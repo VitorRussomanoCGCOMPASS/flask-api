@@ -1,7 +1,6 @@
 # minimal-flask-api
 
-This [template repository](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template)
- provides a minimal configuration for a 'production-ready' Flask API 
+This provides a minimal configuration for a 'production-ready' Flask API 
 project. It includes a basic project structure and 'seed' files for functional and 
 non-function testing, a basic application structure (including error-handling 
 blueprint), and a few assorted 'getting started' files too.
@@ -55,15 +54,3 @@ docker run -p 5000:5000 flask-app
 
 You should see your server boot up, and should be accessible as before.
 
-## Developing with the template
-
-To develop the template for your own project, you'll need to make sure to [create your
-own repository from this template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) 
-and then install the project's development dependencies. You can do this with:
-
-```bash
-pip install -r requirements/develop.txt
-```
-
-This'll install some style formatting and testing tools (including `pytest` and 
-`locust`).
