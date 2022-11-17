@@ -1,38 +1,39 @@
 from api.app import db
 
 
-class VNA(db.Model):
+def Column(*args, **kwargs) -> db.Column:
     """
-    Attributes
-    ----------
-    __tablename__ = "vna_anbima"
-    Primary keys
-    -----------
-    data_referencia : Column(db.Date)
-    codigo_selic: Column(db.Integer)
-    Others
-    ------
-    tipo_titulo: Column(db.String)
-    index: Column(db.Float)
-    tipo_correcao: Column(db.String)
-    data_validade: Column(db.Date)
-    vna: Column(db.Float)
-    Relationships
-    --------------
-    None
-    Methods
+    Creates a wrapper for the columns.
+    With the default arguments being Nullable=False.
+    Instead of the Nullable=True in sqlalchemy.
+
+    Returns
     -------
+    db.Column
     """
+    kwargs.setdefault("nullable", False)
+    return db.Column(*args, **kwargs)
 
-    __tablename__ = "anbima_vna"
 
-    data_referencia = db.Column(db.Date, primary_key=True)
-    tipo_titulo = db.Column(db.String(50))
-    codigo_selic = db.Column(db.Integer, primary_key=True)
-    index = db.Column(db.Float)
-    tipo_correcao = db.Column(db.String)
-    data_validade = db.Column(db.Date)
-    vna = db.Column(db.Float)
+class SectorEntry(db.Model):
+    __tablename__ = "sector_entry"
+    id = Column(db.Integer, autoincrement=True,  primary_key=True)
+    methodology = Column(db.String(50))
+    sector = Column(db.String(50),nullable=True)
+    subsector = Column(db.String(50),nullable=True)
 
-    def __repr__(self) -> str:
-        return f"{self.codigo_selic} at {self.data_referencia}"
+    assets = db.relationship("AssetsSector", lazy=True)
+
+
+class AssetsSector(db.Model):
+    __tablename__ = "asset_sector"
+
+    ticker = Column(db.String(50), primary_key=True)
+    sector_entry_id = Column(db.Integer, db.ForeignKey("sector_entry.id"), primary_key =True) 
+    
+
+    
+
+
+# https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iv-database
+#https://medium.com/craftsmenltd/flask-with-sqlalchemy-marshmallow-2ec34ecfd9d4

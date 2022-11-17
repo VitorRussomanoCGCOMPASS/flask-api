@@ -54,3 +54,25 @@ docker run -p 5000:5000 flask-app
 
 You should see your server boot up, and should be accessible as before.
 
+
+# Best practices naming resources
+Use nouns in their plural form to represent resources, eg:
+✅ Users of a system: /users, /users/{userId}
+✅ User’s playlists: /users/{userId}/playlists, /users/{userId}/playlists/{playlistId}
+Use hyphens “-” to separate words and improve redeability
+✅ /users/{userId}/-mobile-devices
+❌ /users/{userId}/mobileDevices
+❌ /users/{userId}/mobile_devices
+Use forward slashes “/’ to indicate hierarchy
+✅ /users/{userId}/mobile-devices
+❌ /users-mobile-devices/{userId}
+❌ /users-mobile-devices/?userId={userId}
+Use only lowercase letters in URIs
+✅ /users/{userId}/mobile-devices
+❌ /Users/{userId}/Mobile-Devices
+
+
+# Best practices naming actions
+Use verbs to represent actions, e.g.:
+✅ Execute a checkout action: /users/{userId}/cart/checkout
+Same as resources, use hyphens, forward slashes, and lowercase letters.
