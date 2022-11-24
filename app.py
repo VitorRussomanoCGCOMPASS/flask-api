@@ -1,7 +1,7 @@
 from flask import Blueprint, Flask, jsonify, make_response, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from api.models.base_model import db
+from api.models.base_model import database 
 from api.config import Config
 from flasgger import Swagger
 
@@ -16,7 +16,7 @@ def create_app():
     app.register_blueprint(sector_blueprint) 
     
     swagger = Swagger(app)
-    db.init_app(app)
+    database.init_app(app)
     return app
 
 # https://auth0.com/blog/best-practices-for-flask-api-development/

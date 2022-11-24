@@ -1,9 +1,9 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
-
+import sqlalchemy as db
 
 Base = declarative_base()
-db = SQLAlchemy(model_class=Base)
+database = SQLAlchemy(model_class=Base)
 
 
 def Column(*args, **kwargs):
