@@ -1,8 +1,10 @@
-import typing
-from marshmallow import types, ValidationError
 import logging
+import typing
+
+from marshmallow import RAISE, ValidationError, types
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
+#TODO: Check if makes sense to keep this for the API
 
 class CustomSchema(SQLAlchemyAutoSchema):
     def load(
@@ -16,6 +18,7 @@ class CustomSchema(SQLAlchemyAutoSchema):
         partial: bool | types.StrSequenceOrSet | None = None,
         unknown: str | None = None,
     ):
+        
         if unknown and unknown != "exclude":
             return super().load(data, many=many, partial=partial, unknown=unknown)
         if self.unknown == "exclude" or unknown == "exclude":

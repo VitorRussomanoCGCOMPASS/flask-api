@@ -1,9 +1,10 @@
 from flask import Blueprint, jsonify, request
+from marshmallow import ValidationError
 from sqlalchemy.orm import joinedload
+
 from api.models.sector import AssetsSector, SectorEntry
 from api.schemas.sector import AssetsSectorSchema, SectorEntrySchema
 from app import database
-
 
 sector_blueprint = Blueprint("sector", __name__, url_prefix="/sector")
 
@@ -31,16 +32,26 @@ def get_sectorentry():
 
 @sector_blueprint.route("/assets/", methods=["POST"])
 def create_assetsector():
-    data_json = request.get_json()
-    if data_json is not None:
+    content_type = request.headers.get("Content-Type")
+    if content_type != "application/json":
+        return (
+            jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
+            400,
+        )
+    if request.json:
         try:
-            new_instance = assetsector_schema.loads(data_json)
-            database.session.add(new_instance)
-            database.session.commit()
-            return jsonify(new_instance), 200
-        except Exception as err:
+            teste = assetsector_schema.load(request.json)
+            try:
+                database.session.add(teste)
+                database.session.commit()
+            except Exception as exc:
+                return (
+                    jsonify({"error": "Server Unavailable", "message": "######"}),
+                    400,
+                )
+        except ValidationError as err:
             return jsonify({"error": "Bad Request", "message": err}), 400
-    return jsonify({"error": "Bad Request", "message": "Empty json data"}), 400
+    return jsonify(request.json), 200
 
 
 @sector_blueprint.route("/assets/", methods=["GET"])
@@ -80,12 +91,3 @@ def get_assetsector():
         return jsonify(result_json), 200
 
     return jsonify({"error": "Bad Request", "message": "#####"}), 400
-
-
-""" [docs]class Nested(fields.Nested):
-
-[docs]    def _deserialize(self, *args, **kwargs):
-        if hasattr(self.schema, "session"):
-            self.schema.session = self.root.session
-            self.schema.transient = self.root.transient
-        return super()._deserialize(*args, **kwargs) """
