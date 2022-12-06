@@ -33,10 +33,3 @@ class AssetsSectorSchema(CustomSchema):
     @post_load
     def post_loader(self, data, **kwargs) -> AssetsSector:
         return AssetsSector(**data) 
-
-
-
-A = {"sector_entry" : { 'sector':'ABC', 'subsector':'D', 'methodology':"TESTE"} , 'ticker':"ticker"}
-
-scm = AssetsSectorSchema()    
-K = scm.load(A)
