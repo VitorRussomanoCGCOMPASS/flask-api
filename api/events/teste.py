@@ -1,3 +1,4 @@
+from flask_apscheduler import scheduler
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Query, scoped_session, sessionmaker
 
@@ -5,19 +6,20 @@ from api.dbconnection import urls
 from api.models.base_model import database
 from api.models.sector import SectorEntry
 
+# A thread-local scoped SQLAlchemy session instead of relying on Flask-SQLAlchemy's request context.
 
-#   with scheduler.app.app_context():
+
+some_engine = create_engine(url=urls["localdev"])
+
+session_factory = sessionmaker(bind=some_engine)
+
+
+Session = scoped_session(session_factory)
+
+
 def scheduled_task():
-    print("ok")
+    with Session() as session:
+        print(session.query(SectorEntry).all())
 
-""" 
 
-Alternatively (and probably the best solution) would be to actually set up a thread-local scoped SQLAlchemy session instead of relying on Flask-SQLAlchemy's request context.
 
->>> from sqlalchemy.orm import scoped_session
->>> from sqlalchemy.orm import sessionmaker
-
->>> session_factory = sessionmaker(bind=some_engine)
->>> Session = scoped_session(session_factory)
-
- """

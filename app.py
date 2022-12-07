@@ -16,8 +16,8 @@ from api.routes.home import example_blueprint
 from api.routes.market_index import marketindex_blueprint
 from api.routes.sector import sector_blueprint
 
-logging.config.dictConfig(DEFAULT_LOGGER)
-logger = logging.getLogger("apscheduler")
+# logging.config.dictConfig(DEFAULT_LOGGER)
+# logger = logging.getLogger("apscheduler")
 
 """ def event_listener(event):
     if event.exception:
@@ -33,6 +33,7 @@ logger = logging.getLogger("apscheduler")
 
 
  """
+
 
 
 def create_app() -> Flask:
@@ -58,4 +59,5 @@ def create_app() -> Flask:
 
 if __name__ == "__main__":
     app = create_app()
+    # app.app_context().push()
     app.run(debug=True)

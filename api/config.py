@@ -1,5 +1,4 @@
 from api.dbconnection import urls
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 DEFAULT_LOGGER = {
     "version": 1,
@@ -32,11 +31,13 @@ class Config(object):
     SWAGGER = {"Title": "API.v1"}
     JOBS = [
         {
-            "id": "jobs2",
+            "id": "ID1",
             "func": "api.events.teste:scheduled_task",
             "trigger": "interval",
             "seconds": 5,
         },
     ]
+
+
     SCHEDULER_API_PREFIX = "/middleoffice/scheduler"
     SCHEDULER_API_ENABLED = True
