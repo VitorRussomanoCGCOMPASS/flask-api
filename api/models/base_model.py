@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
 import sqlalchemy as db
+# from sqlalchemy import MetaData
 
 Base = declarative_base()
 database = SQLAlchemy(model_class=Base)
