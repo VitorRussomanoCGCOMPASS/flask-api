@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from api.models.market_index import MarketIndex
 from api.schemas.market_index import MarketIndexSchema
-from api.schemas.dateargs import DateargsSchema
+from api.request_schemas.dateargs import DateargsSchema
 
 marketindex_blueprint = Blueprint("MarketIndex", __name__, url_prefix="/marketindex")
 
@@ -13,6 +13,7 @@ dateargs_schema = DateargsSchema()
 @marketindex_blueprint.route("/", methods=["GET"])
 def get_marketindex():
     args = request.args
+    print(args.to_dict())
     start_date = args.get("start_date", type=str)
     end_date = args.get("end_date", type=str)
     index = args.get("index", type=str)

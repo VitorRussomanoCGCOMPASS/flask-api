@@ -1,6 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.declarative import declarative_base
 import sqlalchemy as db
+
 # from sqlalchemy import MetaData
 
 Base = declarative_base()
@@ -19,5 +20,3 @@ def Column(*args, **kwargs):
     """
     kwargs.setdefault("nullable", False)
     return db.Column(*args, **kwargs)
-
-
