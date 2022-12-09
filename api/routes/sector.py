@@ -5,6 +5,8 @@ from sqlalchemy.orm import joinedload
 from api.models.sector import AssetsSector, SectorEntry
 from api.schemas.sector import AssetsSectorSchema, SectorEntrySchema
 from app import database
+from api.request_schemas.sector import SectorQuerySchema, AssetSectorQuerySchema
+
 
 sector_blueprint = Blueprint("sector", __name__, url_prefix="/sector")
 
@@ -15,18 +17,36 @@ assetsector_schema = AssetsSectorSchema()
 @sector_blueprint.route("/", methods=["GET"])
 def get_sectorentry():
     args = request.args
+    methodology = args.get("methodology",type=str)
+    
+    if methodology:
+        args = SectorQuerySchema().validate(args)
+        result = SectorEntry.query.filter_by(**args).all()
+        result = sectorentry_schema.dump(result,many=True)
+        return jsonify(result) , 200
+    
+    result = SectorEntry.query.all()
+    result = sectorentry_schema.dump(result,many=True)
+    return jsonify(result) , 200 
+   
+@sector_blueprint.route("/assets/", methods=["GET"])
+def get_assetsector():
+    args = request.args
 
-    methodology = args.get("methodology", type=str)
-    if not methodology:
-        result = SectorEntry.query.all()
-        result = sectorentry_schema.dump(result, many=True)
-        return jsonify(result), 200
+    if args:
+        error = AssetSectorQuerySchema().validate(args)
+        if error:
+            return jsonify({"error":"Bad request","message":error})
+        result =  AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).filter_by(**args).all()
+        try:
+            result_json = assetsector_schema.dump(result, many=True)
+        except ValueError:
+            result_json = assetsector_schema.dump(result)
+        return jsonify(result_json), 200            
 
-    result = SectorEntry.query.filter_by(methodology=methodology).all()
-    try:
-        result = sectorentry_schema.dump(result, many=True)
-    except ValueError:
-        result = sectorentry_schema.dump(result)
+
+    result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
+    result = assetsector_schema.dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -54,8 +74,7 @@ def create_assetsector():
     return jsonify(request.json), 200
 
 
-@sector_blueprint.route("/assets/", methods=["GET"])
-def get_assetsector():
+def a():
     args = request.args
     ticker = args.get("ticker", type=str)
     methodology = args.get("methodology", type=str)
