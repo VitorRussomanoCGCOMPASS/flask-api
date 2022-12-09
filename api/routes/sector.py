@@ -17,18 +17,22 @@ assetsector_schema = AssetsSectorSchema()
 @sector_blueprint.route("/", methods=["GET"])
 def get_sectorentry():
     args = request.args
-    methodology = args.get("methodology",type=str)
-    
+    methodology = args.get("methodology", type=str)
+
     if methodology:
-        args = SectorQuerySchema().validate(args)
+        error = SectorQuerySchema().validate(args)
+
+        if error:
+            return jsonify({"error": "Bad request", "message": error})
         result = SectorEntry.query.filter_by(**args).all()
-        result = sectorentry_schema.dump(result,many=True)
-        return jsonify(result) , 200
-    
+        result = sectorentry_schema.dump(result, many=True)
+        return jsonify(result), 200
+
     result = SectorEntry.query.all()
-    result = sectorentry_schema.dump(result,many=True)
-    return jsonify(result) , 200 
-   
+    result = sectorentry_schema.dump(result, many=True)
+    return jsonify(result), 200
+
+
 @sector_blueprint.route("/assets/", methods=["GET"])
 def get_assetsector():
     args = request.args
@@ -36,14 +40,19 @@ def get_assetsector():
     if args:
         error = AssetSectorQuerySchema().validate(args)
         if error:
-            return jsonify({"error":"Bad request","message":error})
-        result =  AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).filter_by(**args).all()
+            return jsonify({"error": "Bad request", "message": error})
+
+        result = (
+            AssetsSector.query.join(AssetsSector.sector_entry, aliased=True)
+            .filter_by(**args)
+            .all()
+        )
+
         try:
             result_json = assetsector_schema.dump(result, many=True)
         except ValueError:
             result_json = assetsector_schema.dump(result)
-        return jsonify(result_json), 200            
-
+        return jsonify(result_json), 200
 
     result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
     result = assetsector_schema.dump(result, many=True)
@@ -60,9 +69,9 @@ def create_assetsector():
         )
     if request.json:
         try:
-            teste = assetsector_schema.load(request.json)
+            assetsector = assetsector_schema.load(request.json)
             try:
-                database.session.add(teste)
+                database.session.add(assetsector)
                 database.session.commit()
             except Exception as exc:
                 return (
@@ -72,41 +81,3 @@ def create_assetsector():
         except ValidationError as err:
             return jsonify({"error": "Bad Request", "message": err}), 400
     return jsonify(request.json), 200
-
-
-def a():
-    args = request.args
-    ticker = args.get("ticker", type=str)
-    methodology = args.get("methodology", type=str)
-
-    if not args:
-        result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
-        result = assetsector_schema.dump(result, many=True)
-        return jsonify(result), 200
-
-    if ticker:
-        result = (
-            AssetsSector.query.options(joinedload(AssetsSector.sector_entry))
-            .filter_by(ticker=ticker)
-            .all()
-        )
-        try:
-            result_json = assetsector_schema.dump(result, many=True)
-        except ValueError:
-            result_json = assetsector_schema.dump(result)
-        return jsonify(result_json), 200
-
-    if methodology:
-        result = (
-            AssetsSector.query.join(AssetsSector.sector_entry, aliased=True)
-            .filter_by(methodology=methodology)
-            .all()
-        )
-
-        try:
-            result_json = assetsector_schema.dump(result, many=True)
-        except ValueError:
-            result_json = assetsector_schema.dump(result)
-        return jsonify(result_json), 200
-
-    return jsonify({"error": "Bad Request", "message": "#####"}), 400

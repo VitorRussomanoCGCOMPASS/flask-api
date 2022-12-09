@@ -1,6 +1,6 @@
 """ Setup for unittest database access """
 
-from config import TestConfig
+from tests.config import TestConfig
 from flask import Flask
 from flask_testing import TestCase
 

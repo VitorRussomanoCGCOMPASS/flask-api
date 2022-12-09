@@ -13,14 +13,7 @@ CONNECTION_STRING = (
 
 
 urls = {
-    "DB_FondosBrasil": URL.create(
-        "mssql+pyodbc",
-        query={
-            "odbc_connect": CONNECTION_STRING.format(
-                "{SQL Server}", "CGQ-DB-BI,34641", "DB_FondosBrasil"
-            )
-        },
-    ),
+
     "localdev": URL.create(
         "mssql+pyodbc",
         query={
@@ -29,11 +22,11 @@ urls = {
             )
         },
     ),
-    "localdev2": URL.create(
+    "testing": URL.create(
         "mssql+pyodbc",
         query={
             "odbc_connect": CONNECTION_STRING.format(
-                "{SQL Server}", "DESKTOP-46RDGH3", "localdev2"
+                "{SQL Server}", "DESKTOP-46RDGH3", "testing"
             )
         },
     ),

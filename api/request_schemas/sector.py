@@ -11,6 +11,5 @@ class SectorQuerySchema(Schema):
 class AssetSectorQuerySchema(DropSchema):
 
     methodology = fields.String(allow_none=True)
-    ticker= fields.String(allow_none=True)
 
 
