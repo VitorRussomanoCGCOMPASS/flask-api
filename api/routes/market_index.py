@@ -13,14 +13,25 @@ dateargs_schema = DateargsSchema()
 
 
 @marketindex_blueprint.route("/", methods=["GET"])
-def getmarketindex_date():
+def getmarketindex():
+
+    """
+    Market Index by date and or index.
+    If no args, returns all data
+
+    """
     args = request.args
-    errors = MarketIndexQuerySchema().validate(args)
+    if args:
+        errors = MarketIndexQuerySchema().validate(args)
+        if errors:
+            return jsonify({"error": "Bad request", "message": errors}), 400
 
-    if errors:
-        return jsonify({"error": "Bad request", "message": errors}), 400
+        args = MarketIndexQuerySchema().dump(args)
+        result = MarketIndex.query.filter_by(**args).all()
+        result = marketindex_schema.dump(result, many=True)
+        return jsonify(result), 200
 
-    args = MarketIndexQuerySchema().dump(args)
-    result = MarketIndex.query.filter_by(**args).all()
+    result = MarketIndex.query.all()
     result = marketindex_schema.dump(result, many=True)
+
     return jsonify(result), 200
