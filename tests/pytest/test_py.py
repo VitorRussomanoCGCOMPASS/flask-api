@@ -1,4 +1,15 @@
 from api.models.sector import SectorEntry
+from pytest import fixture
+
+
+@fixture(scope='module')
+def new_sectorentry():
+    sectorentry_dbo = SectorEntry(methodology='SARAIVA',sector='sectorA',subsector='subsectorA')
+    
+def test_get_sectorentry(session,new_sectorentry):
+
+
+
 
 
 def test_config(app):
