@@ -8,7 +8,7 @@ class MarketIndexSchema(CustomSchema):
     class Meta:
         model = MarketIndex
         unknown = EXCLUDE
-        dateformat = "%d/%m/%y"
+        dateformat = "%Y-%m-%d"
 
     @pre_load(pass_many=True)
     def pre_lds(self, data, many, **kwargs):
