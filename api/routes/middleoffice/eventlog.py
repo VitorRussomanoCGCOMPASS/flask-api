@@ -10,18 +10,22 @@ middleoffice_blueprint = Blueprint("Middleoffice", __name__, url_prefix="/middle
 
 eventlog_schema = EventLogSchema()
 
+from sqlalchemy import func, Date
 
-def get_eventlog_today():
+
+def get_eventlog_latest():
     """
-    Get todays event log
+
+    Get all logs associated with latest available date
+
     """
-    today = datetime.datetime.today()
-    today_start = today.replace(hour=0, minute=0, second=0)
-    today_end = today.replace(hour=23, minute=59, second=59)
-    result = EventLog.query.filter(
-        EventLog.asctime.between(today_start, today_end)
-    ).all()
-    result = eventlog_schema.dump(result, many=True)
+    latest = EventLog.query(func.max(EventLog.asctime.cast(Date))).scalar()
+    result = EventLog.query().filter(EventLog.asctime.cast(Date) == latest).all()
+
+    try:
+        result = eventlog_schema.dump(result, many=True)
+    except ValueError:
+        result = eventlog_schema.dump(result)
     return result
 
 
@@ -79,5 +83,5 @@ def get_eventlog_date():
         result = get_eventlog_period(start_date, end_date)
         return jsonify(result), 200
 
-    result = get_eventlog_today()
+    result = get_eventlog_latest()
     return jsonify(result), 200
