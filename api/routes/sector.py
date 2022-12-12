@@ -8,7 +8,7 @@ from app import database
 from api.request_schemas.sector import SectorQuerySchema, AssetSectorQuerySchema
 
 
-sector_blueprint = Blueprint("sector", __name__, url_prefix="/sector")
+sector_blueprint = Blueprint("sector", __name__, url_prefix="/sectors")
 
 sectorentry_schema = SectorEntrySchema()
 assetsector_schema = AssetsSectorSchema()

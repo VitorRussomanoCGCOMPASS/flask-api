@@ -45,7 +45,7 @@ class Config(object):
     JOBS = [
         {
             "id": "ID1",
-            "func": "api.events.logevents:upload_logevents",
+            "func": "api.jobs.logevents:upload_logevents",
             "trigger": "cron",
             "day_of_week": "mon-fri",
             "hour":23,

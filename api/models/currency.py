@@ -17,3 +17,5 @@ class CurrencyValues(Base):
     date = Column(db.Date, primary_key=True)
     value = Column(db.Float)
     currency_id = Column(db.Integer, db.ForeignKey("currency.id"), primary_key=True)
+
+

@@ -1,15 +1,16 @@
-from api.request_schemas.dropargs import DropSchema
-from marshmallow import fields, RAISE
+from marshmallow import fields
 from api.request_schemas.dateargs import DateSchema, DateargsSchema
 
-class CurrencyQuerySchema(DateSchema):
+class CurrencyDateQuerySchema(DateSchema):
     class Meta:
         dateformat = "%Y-%m-%d"
 
-    id = fields.Integer()
+    currency_id = fields.Integer(data_key='id')
 
-class CurrencyQueryArgsSchema(DateargsSchema):
+class CurrencyPeriodQuerySchema(DateargsSchema):
     class Meta:
         dateformat = "%Y-%m-%d"
 
-    id = fields.Integer()
+    currency_id = fields.Integer(data_key='id')
+
+
