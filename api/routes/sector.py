@@ -68,16 +68,17 @@ def create_assetsector():
             400,
         )
     if request.json:
+        
         try:
-            assetsector = assetsector_schema.load(request.json)
-            try:
-                database.session.add(assetsector)
-                database.session.commit()
-            except Exception as exc:
+            result = assetsector_schema.load(request.json)
+        except ValidationError as err:
+            return jsonify({"error": "Bad Request", "message": err.messages}), 400
+        try:
+            database.session.add(result)
+            database.session.commit()
+        except Exception as exc:
                 return (
                     jsonify({"error": "Server Unavailable", "message": "######"}),
                     400,
                 )
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err}), 400
     return jsonify(request.json), 200
