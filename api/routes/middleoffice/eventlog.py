@@ -1,12 +1,11 @@
 import datetime
 
-from flask import Blueprint, jsonify, request
-
+from flask import jsonify, request
+from api.routes.middleoffice import middleoffice_blueprint
 from api.models.eventlog import EventLog
 from api.request_schemas.dateargs import DateargsSchema, DateSchema
 from api.schemas.eventlog import EventLogSchema
 
-middleoffice_blueprint = Blueprint("Middleoffice", __name__, url_prefix="/middleoffice")
 
 eventlog_schema = EventLogSchema()
 

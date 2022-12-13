@@ -67,6 +67,7 @@ def create_assetsector():
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
+    # FIXME: YOU CAN SEND IT EMPTY...
     if request.json:
         
         try:
