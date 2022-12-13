@@ -6,7 +6,6 @@ from marshmallow import fields, pre_load, post_load, EXCLUDE
 class SectorEntrySchema(CustomSchema):
     class Meta:
         model = SectorEntry
-        unknown = EXCLUDE
 
     @pre_load
     def pre_loader(self, data, many, **kwargs):
@@ -20,7 +19,6 @@ class SectorEntrySchema(CustomSchema):
 class AssetsSectorSchema(CustomSchema):
     class Meta:
         model = AssetsSector
-        unknown = EXCLUDE
 
     sector_entry = fields.Nested(SectorEntrySchema)
 
@@ -31,5 +29,3 @@ class AssetsSectorSchema(CustomSchema):
     @post_load
     def post_loader(self, data, **kwargs) -> AssetsSector:
         return AssetsSector(**data)
-
-

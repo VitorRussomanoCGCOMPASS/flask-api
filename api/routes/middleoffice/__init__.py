@@ -8,4 +8,4 @@ def middle_office_home():
     return "Middle office route"
 
 
-from api.routes.middleoffice import eventlog, jobs
+from api.routes.middleoffice import eventlog, jobs, holidays

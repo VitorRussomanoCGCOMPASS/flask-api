@@ -23,7 +23,7 @@ def get_sectorentry():
         error = SectorQuerySchema().validate(args)
 
         if error:
-            return jsonify({"error": "Bad request", "message": error})
+            return jsonify({"error": "Bad request", "message": error}), 400
         result = SectorEntry.query.filter_by(**args).all()
         result = sectorentry_schema.dump(result, many=True)
         return jsonify(result), 200
@@ -40,7 +40,7 @@ def get_assetsector():
     if args:
         error = AssetSectorQuerySchema().validate(args)
         if error:
-            return jsonify({"error": "Bad request", "message": error})
+            return jsonify({"error": "Bad request", "message": error}) ,400
 
         result = (
             AssetsSector.query.join(AssetsSector.sector_entry, aliased=True)
@@ -67,9 +67,8 @@ def create_assetsector():
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    # FIXME: YOU CAN SEND IT EMPTY...
     if request.json:
-        
+
         try:
             result = assetsector_schema.load(request.json)
         except ValidationError as err:
@@ -78,8 +77,8 @@ def create_assetsector():
             database.session.add(result)
             database.session.commit()
         except Exception as exc:
-                return (
-                    jsonify({"error": "Server Unavailable", "message": "######"}),
-                    400,
-                )
+            return (
+                jsonify({"error": "Server Unavailable", "message": "######"}),
+                400,
+            )
     return jsonify(request.json), 200
