@@ -3,7 +3,7 @@ import datetime
 from flask import jsonify, request
 from api.routes.middleoffice import middleoffice_blueprint
 from api.models.eventlog import EventLog
-from api.request_schemas.dateargs import DateargsSchema, DateSchema
+from api.request_schemas.dateargs import PeriodSchema, DateSchema
 from api.schemas.eventlog import EventLogSchema
 
 
@@ -75,7 +75,7 @@ def get_eventlog_date():
         return jsonify(result), 200
 
     if end_date or start_date:
-        errors = DateargsSchema().validate(args)
+        errors = PeriodSchema().validate(args)
         if errors:
             return jsonify({"error": "Bad Request", "message": errors}), 400
 

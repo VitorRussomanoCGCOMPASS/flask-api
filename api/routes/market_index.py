@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from api.models.market_index import MarketIndex
 from api.schemas.market_index import MarketIndexSchema
-from api.request_schemas.dateargs import DateargsSchema
+from api.request_schemas.dateargs import PeriodSchema
 from api.request_schemas.marketindex import MarketIndexQuerySchema
 
 
@@ -9,7 +9,7 @@ marketindex_blueprint = Blueprint("MarketIndex", __name__, url_prefix="/marketin
 
 
 marketindex_schema = MarketIndexSchema()
-dateargs_schema = DateargsSchema()
+dateargs_schema = PeriodSchema()
 
 
 @marketindex_blueprint.route("/", methods=["GET"])

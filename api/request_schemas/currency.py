@@ -1,5 +1,5 @@
 from marshmallow import fields
-from api.request_schemas.dateargs import DateSchema, DateargsSchema
+from api.request_schemas.dateargs import DateSchema, PeriodSchema
 
 class CurrencyDateQuerySchema(DateSchema):
     class Meta:
@@ -7,7 +7,7 @@ class CurrencyDateQuerySchema(DateSchema):
 
     currency_id = fields.Integer(data_key='id')
 
-class CurrencyPeriodQuerySchema(DateargsSchema):
+class CurrencyPeriodQuerySchema(PeriodSchema):
     class Meta:
         dateformat = "%Y-%m-%d"
 

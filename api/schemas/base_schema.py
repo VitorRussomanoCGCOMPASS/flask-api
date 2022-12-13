@@ -4,7 +4,6 @@ import typing
 from marshmallow import RAISE, ValidationError, types
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
-#TODO: Check if makes sense to keep this for the API
 
 class CustomSchema(SQLAlchemyAutoSchema):
     def load(
