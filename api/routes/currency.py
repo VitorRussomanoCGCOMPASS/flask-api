@@ -9,16 +9,23 @@ from app import database
 
 currency_blueprint = Blueprint("Currency", __name__, url_prefix="/currencies")
 
-currency_schema = CurrencySchema()
-currency_values_schema = CurrencyValuesSchema()
 
 #  TODO : REVIEW POST
+
 
 @currency_blueprint.route("/", methods=["GET"])
 def get_currency():
 
     result = Currency.query.all()
-    result = currency_schema.dump(result, many=True)
+    result = CurrencySchema().dump(result, many=True)
+    return jsonify(result), 200
+
+
+@currency_blueprint.route("/<int:id>", methods=["GET"])
+def get_currency_id(id: int):
+
+    result = Currency.query.filter_by(id=id).one_or_404()
+    result = CurrencySchema().dump(result)
     return jsonify(result), 200
 
 
@@ -33,7 +40,7 @@ def post_currency():
         )
     if request.json:
         try:
-            result = currency_schema.load(request.json)
+            result = CurrencySchema().load(request.json)
         except ValidationError as err:
             return jsonify({"error": "Bad Request", "message": err.messages}), 400
         try:
@@ -46,34 +53,6 @@ def post_currency():
             )
 
     return jsonify(request.json), 200
-
-
-def get_currency_period(start_date, end_date, currency_id):
-
-    if not currency_id:
-        result = CurrencyValues.query.filter(
-            CurrencyValues.date.between(start_date, end_date)
-        ).all()
-    else:
-
-        result = CurrencyValues.query.filter(
-            CurrencyValues.date.between(start_date, end_date)
-        ).all()
-
-    try:
-        result = currency_values_schema.dump(result, many=True)
-    except ValueError:
-        result = currency_values_schema.dump(result)
-    return result
-
-
-def get_currency_id(currency_id):
-    result = CurrencyValues.query.filter_by(currency_id=currency_id).all()
-    try:
-        result = currency_values_schema.dump(result, many=True)
-    except ValueError:
-        result = currency_values_schema.dump(result)
-    return result
 
 
 @currency_blueprint.route("/<int:id>/values/", methods=["GET"])
@@ -90,17 +69,31 @@ def get_currency_values_id(id: int):
         result = CurrencyValues.query.filter_by(
             currency_id=id, date=date
         ).first_or_404()
-        result = currency_values_schema.dump(result)
+        result = CurrencyValuesSchema()
         return jsonify(result), 200
 
     if end_date or start_date:
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_currency_period(start_date, end_date, id)
+        result = (
+            CurrencyValues.query.filter(
+                CurrencyValues.date.between(start_date, end_date)
+            )
+            .filter_by(currency_id=id)
+            .all()
+        )
+        try:
+            result = CurrencyValuesSchema().dump(result, many=True)
+        except ValueError:
+            result = CurrencyValuesSchema().dump(result)
         return jsonify(result), 200
 
-    result = get_currency_id(id)
+    result = CurrencyValues.query.filter_by(currency_id=id).all()
+    try:
+        result = CurrencyValuesSchema().dump(result, many=True)
+    except ValueError:
+        result = CurrencyValuesSchema().dump(result)
     return jsonify(result), 200
 
 
@@ -117,16 +110,26 @@ def get_currency_values_date():
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = CurrencyValues.query.filter_by(date=date).one_or_404()
-        result = currency_values_schema.dump(result)
+        result = CurrencyValuesSchema()
         return jsonify(result), 200
 
     if end_date or start_date:
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_currency_period(start_date, end_date, currency_id=None)
+        result = (
+            CurrencyValues.query.filter(
+                CurrencyValues.date.between(start_date, end_date)
+            )
+            .filter_by(currency_id=id)
+            .all()
+        )
+        try:
+            result = CurrencyValuesSchema().dump(result, many=True)
+        except ValueError:
+            result = CurrencyValuesSchema().dump(result)
         return jsonify(result), 200
 
     result = CurrencyValues.query.all()
-    result = currency_values_schema.dump(result, many=True)
+    result = CurrencyValuesSchema()
     return jsonify(result), 200

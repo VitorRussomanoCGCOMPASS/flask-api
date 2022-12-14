@@ -7,7 +7,6 @@ from marshmallow import ValidationError
 
 # TODO : REVIEW POST METHODS
 
-
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["GET"])
 def get_holidaycalendars():
     result = HolidayCalendars.query.all()

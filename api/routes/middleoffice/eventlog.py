@@ -1,17 +1,12 @@
 import datetime
-
-from flask import jsonify, request
-from api.routes.middleoffice import middleoffice_blueprint
-from api.models.eventlog import EventLog
-from api.request_schemas.dateargs import PeriodSchema, DateSchema
-from api.schemas.eventlog import EventLogSchema
 import json
 
-eventlog_schema = EventLogSchema()
+from flask import jsonify, request
 
-
-# TODO : CURRENT / ALL BEHAVIOUR
-
+from api.models.eventlog import EventLog
+from api.request_schemas.dateargs import DateSchema, PeriodSchema
+from api.routes.middleoffice import middleoffice_blueprint
+from api.schemas.eventlog import EventLogSchema
 
 
 def get_current_log():
@@ -42,30 +37,59 @@ def get_eventlog_period(start_date, end_date):
     result = EventLog.query.filter(
         EventLog.asctime.between(start_date_start, end_date_end)
     ).all()
-    result = eventlog_schema.dump(result, many=True)
+    result = EventLogSchema().dump(result, many=True)
     return result
 
 
-@middleoffice_blueprint.route("/event-logs/", methods=["GET"])
-def get_eventlog_date():
+def get_eventlog_date(asctime):
+    """
 
+    Get event log in date
+
+    Parameters
+    ----------
+    asctime : str
+        "%Y-%m-%d" format
+    """
+    asctime = datetime.datetime.strptime(asctime, "%Y-%m-%d")
+    asctime_start = asctime.replace(hour=0, minute=0, second=0)
+    asctime_end = asctime.replace(hour=23, minute=59, second=59)
+    result = EventLog.query.filter(
+        EventLog.asctime.between(asctime_start, asctime_end)
+    ).all()
+    result = EventLogSchema().dump(result, many=True)
+    return result
+
+
+@middleoffice_blueprint.route("/event-logs/<bool:current>/", methods=["GET"])
+def get_eventlogs(current: bool):
+    """
+    Get event logs by
+
+    asctime: str
+
+    start_date and end_date :str
+
+    current: bool
+
+    If no arguments, returns all event logs (In SQL)
+
+    """
     args = request.args
     asctime = args.get("date", type=str)
     start_date = args.get("start_date", type=str)
     end_date = args.get("end_date", type=str)
+
+    if current:
+        result = get_current_log()
+        return jsonify(result), 200
 
     if asctime:
         errors = DateSchema().validate(args)
         if errors:
             return jsonify({"error": "Bad Request", "message": errors}), 400
 
-        asctime = datetime.datetime.strptime(asctime, "%Y-%m-%d")
-        asctime_start = asctime.replace(hour=0, minute=0, second=0)
-        asctime_end = asctime.replace(hour=23, minute=59, second=59)
-        result = EventLog.query.filter(
-            EventLog.asctime.between(asctime_start, asctime_end)
-        ).all()
-        result = eventlog_schema.dump(result, many=True)
+        result = get_eventlog_date(asctime)
         return jsonify(result), 200
 
     if end_date or start_date:
@@ -76,5 +100,6 @@ def get_eventlog_date():
         result = get_eventlog_period(start_date, end_date)
         return jsonify(result), 200
 
-    result = get_current_log()
+    result = EventLog.query.all()
+    result = EventLogSchema().dump(result, many=True)
     return jsonify(result), 200
