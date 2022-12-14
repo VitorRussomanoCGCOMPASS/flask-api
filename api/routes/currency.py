@@ -2,10 +2,8 @@ from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError
 
 from api.models.currency import Currency, CurrencyValues
-from api.request_schemas.currency import (
-    CurrencyPeriodQuerySchema,
-    CurrencyDateQuerySchema,
-)
+from api.request_schemas.dateargs import DateSchema, PeriodSchema
+
 from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
 from app import database
 
@@ -25,6 +23,7 @@ def get_currency():
 
 @currency_blueprint.route("/", methods=["POST"])
 def post_currency():
+
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
@@ -49,11 +48,17 @@ def post_currency():
 
 
 def get_currency_period(start_date, end_date, currency_id):
-    result = (
-        CurrencyValues.query.filter(CurrencyValues.date.between(start_date, end_date))
-        .filter_by(currency_id=currency_id)
-        .all()
-    )
+
+    if not currency_id:
+        result = CurrencyValues.query.filter(
+            CurrencyValues.date.between(start_date, end_date)
+        ).all()
+    else:
+
+        result = CurrencyValues.query.filter(
+            CurrencyValues.date.between(start_date, end_date)
+        ).all()
+
     try:
         result = currency_values_schema.dump(result, many=True)
     except ValueError:
@@ -61,38 +66,64 @@ def get_currency_period(start_date, end_date, currency_id):
     return result
 
 
-@currency_blueprint.route("/values/", methods=["GET"])
-def get_currency_values_date():
+def get_currency_id(currency_id):
+    result = CurrencyValues.query.filter_by(currency_id=currency_id).all()
+    try:
+        result = currency_values_schema.dump(result, many=True)
+    except ValueError:
+        result = currency_values_schema.dump(result)
+    return result
 
+
+@currency_blueprint.route("/<int:id>/values/", methods=["GET"])
+def get_currency_values_id(id: int):
     args = request.args
-    currency_id = args.get("id", type=int)
     date = args.get("date", type=str)
     start_date = args.get("start_date", type=str)
     end_date = args.get("end_date", type=str)
 
     if date:
-        error = CurrencyDateQuerySchema().validate(args)
+        error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = CurrencyValues.query.filter_by(
-            currency_id=currency_id, date=date
+            currency_id=id, date=date
         ).first_or_404()
         result = currency_values_schema.dump(result)
         return jsonify(result), 200
 
     if end_date or start_date:
-        error = CurrencyPeriodQuerySchema().validate(args)
+        error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_currency_period(start_date, end_date, currency_id)
+        result = get_currency_period(start_date, end_date, id)
         return jsonify(result), 200
 
-    if currency_id is not None:
-        result = CurrencyValues.query.filter_by(currency_id=currency_id).all()
-        try:
-            result = currency_values_schema.dump(result, many=True)
-        except ValueError:
-            result = currency_schema.dump(result)
+    result = get_currency_id(id)
+    return jsonify(result), 200
+
+
+@currency_blueprint.route("/values/", methods=["GET"])
+def get_currency_values_date():
+
+    args = request.args
+    date = args.get("date", type=str)
+    start_date = args.get("start_date", type=str)
+    end_date = args.get("end_date", type=str)
+
+    if date:
+        error = DateSchema().validate(args)
+        if error:
+            return jsonify({"error": "Bad Request", "message": error}), 400
+        result = CurrencyValues.query.filter_by(date=date).first_or_404()
+        result = currency_values_schema.dump(result)
+        return jsonify(result), 200
+
+    if end_date or start_date:
+        error = PeriodSchema().validate(args)
+        if error:
+            return jsonify({"error": "Bad Request", "message": error}), 400
+        result = get_currency_period(start_date, end_date, currency_id=None)
         return jsonify(result), 200
 
     result = CurrencyValues.query.all()

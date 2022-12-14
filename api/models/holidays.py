@@ -8,8 +8,6 @@ class HolidayCalendars(Base):
     id = Column(db.Integer, autoincrement=True, primary_key=True)
 
     calendar = Column(db.String(50))
-    init_date = Column(db.Date)
-    end_date = Column(db.Date)
     holidays = relationship("Holidays")
 
 

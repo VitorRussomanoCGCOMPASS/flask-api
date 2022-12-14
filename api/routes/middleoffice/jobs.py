@@ -1,7 +1,9 @@
-from flask import jsonify, request
+import json
+
+from flask import stream_with_context
+from flask.wrappers import Response
 from flask_apscheduler import api
 
-from api.request_schemas.jobs import JobsQuerySchema
 from api.routes.middleoffice import middleoffice_blueprint
 
 
@@ -12,42 +14,51 @@ def get_scheduler():
 
 @middleoffice_blueprint.route("/jobs/", methods=["GET"])
 def get_jobs():
-    args = request.args
-    id = args.get("id", type=str)
-    if args:
-        error = JobsQuerySchema().validate(args)
-        if error:
-            return jsonify({"error": "Bad Request", "message": error}), 400
-        return api.get_job(id)
+    return api.get_jobs()
 
-    return api.get_jobs(), 200
+
+@middleoffice_blueprint.route("/jobs/<int:id>/", methods=["GET"])
+def get_job(id: int):
+    return api.get_job(id)
+
+
+@middleoffice_blueprint.route("/jobs/<int:id>/pause/", methods=["POST"])
+def pause_job(id: int):
+    return api.pause_job(id)
+
+
+@middleoffice_blueprint.route("/jobs/<int:id>/resume/", methods=["POST"])
+def resume_job(id: int):
+    return api.resume_job(id)
+
+
+@middleoffice_blueprint.route("/jobs/<int:id>/run/", methods=["POST"])
+def run_job(id: int):
+    return api.run_job(id)
+
+
+def pause_all_jobs():
+
+    jobs = json.loads(api.get_jobs().data)
+    for job in jobs:
+        id = job.get("id")
+        result = api.pause_job(id)
+        yield result.response[0]  # type: ignore
+
+
+def resume_all_jobs():
+    jobs = api.get_jobs().data.decode()
+
+    for job in jobs:
+        result = api.resume_job(job.get("id"))
+        yield json.dumps(result.response[0])  # type: ignore
 
 
 @middleoffice_blueprint.route("/jobs/pause/", methods=["POST"])
-def pause_job():
-    args = request.args
-    id = args.get("id", type=str)
-    error = JobsQuerySchema().validate(args)
-    if error:
-        return jsonify({"error": "Bad Request", "message": error}), 400
-    return api.pause_job(id), 200
+def streamed_pause_all_jobs():
+    return stream_with_context(Response(pause_all_jobs(), content_type="application/json"))  # type: ignore
 
 
 @middleoffice_blueprint.route("/jobs/resume/", methods=["POST"])
-def resume_job():
-    args = request.args
-    id = args.get("id", type=str)
-    error = JobsQuerySchema().validate(args)
-    if error:
-        return jsonify({"error": "Bad Request", "message": error}), 400
-    return api.resume_job(id), 200
-
-
-@middleoffice_blueprint.route("/jobs/run/", methods=["POST"])
-def run_job():
-    args = request.args
-    id = args.get("id", type=str)
-    error = JobsQuerySchema().validate(args)
-    if error:
-        return jsonify({"error": "Bad Request", "message": error}), 400
-    return api.run_job(id), 200
+def streamed_resume_all_jobs():
+    return stream_with_context(Response(resume_all_jobs(), content_type="application/json"))  # type: ignore

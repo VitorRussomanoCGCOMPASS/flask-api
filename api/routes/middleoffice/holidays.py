@@ -17,26 +17,6 @@ def get_holidaycalendars():
     return jsonify(result), 200
 
 
-@middleoffice_blueprint.route("/holidays/", methods=["GET"])
-def get_holidays():
-    args = request.args
-    id = args.get("id", type=int)
-
-    if args:
-        error = HolidaysQuerySchema().validate(args)
-        if error:
-            return jsonify({"error": "Bad request", "message": error}), 400
-
-        args = HolidaysQuerySchema().load(args)
-        result = Holidays.query.filter_by(**args).all()
-        result = HolidaysSchema().dump(result, many=True)
-        return jsonify(result), 200
-
-    result = Holidays.query.all()
-    result = HolidaysSchema().dump(result, many=True)
-    return jsonify(result), 200
-
-
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["POST"])
 def post_holidaycalendar():
     content_type = request.headers.get("Content-Type")
@@ -62,6 +42,27 @@ def post_holidaycalendar():
             )
 
     return jsonify({"error": "Bad Request", "message": "empty json"}), 400
+
+
+@middleoffice_blueprint.route("/holidays/", methods=["GET"])
+def get_holidays():
+    args = request.args
+    id = args.get("id", type=int)
+
+    if args:
+        error = HolidaysQuerySchema().validate(args)
+        if error:
+            return jsonify({"error": "Bad request", "message": error}), 400
+
+        args = HolidaysQuerySchema().load(args)
+        result = Holidays.query.filter_by(**args).all()
+        result = HolidaysSchema().dump(result, many=True)
+        return jsonify(result), 200
+
+    result = Holidays.query.all()
+    result = HolidaysSchema().dump(result, many=True)
+    return jsonify(result), 200
+
 
 
 @middleoffice_blueprint.route("/holidays/", methods=["POST"])

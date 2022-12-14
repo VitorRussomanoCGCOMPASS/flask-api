@@ -51,7 +51,15 @@ class Config(object):
             "hour":23,
             "minute":59
         },
+        {
+            "id": "ID2",
+            "func": "api.jobs.logevents:upload_logevents",
+            "trigger": "cron",
+            "day_of_week": "mon-fri",
+            "hour":23,
+            "minute":59
+        }
     ]
     SCHEDULER_TIMEZONE = brt
     SCHEDULER_API_PREFIX = "/middleoffice/scheduler"
-    SCHEDULER_API_ENABLED = True
+    SCHEDULER_API_ENABLED = False

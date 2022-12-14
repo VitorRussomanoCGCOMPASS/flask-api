@@ -20,7 +20,7 @@ class HolidaysSchema(CustomSchema):
     class Meta:
         model = Holidays
 
-    calendar_id = fields.Nested(HolidayCalendarsSchema, only=("id",))
+    id= fields.Nested(HolidayCalendarsSchema, only=("id",))
 
     @pre_load
     def pre_loader(self, data, many, **kwargs):
