@@ -5,27 +5,21 @@ from api.routes.middleoffice import middleoffice_blueprint
 from api.models.eventlog import EventLog
 from api.request_schemas.dateargs import PeriodSchema, DateSchema
 from api.schemas.eventlog import EventLogSchema
-
+import json
 
 eventlog_schema = EventLogSchema()
 
-from sqlalchemy import func, Date
+
+# TODO : CURRENT / ALL BEHAVIOUR
 
 
-def get_eventlog_latest():
-    """
 
-    Get all logs associated with latest available date
-
-    """
-    latest = EventLog.query(func.max(EventLog.asctime.cast(Date))).scalar()
-    result = EventLog.query().filter(EventLog.asctime.cast(Date) == latest).all()
-
-    try:
-        result = eventlog_schema.dump(result, many=True)
-    except ValueError:
-        result = eventlog_schema.dump(result)
-    return result
+def get_current_log():
+    eventlogs = []
+    with open("api/jobs/eventslog.json") as file:
+        for line in file:
+            eventlogs.append(json.loads(line))
+    return eventlogs
 
 
 def get_eventlog_period(start_date, end_date):
@@ -52,7 +46,7 @@ def get_eventlog_period(start_date, end_date):
     return result
 
 
-@middleoffice_blueprint.route("/eventlogs/")
+@middleoffice_blueprint.route("/event-logs/", methods=["GET"])
 def get_eventlog_date():
 
     args = request.args
@@ -82,5 +76,5 @@ def get_eventlog_date():
         result = get_eventlog_period(start_date, end_date)
         return jsonify(result), 200
 
-    result = get_eventlog_latest()
+    result = get_current_log()
     return jsonify(result), 200

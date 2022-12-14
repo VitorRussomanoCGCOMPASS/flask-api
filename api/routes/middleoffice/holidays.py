@@ -3,8 +3,9 @@ from flask import jsonify, request
 from api.models.holidays import HolidayCalendars, Holidays
 from app import database
 from api.schemas.holidays import HolidaysSchema, HolidayCalendarsSchema
-from api.request_schemas.holidays import HolidaysQuerySchema
 from marshmallow import ValidationError
+
+# TODO : REVIEW POST METHODS
 
 
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["GET"])
@@ -14,6 +15,13 @@ def get_holidaycalendars():
         result = HolidayCalendarsSchema().dump(result, many=True)
     except ValueError:
         result = HolidayCalendarsSchema().dump(result)
+    return jsonify(result), 200
+
+
+@middleoffice_blueprint.route("/holiday-calendars/<int:id>/", methods=["GET"])
+def get_holidaycalendar_id(id: int):
+    result = HolidayCalendars.query.filter_by(id=id).one_or_404()
+    result = HolidayCalendarsSchema().dump(result)
     return jsonify(result), 200
 
 
@@ -44,25 +52,18 @@ def post_holidaycalendar():
     return jsonify({"error": "Bad Request", "message": "empty json"}), 400
 
 
-@middleoffice_blueprint.route("/holidays/", methods=["GET"])
-def get_holidays():
-    args = request.args
-    id = args.get("id", type=int)
-
-    if args:
-        error = HolidaysQuerySchema().validate(args)
-        if error:
-            return jsonify({"error": "Bad request", "message": error}), 400
-
-        args = HolidaysQuerySchema().load(args)
-        result = Holidays.query.filter_by(**args).all()
-        result = HolidaysSchema().dump(result, many=True)
-        return jsonify(result), 200
-
-    result = Holidays.query.all()
+@middleoffice_blueprint.route("/holiday-calendars/<int:id>/holidays/", methods=["GET"])
+def get_holidays_id(id: int):
+    result = Holidays.query.filter_by(id=id).all()
     result = HolidaysSchema().dump(result, many=True)
     return jsonify(result), 200
 
+
+@middleoffice_blueprint.route("/holiday-calendars/holidays/", methods=["GET"])
+def get_holidays():
+    result = Holidays.query.all()
+    result = HolidaysSchema().dump(result, many=True)
+    return jsonify(result), 200
 
 
 @middleoffice_blueprint.route("/holidays/", methods=["POST"])

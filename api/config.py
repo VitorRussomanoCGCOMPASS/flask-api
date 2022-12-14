@@ -2,7 +2,7 @@ from api.dbconnection import urls
 import os
 import pytz
 
-eventlog_path = os.path.join("api/events/" + "eventslog.json")
+eventlog_path = os.path.join("api/jobs/" + "eventslog.json")
 
 DEFAULT_LOGGER = {
     "version": 1,
@@ -44,21 +44,14 @@ class Config(object):
     SWAGGER = {"Title": "API.v1"}
     JOBS = [
         {
-            "id": "ID1",
+            "id": "id1",
             "func": "api.jobs.logevents:upload_logevents",
             "trigger": "cron",
             "day_of_week": "mon-fri",
-            "hour":23,
-            "minute":59
+            "hour":14,
+            "minute":8
         },
-        {
-            "id": "ID2",
-            "func": "api.jobs.logevents:upload_logevents",
-            "trigger": "cron",
-            "day_of_week": "mon-fri",
-            "hour":23,
-            "minute":59
-        }
+
     ]
     SCHEDULER_TIMEZONE = brt
     SCHEDULER_API_PREFIX = "/middleoffice/scheduler"

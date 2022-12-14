@@ -12,6 +12,7 @@ currency_blueprint = Blueprint("Currency", __name__, url_prefix="/currencies")
 currency_schema = CurrencySchema()
 currency_values_schema = CurrencyValuesSchema()
 
+#  TODO : REVIEW POST
 
 @currency_blueprint.route("/", methods=["GET"])
 def get_currency():
@@ -115,7 +116,7 @@ def get_currency_values_date():
         error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = CurrencyValues.query.filter_by(date=date).first_or_404()
+        result = CurrencyValues.query.filter_by(date=date).one_or_404()
         result = currency_values_schema.dump(result)
         return jsonify(result), 200
 

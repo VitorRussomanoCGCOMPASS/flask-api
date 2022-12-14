@@ -5,7 +5,6 @@ from sqlalchemy.orm import joinedload
 from api.models.sector import AssetsSector, SectorEntry
 from api.schemas.sector import AssetsSectorSchema, SectorEntrySchema
 from app import database
-from api.request_schemas.sector import SectorQuerySchema, AssetSectorQuerySchema
 
 
 sector_blueprint = Blueprint("sector", __name__, url_prefix="/sectors")
@@ -14,46 +13,39 @@ sectorentry_schema = SectorEntrySchema()
 assetsector_schema = AssetsSectorSchema()
 
 
+# TODO : REVIEW POST METHOD
+
+
+@sector_blueprint.route("/<string:methodology>", methods=["GET"])
+def get_sector_entry_methodology(methodology: str):
+    result = SectorEntry.query.filter_by(methodology=methodology).all()
+    result = sectorentry_schema.dump(result, many=True)
+    return jsonify(result), 200
+
+
 @sector_blueprint.route("/", methods=["GET"])
 def get_sectorentry():
-    args = request.args
-    methodology = args.get("methodology", type=str)
-
-    if methodology:
-        error = SectorQuerySchema().validate(args)
-
-        if error:
-            return jsonify({"error": "Bad request", "message": error}), 400
-        result = SectorEntry.query.filter_by(**args).all()
-        result = sectorentry_schema.dump(result, many=True)
-        return jsonify(result), 200
-
     result = SectorEntry.query.all()
     result = sectorentry_schema.dump(result, many=True)
     return jsonify(result), 200
 
 
+@sector_blueprint.route("/<string:methodology>/assets/", methods=["GET"])
+def get_assetsector_methodology(methodology: str):
+    result = (
+        AssetsSector.query.join(AssetsSector.sector_entry, aliased=True)
+        .filter_by(methodology=methodology)
+        .all()
+    )
+    try:
+        result_json = assetsector_schema.dump(result, many=True)
+    except ValueError:
+        result_json = assetsector_schema.dump(result)
+    return jsonify(result_json), 200
+
+
 @sector_blueprint.route("/assets/", methods=["GET"])
 def get_assetsector():
-    args = request.args
-
-    if args:
-        error = AssetSectorQuerySchema().validate(args)
-        if error:
-            return jsonify({"error": "Bad request", "message": error}) ,400
-
-        result = (
-            AssetsSector.query.join(AssetsSector.sector_entry, aliased=True)
-            .filter_by(**args)
-            .all()
-        )
-
-        try:
-            result_json = assetsector_schema.dump(result, many=True)
-        except ValueError:
-            result_json = assetsector_schema.dump(result)
-        return jsonify(result_json), 200
-
     result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
     result = assetsector_schema.dump(result, many=True)
     return jsonify(result), 200

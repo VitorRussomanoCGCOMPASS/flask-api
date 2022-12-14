@@ -17,23 +17,23 @@ def get_jobs():
     return api.get_jobs()
 
 
-@middleoffice_blueprint.route("/jobs/<int:id>/", methods=["GET"])
-def get_job(id: int):
+@middleoffice_blueprint.route("/jobs/<string:id>/", methods=["GET"])
+def get_job(id: str):
     return api.get_job(id)
 
 
-@middleoffice_blueprint.route("/jobs/<int:id>/pause/", methods=["POST"])
-def pause_job(id: int):
+@middleoffice_blueprint.route("/jobs/<string:id>/pause/", methods=["POST"])
+def pause_job(id: str):
     return api.pause_job(id)
 
 
-@middleoffice_blueprint.route("/jobs/<int:id>/resume/", methods=["POST"])
-def resume_job(id: int):
+@middleoffice_blueprint.route("/jobs/<string:id>/resume/", methods=["POST"])
+def resume_job(id: str):
     return api.resume_job(id)
 
 
-@middleoffice_blueprint.route("/jobs/<int:id>/run/", methods=["POST"])
-def run_job(id: int):
+@middleoffice_blueprint.route("/jobs/<string:id>/run/", methods=["POST"])
+def run_job(id: str):
     return api.run_job(id)
 
 

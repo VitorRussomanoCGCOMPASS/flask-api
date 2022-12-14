@@ -17,7 +17,7 @@ def upload_logevents():
     Session = scoped_session(session_factory)
 
     eventlogs = []
-    with open("api/events/eventslog.json") as file:
+    with open("api/jobs/eventslog.json") as file:
         for line in file:
             eventlogs.append(json.loads(line))
 
