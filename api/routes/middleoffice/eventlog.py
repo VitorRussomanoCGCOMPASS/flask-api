@@ -1,27 +1,12 @@
 import datetime
+import json
 
 from flask import jsonify, request
-from api.routes.middleoffice import middleoffice_blueprint
+
 from api.models.eventlog import EventLog
-from api.request_schemas.dateargs import PeriodSchema, DateSchema
+from api.request_schemas.dateargs import DateSchema, PeriodSchema
+from api.routes.middleoffice import middleoffice_blueprint
 from api.schemas.eventlog import EventLogSchema
-import json
-from marshmallow import fields, Schema, RAISE
-
-
-class CurrentSchema(Schema):
-    class Meta:
-        unknown = RAISE
-
-    current = fields.Bool(required=True)
-
-
-def get_current_log():
-    eventlogs = []
-    with open("api/jobs/eventslog.json") as file:
-        for line in file:
-            eventlogs.append(json.loads(line))
-    return eventlogs
 
 
 def get_eventlog_period(start_date, end_date):
@@ -60,23 +45,87 @@ def get_eventlog_date(asctime):
     return result
 
 
+@middleoffice_blueprint.route("/event-logs/current/", methods=["GET"])
+def get_currenteventlogs():
+
+    """
+    Returns all current Event-logs
+
+    ---
+
+    tags:
+        - Middle Office
+
+
+    responses:
+        200:
+            description: OK
+            schema:
+                $ref: '#/definitions/EventLogSchema'
+
+    """
+
+    eventlogs = []
+    with open("api/jobs/eventslog.json") as file:
+        for line in file:
+            eventlogs.append(json.loads(line))
+    return jsonify(eventlogs), 200
+
+
 @middleoffice_blueprint.route("/event-logs/", methods=["GET"])
 def get_eventlogs():
     """
-    Get event logs by
+    Returns non-current Event-Logs. Which may be filtered down by date or period.
+    ---
+    tags:
+        - Middle Office
 
-    asctime: str
+    parameters:
+      - name: date
+        in: query
+        type: string
+        required: False
+        default: None
+        format: 'YYYY-mm-dd'
+        description:
+            The date of the event-logs to filter by.
+            This parameter is incompatible with `start_date`, `end_date`.
 
-    start_date and end_date :str
 
-    current: bool , (default=True)
+      - name: start_date
+        in: query
+        type: string
+        required: False
+        default: None
+        format: 'YYYY-mm-dd'
+        description:
+            The start_date for the period of which the event-logs will be filtered. Must be used together with `end_date`.
+            This parameter is incompatible with `date`.
+
+      - name: end_date
+        in: query
+        type: string
+        required: False
+        default: None
+        format: 'YYYY-mm-dd'
+        description:
+            The end_date for the period of which the event-logs will be filtered. Must be used together with `start_date`.
+            This parameter is incompatible with `date`.
+
+    responses:
+        200:
+            description: OK
+            schema:
+                $ref: '#/definitions/EventLogSchema'
+        400:
+            description: Bad Request
+
     """
 
     args = request.args
     asctime = args.get("date", type=str)
     start_date = args.get("start_date", type=str)
     end_date = args.get("end_date", type=str)
-    current = args.get("current", type=bool, default=True)
 
     if asctime:
         errors = DateSchema().validate(args)
@@ -92,14 +141,6 @@ def get_eventlogs():
             return jsonify({"error": "Bad Request", "message": errors}), 400
 
         result = get_eventlog_period(start_date, end_date)
-        return jsonify(result), 200
-
-    if current:
-        errors = CurrentSchema().validate(args)
-        if errors:
-            return jsonify({"error": "Bad Request", "message": errors}), 400
-
-        result = get_current_log()
         return jsonify(result), 200
 
     result = EventLog.query.all()

@@ -13,23 +13,88 @@ sectorentry_schema = SectorEntrySchema()
 assetsector_schema = AssetsSectorSchema()
 
 
-
-@sector_blueprint.route("/<string:methodology>", methods=["GET"])
-def get_sector_entry_methodology(methodology: str):
-    result = SectorEntry.query.filter_by(methodology=methodology).all()
-    result = sectorentry_schema.dump(result, many=True)
-    return jsonify(result), 200
-
-
 @sector_blueprint.route("/", methods=["GET"])
 def get_sectorentry():
+    """
+    Returns all methodologies with their respectives sector and subsectors classification
+    ---
+
+
+    responses:
+        200:
+            description: OK
+
+    """
     result = SectorEntry.query.all()
     result = sectorentry_schema.dump(result, many=True)
     return jsonify(result), 200
 
 
+@sector_blueprint.route("/<string:methodology>", methods=["GET"])
+def get_sector_entry_methodology(methodology: str):
+
+    """
+    Returns all sectors and subsectors associated with a methodology
+    ---
+
+    parameters:
+      - name: methodology
+        in: path
+        type: integer
+        required: False
+        default: None
+
+
+    responses:
+        200:
+            description: OK
+
+    """
+    result = SectorEntry.query.filter_by(methodology=methodology).all()
+    result = sectorentry_schema.dump(result, many=True)
+    return jsonify(result), 200
+
+
+@sector_blueprint.route("/assets/", methods=["GET"])
+def get_assetsector():
+    """
+    Returns all assets and their sectors and subsectors classification
+    ---
+
+    responses:
+        200:
+            description: OK
+
+    """
+
+    result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
+    result = assetsector_schema.dump(result, many=True)
+    return jsonify(result), 200
+
+
 @sector_blueprint.route("/<string:methodology>/assets/", methods=["GET"])
 def get_assetsector_methodology(methodology: str):
+
+    """
+    Returns all assets and their sectors and subsectors classification associated with a methodology
+    ---
+
+    parameters:
+      - name: methodology
+        in: path
+        type: integer
+        required: False
+        default: None
+
+
+    responses:
+        200:
+            description: OK
+        404:
+            description: Bad Request. Methodology must be a string.
+
+    """
+
     result = (
         AssetsSector.query.join(AssetsSector.sector_entry, aliased=True)
         .filter_by(methodology=methodology)
@@ -40,13 +105,6 @@ def get_assetsector_methodology(methodology: str):
     except TypeError:
         result_json = assetsector_schema.dump(result)
     return jsonify(result_json), 200
-
-
-@sector_blueprint.route("/assets/", methods=["GET"])
-def get_assetsector():
-    result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
-    result = assetsector_schema.dump(result, many=True)
-    return jsonify(result), 200
 
 
 @sector_blueprint.route("/assets/", methods=["POST"])

@@ -9,6 +9,21 @@ from marshmallow import ValidationError
 
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["GET"])
 def get_holidaycalendars():
+    """
+    Returns all Holiday Calendars
+     
+    ---
+
+    tags:
+        - Middle Office
+
+    responses:
+        200:
+            description: OK
+            schema: 
+                $ref: '#/definitions/HolidayCalendarsSchema'
+    
+    """    
     result = HolidayCalendars.query.all()
     try:
         result = HolidayCalendarsSchema().dump(result, many=True)
@@ -19,7 +34,36 @@ def get_holidaycalendars():
 
 @middleoffice_blueprint.route("/holiday-calendars/<int:id>", methods=["GET"])
 def get_holidaycalendar_id(id: int):
-    result = HolidayCalendars.query.filter_by(id=id).one_or_404()
+   
+    """
+    Returns the Holiday Calendars associated with the provided ID.
+    
+  
+    ---
+
+    tags:
+        - Middle Office
+
+
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: False
+        default: None
+    
+    responses:
+        200:
+            description: OK
+            schema: 
+                $ref : '#/definitions/HolidayCalendarsSchema'
+    
+    """    
+   
+   
+   
+   
+    result = HolidayCalendars.query.filter_by(id=id).one()
     result = HolidayCalendarsSchema().dump(result)
     return jsonify(result), 200
 
@@ -53,6 +97,30 @@ def post_holidaycalendar():
 
 @middleoffice_blueprint.route("/holiday-calendars/<int:id>/holidays/", methods=["GET"])
 def get_holidays_id(id: int):
+
+    """
+    Returns all Holidays associated with a Calendar. 
+    ---
+
+    tags:
+        - Middle Office
+
+
+    parameters:
+      - name: id
+        in: path
+        type: integer
+        required: False
+        default: None
+    
+    responses:
+        200:
+            description: OK
+            schema:
+                $ref: '#/definitions/HolidaysSchema'
+    """    
+
+
     result = Holidays.query.filter_by(calendar_id=id).all()
     result = HolidaysSchema().dump(result, many=True)
     return jsonify(result), 200
@@ -60,6 +128,20 @@ def get_holidays_id(id: int):
 
 @middleoffice_blueprint.route("/holiday-calendars/holidays/", methods=["GET"])
 def get_holidays():
+
+    """
+    Returns all Holidays associated with a Calendar. 
+    ---
+
+    tags:
+        - Middle Office
+
+    responses:
+        200:
+            description: OK
+            schema:
+                $ref: '#/definitions/HolidaysSchema'
+    """    
     result = Holidays.query.all()
     result = HolidaysSchema().dump(result, many=True)
     return jsonify(result), 200

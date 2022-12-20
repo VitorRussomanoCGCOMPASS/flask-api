@@ -8,7 +8,6 @@ from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
 from app import database
 
 #TODO : FIX REF TO SCHEMAS
-# TODO : ADD EXMAPLE TO PARAMETERS
 
 currency_blueprint = Blueprint("Currency", __name__, url_prefix="/currencies")
 
@@ -49,9 +48,9 @@ def get_currency_id(id: int):
         schema:
           $ref: '#/definitions/CurrencySchema'
       404:
-        description: Bad Request. Currency `id` must be an integer
+        description: Bad Request. field `id` must be an integer
     """
-    result = Currency.query.filter_by(id=id).one_or_404()
+    result = Currency.query.filter_by(id=id).one()
     result = CurrencySchema().dump(result)
     return jsonify(result), 200
 
@@ -123,7 +122,7 @@ def get_currency_values_id(id: int):
     """
     Returns all values associated with a Currency. May be filtered down by date or period.
     ---
-
+     
     parameters:
       - name: id
         in: path
@@ -170,7 +169,7 @@ def get_currency_values_id(id: int):
       400:
         description: Bad Request
       404:
-        description: Bad Request. Currency `id` must be integer
+        description: Bad Request. field `id` must be integer
     """
     args = request.args
     date = args.get("date", type=str)
@@ -214,7 +213,6 @@ def get_currency_values_date():
         format: 'YYYY-mm-dd'
         description:
             This parameter is incompatible with `start_date` and `end_date`.
-        example: Teste
 
 
       - name: start_date
@@ -226,7 +224,6 @@ def get_currency_values_date():
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
             This parameter is incompatible with `date`.
-        example: Teste
 
       - name: end_date
         in: query
@@ -237,7 +234,7 @@ def get_currency_values_date():
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
-        example: Teste
+
     responses:
       200:
         description: OK

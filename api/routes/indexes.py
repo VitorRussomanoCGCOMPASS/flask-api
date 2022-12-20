@@ -51,7 +51,7 @@ def get_indexes_id(id: int):
         404:
             description: Bad Request. Currency `id` must be an integer 
     """
-    result = Indexes.query.filter_by(id=id).one_or_404()
+    result = Indexes.query.filter_by(id=id).one()
     result = IndexesSchema().dump(result)
     return jsonify(result), 200
 
