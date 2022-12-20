@@ -20,10 +20,12 @@ def get_sectorentry():
     ---
 
 
+        
     responses:
-        200:
-            description: OK
-
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/SectorEntry'
     """
     result = SectorEntry.query.all()
     result = sectorentry_schema.dump(result, many=True)
@@ -42,12 +44,14 @@ def get_sector_entry_methodology(methodology: str):
         in: path
         type: integer
         required: False
-        default: None
 
 
+        
     responses:
-        200:
-            description: OK
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/SectorEntry'
 
     """
     result = SectorEntry.query.filter_by(methodology=methodology).all()
@@ -61,10 +65,12 @@ def get_assetsector():
     Returns all assets and their sectors and subsectors classification
     ---
 
+        
     responses:
-        200:
-            description: OK
-
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/AssetsSector'
     """
 
     result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
@@ -84,14 +90,16 @@ def get_assetsector_methodology(methodology: str):
         in: path
         type: integer
         required: False
-        default: None
 
 
+         
     responses:
-        200:
-            description: OK
-        404:
-            description: Bad Request. Methodology must be a string.
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/AssetsSector'
+        '404':
+          description: Bad Request. field `Methodology` must be a string.
 
     """
 

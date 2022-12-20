@@ -20,7 +20,6 @@ def get_marketindex():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             This parameter is incompatible with `start_date` and `end_date`.
@@ -30,7 +29,6 @@ def get_marketindex():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
@@ -40,18 +38,19 @@ def get_marketindex():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
+      
     responses:
-      200:
-        description: OK
-        schema:
-          $ref: '#/definitions/MarketIndexSchema'
-      400:
-        description: Bad Request
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/MarketIndex'
+
+        '400':
+          description: Bad Request.
 
     """
     args = request.args
@@ -101,13 +100,11 @@ def get_marketindex_id(index: str):
         in: path
         type: string
         required: False
-        default: None
 
       - name: date
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The date of the values to filter by.
@@ -117,7 +114,6 @@ def get_marketindex_id(index: str):
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
@@ -127,21 +123,22 @@ def get_marketindex_id(index: str):
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
 
     responses:
-      200:
-        description: OK
-        schema:
-            $ref: '#/definitions/MarketIndexSchema'
-      400:
-        description: Bad Request
-      404:
-        description: Bad Request. field `index` must be string
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/MarketIndex'
+              
+        '400':
+          description: Bad Request.
+
+        '404':
+          description: Bad Request. field `index` must be string
     """
     args = request.args
     date = args.get("date", type=str)

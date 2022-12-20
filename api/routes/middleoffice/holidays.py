@@ -16,13 +16,12 @@ def get_holidaycalendars():
 
     tags:
         - Middle Office
-
-    responses:
-        200:
-            description: OK
-            schema: 
-                $ref: '#/definitions/HolidayCalendarsSchema'
     
+    responses:
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/HolidayCalendars'
     """    
     result = HolidayCalendars.query.all()
     try:
@@ -50,14 +49,15 @@ def get_holidaycalendar_id(id: int):
         in: path
         type: integer
         required: False
-        default: None
     
     responses:
-        200:
-            description: OK
-            schema: 
-                $ref : '#/definitions/HolidayCalendarsSchema'
-    
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/HolidayCalendars'
+
+        '404':
+          description: Bad Request. field `id` must be an integer
     """    
    
    
@@ -111,13 +111,12 @@ def get_holidays_id(id: int):
         in: path
         type: integer
         required: False
-        default: None
-    
+
     responses:
-        200:
-            description: OK
-            schema:
-                $ref: '#/definitions/HolidaysSchema'
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/Holidays'
     """    
 
 
@@ -138,9 +137,9 @@ def get_holidays():
 
     responses:
         200:
-            description: OK
-            schema:
-                $ref: '#/definitions/HolidaysSchema'
+          description: OK
+          schema:
+                $ref: '#/definitions/Holidays'
     """    
     result = Holidays.query.all()
     result = HolidaysSchema().dump(result, many=True)

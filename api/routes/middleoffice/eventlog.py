@@ -58,10 +58,11 @@ def get_currenteventlogs():
 
 
     responses:
-        200:
-            description: OK
-            schema:
-                $ref: '#/definitions/EventLogSchema'
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/EventLog'
+
 
     """
 
@@ -77,6 +78,7 @@ def get_eventlogs():
     """
     Returns non-current Event-Logs. Which may be filtered down by date or period.
     ---
+    
     tags:
         - Middle Office
 
@@ -85,7 +87,6 @@ def get_eventlogs():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The date of the event-logs to filter by.
@@ -96,7 +97,6 @@ def get_eventlogs():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The start_date for the period of which the event-logs will be filtered. Must be used together with `end_date`.
@@ -106,19 +106,22 @@ def get_eventlogs():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The end_date for the period of which the event-logs will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
 
     responses:
-        200:
-            description: OK
-            schema:
-                $ref: '#/definitions/EventLogSchema'
-        400:
-            description: Bad Request
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/EventLog'
+              
+        '400':
+          description: Bad Request
+
+
+
 
     """
 

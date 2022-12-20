@@ -21,19 +21,35 @@ from apispec.ext.marshmallow import MarshmallowPlugin
 # logging.config.dictConfig(DEFAULT_LOGGER)
 # logger = logging.getLogger("apscheduler")
 
-spec = APISpec("My api docs", "1.0", "2.0", plugins=[MarshmallowPlugin()])
-
 
 from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
 from api.schemas.indexes import IndexesSchema, IndexValuesSchema
-
+from api.schemas.eventlog import EventLogSchema
+from api.schemas.holidays import HolidayCalendarsSchema, HolidaysSchema
+from api.schemas.sector import SectorEntrySchema, AssetsSectorSchema
+from api.schemas.market_index import MarketIndexSchema
 
 def create_template(app: Flask):
+    spec = APISpec(
+        title="Compass BR",
+        version="1.0",
+        openapi_version="2.0",
+        plugins=[MarshmallowPlugin()],
+    )
+
     template = spec.to_flasgger(
         app,
         definitions=[
             CurrencySchema,
             CurrencyValuesSchema,
+            IndexesSchema,
+            IndexValuesSchema,
+            EventLogSchema,
+            HolidayCalendarsSchema,
+            HolidaysSchema,
+            SectorEntrySchema,
+            AssetsSectorSchema,
+            MarketIndexSchema
         ],
     )
     return template

@@ -16,11 +16,13 @@ def get_indexes():
     Returns all Indexes
     ---
 
+
     responses:
-        200:
+        '200':
           description: OK
           schema:
-              $ref: '#/definitions/IndexesSchema'
+                $ref: '#/definitions/Indexes'
+              
 
     """
     result = Indexes.query.all()
@@ -42,14 +44,17 @@ def get_indexes_id(id: int):
         in: path
         type: integer
         required: False
-        default: None
+ 
+
     responses:
-        200:
-            description: OK
-            schema:
-                $ref: '#/definitions/IndexesSchema'
-        404:
-            description: Bad Request. Currency `id` must be an integer 
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/Indexes'
+
+        '404':
+          description: Bad Request. field `id` must be an integer 
+    
     """
     result = Indexes.query.filter_by(id=id).one()
     result = IndexesSchema().dump(result)
@@ -102,7 +107,6 @@ def get_indexes_values():
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             This parameter is incompatible with `start_date` and `end_date`.
@@ -112,7 +116,6 @@ def get_indexes_values():
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
@@ -122,19 +125,19 @@ def get_indexes_values():
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
 
     responses:
-      200:
-        description: OK
-        schema:
-          $ref: '#/definitions/IndexValuesSchema'
-      400:
-        description: Bad Request
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/IndexValues'
+
+        '400':
+          description: Bad Request.
 
     """
     args = request.args
@@ -174,13 +177,11 @@ def get_indexes_values_id(id: int):
         in: path
         type: integer
         required: False
-        default: None
 
       - name: date
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The date of the values to filter by.
@@ -190,7 +191,6 @@ def get_indexes_values_id(id: int):
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
@@ -200,21 +200,21 @@ def get_indexes_values_id(id: int):
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
 
     responses:
-      200:
-        description: OK
-        schema:
-            $ref: '#/definitions/IndexValuesSchema'
-      400:
-        description: Bad Request
-      404:
-        description: Bad Request. Index `id` must be integer
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/IndexValues'
+
+        '400':
+          description: Bad Request.
+        '404':
+          description: Bad Request. field `id` must be integer
     """
     args = request.args
     date = args.get("date", type=str)

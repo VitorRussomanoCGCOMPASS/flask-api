@@ -7,7 +7,7 @@ from api.request_schemas.dateargs import DateSchema, PeriodSchema
 from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
 from app import database
 
-#TODO : FIX REF TO SCHEMAS
+# TODO : FIX REF TO SCHEMAS
 
 currency_blueprint = Blueprint("Currency", __name__, url_prefix="/currencies")
 
@@ -19,10 +19,10 @@ def get_currency():
     ---
 
     responses:
-        200:
+        '200':
           description: OK
           schema:
-              $ref: '#/definitions/CurrencySchema'
+                $ref: '#/definitions/Currency'
 
     """
     result = Currency.query.all()
@@ -41,14 +41,15 @@ def get_currency_id(id: int):
         in: path
         type: integer
         required: False
-        default: None
+
     responses:
-      200:
-        description: OK
-        schema:
-          $ref: '#/definitions/CurrencySchema'
-      404:
-        description: Bad Request. field `id` must be an integer
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/Currency'
+
+        '404':
+          description: Bad Request. field `id` must be an integer
     """
     result = Currency.query.filter_by(id=id).one()
     result = CurrencySchema().dump(result)
@@ -98,7 +99,7 @@ def get_currency_period(start_date, end_date, currency_id):
     except TypeError:
         result = CurrencyValuesSchema().dump(result)
     return result
-    
+
 
 def get_currency_date(date, currency_id):
 
@@ -122,30 +123,27 @@ def get_currency_values_id(id: int):
     """
     Returns all values associated with a Currency. May be filtered down by date or period.
     ---
-     
+
     parameters:
       - name: id
         in: path
         type: integer
         required: False
-        default: None
-        
+
 
       - name: date
         in: query
         type: string
         required: False
-        default: None
         format:  'YYYY-mm-dd'
         description:
             The date of the values to filter by.
             This parameter is incompatible with `start_date` and `end_date`.
-        
+
       - name: start_date
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
@@ -155,21 +153,22 @@ def get_currency_values_id(id: int):
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
 
     responses:
-      200:
-        description: OK
-        schema:
-            $ref: '#/definitions/CurrencyValuesSchema'
-      400:
-        description: Bad Request
-      404:
-        description: Bad Request. field `id` must be integer
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/CurrencyValues'
+              
+        '400':
+          description: Bad Request
+
+        '404':
+          description: Bad Request. field `id` must be integer
     """
     args = request.args
     date = args.get("date", type=str)
@@ -209,7 +208,6 @@ def get_currency_values_date():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             This parameter is incompatible with `start_date` and `end_date`.
@@ -219,7 +217,6 @@ def get_currency_values_date():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The start_date for the period of which the values will be filtered. Must be used together with `end_date`.
@@ -229,19 +226,20 @@ def get_currency_values_date():
         in: query
         type: string
         required: False
-        default: None
         format: 'YYYY-mm-dd'
         description:
             The end_date for the period of which the values will be filtered. Must be used together with `start_date`.
             This parameter is incompatible with `date`.
 
     responses:
-      200:
-        description: OK
-        schema:
-          $ref: '#/definitions/CurrencyValuesSchema'
-      400:
-        description: Bad Request
+        '200':
+          description: OK
+          schema:
+                $ref: '#/definitions/CurrencyValues'
+              
+        '400':
+          description: Bad Request
+
 
     """
     args = request.args
