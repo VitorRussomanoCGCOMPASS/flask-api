@@ -12,12 +12,12 @@ def get_holidaycalendars():
     result = HolidayCalendars.query.all()
     try:
         result = HolidayCalendarsSchema().dump(result, many=True)
-    except ValueError:
+    except TypeError:
         result = HolidayCalendarsSchema().dump(result)
     return jsonify(result), 200
 
 
-@middleoffice_blueprint.route("/holiday-calendars/<int:id>/", methods=["GET"])
+@middleoffice_blueprint.route("/holiday-calendars/<int:id>", methods=["GET"])
 def get_holidaycalendar_id(id: int):
     result = HolidayCalendars.query.filter_by(id=id).one_or_404()
     result = HolidayCalendarsSchema().dump(result)
@@ -53,7 +53,7 @@ def post_holidaycalendar():
 
 @middleoffice_blueprint.route("/holiday-calendars/<int:id>/holidays/", methods=["GET"])
 def get_holidays_id(id: int):
-    result = Holidays.query.filter_by(id=id).all()
+    result = Holidays.query.filter_by(calendar_id=id).all()
     result = HolidaysSchema().dump(result, many=True)
     return jsonify(result), 200
 

@@ -13,8 +13,6 @@ sectorentry_schema = SectorEntrySchema()
 assetsector_schema = AssetsSectorSchema()
 
 
-# TODO : REVIEW POST METHOD
-
 
 @sector_blueprint.route("/<string:methodology>", methods=["GET"])
 def get_sector_entry_methodology(methodology: str):
@@ -39,7 +37,7 @@ def get_assetsector_methodology(methodology: str):
     )
     try:
         result_json = assetsector_schema.dump(result, many=True)
-    except ValueError:
+    except TypeError:
         result_json = assetsector_schema.dump(result)
     return jsonify(result_json), 200
 

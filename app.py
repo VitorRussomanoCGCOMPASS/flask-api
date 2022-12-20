@@ -2,6 +2,8 @@ import logging
 import logging.config
 
 from flasgger import Swagger
+from flasgger import APISpec
+
 from flask import Flask
 from flask_apscheduler import APScheduler
 
@@ -13,8 +15,28 @@ from api.routes.market_index import marketindex_blueprint
 from api.routes.middleoffice import middleoffice_blueprint
 from api.routes.sector import sector_blueprint
 
+
+from apispec.ext.marshmallow import MarshmallowPlugin
+
 # logging.config.dictConfig(DEFAULT_LOGGER)
 # logger = logging.getLogger("apscheduler")
+
+spec = APISpec("My api docs", "1.0", "2.0", plugins=[MarshmallowPlugin()])
+
+
+from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
+from api.schemas.indexes import IndexesSchema, IndexValuesSchema
+
+
+def create_template(app: Flask):
+    template = spec.to_flasgger(
+        app,
+        definitions=[
+            CurrencySchema,
+            CurrencyValuesSchema,
+        ],
+    )
+    return template
 
 
 def create_app(config_class=Config) -> Flask:
@@ -31,8 +53,10 @@ def create_app(config_class=Config) -> Flask:
     scheduler.init_app(app)
     scheduler.start()
 
-    swagger = Swagger(app)
+    template = create_template(app)
+    swagger = Swagger(app, template=template)
     database.init_app(app)
+
     return app
 
 

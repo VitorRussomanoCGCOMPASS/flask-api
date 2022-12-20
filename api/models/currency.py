@@ -8,7 +8,7 @@ class Currency(Base):
 
     id = Column(db.Integer, autoincrement=True, primary_key=True)
     currency = Column(db.String)
-    values = relationship("CurrencyValues", backref="currency", lazy=True)
+    values = relationship("CurrencyValues", backref="currency")
 
 
 class CurrencyValues(Base):

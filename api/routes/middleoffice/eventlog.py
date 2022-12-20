@@ -1,12 +1,19 @@
 import datetime
-import json
 
 from flask import jsonify, request
-
-from api.models.eventlog import EventLog
-from api.request_schemas.dateargs import DateSchema, PeriodSchema
 from api.routes.middleoffice import middleoffice_blueprint
+from api.models.eventlog import EventLog
+from api.request_schemas.dateargs import PeriodSchema, DateSchema
 from api.schemas.eventlog import EventLogSchema
+import json
+from marshmallow import fields, Schema, RAISE
+
+
+class CurrentSchema(Schema):
+    class Meta:
+        unknown = RAISE
+
+    current = fields.Bool(required=True)
 
 
 def get_current_log():
@@ -42,15 +49,7 @@ def get_eventlog_period(start_date, end_date):
 
 
 def get_eventlog_date(asctime):
-    """
 
-    Get event log in date
-
-    Parameters
-    ----------
-    asctime : str
-        "%Y-%m-%d" format
-    """
     asctime = datetime.datetime.strptime(asctime, "%Y-%m-%d")
     asctime_start = asctime.replace(hour=0, minute=0, second=0)
     asctime_end = asctime.replace(hour=23, minute=59, second=59)
@@ -61,8 +60,8 @@ def get_eventlog_date(asctime):
     return result
 
 
-@middleoffice_blueprint.route("/event-logs/<bool:current>/", methods=["GET"])
-def get_eventlogs(current: bool):
+@middleoffice_blueprint.route("/event-logs/", methods=["GET"])
+def get_eventlogs():
     """
     Get event logs by
 
@@ -70,19 +69,14 @@ def get_eventlogs(current: bool):
 
     start_date and end_date :str
 
-    current: bool
-
-    If no arguments, returns all event logs (In SQL)
-
+    current: bool , (default=True)
     """
+
     args = request.args
     asctime = args.get("date", type=str)
     start_date = args.get("start_date", type=str)
     end_date = args.get("end_date", type=str)
-
-    if current:
-        result = get_current_log()
-        return jsonify(result), 200
+    current = args.get("current", type=bool, default=True)
 
     if asctime:
         errors = DateSchema().validate(args)
@@ -98,6 +92,14 @@ def get_eventlogs(current: bool):
             return jsonify({"error": "Bad Request", "message": errors}), 400
 
         result = get_eventlog_period(start_date, end_date)
+        return jsonify(result), 200
+
+    if current:
+        errors = CurrentSchema().validate(args)
+        if errors:
+            return jsonify({"error": "Bad Request", "message": errors}), 400
+
+        result = get_current_log()
         return jsonify(result), 200
 
     result = EventLog.query.all()
