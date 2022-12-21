@@ -14,7 +14,7 @@ class IMASchema(CustomSchema):
         return IMA(**data)
 
 
-class IMAComponentsSchema(CustomSchema):
+class ComponentsIMASchema(CustomSchema):
     class Meta:
         model = ComponentsIMA
         unknown = EXCLUDE
