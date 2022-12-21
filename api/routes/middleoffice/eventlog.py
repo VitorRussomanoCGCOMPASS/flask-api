@@ -61,8 +61,9 @@ def get_currenteventlogs():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/EventLog'
-
 
     """
 

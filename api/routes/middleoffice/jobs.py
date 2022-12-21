@@ -1,7 +1,3 @@
-import json
-
-from flask import stream_with_context
-from flask.wrappers import Response
 from flask_apscheduler import api
 
 from api.routes.middleoffice import middleoffice_blueprint
@@ -14,64 +10,65 @@ def get_scheduler():
     ---
 
     tags:
-        - Middle Office
-  
-    responses:  
-        '200':
-          description: OK
-          schema:
-            type: array
-            properties:
-              current_host:
-                type: string
-              allowed_hosts:
-                type: string
-              running:
-                type: boolean
+            - Middle Office
 
-      
+
+    responses:
+       '200':
+             description: OK
+             schema:
+               type: object
+               properties:
+                     current_host:
+                       type: string
+                     allowed_hosts:
+                       type: string
+                     running:
+                       type: boolean
     """
     return api.get_scheduler_info()
 
 
 @middleoffice_blueprint.route("/jobs/", methods=["GET"])
-def get_jobs():
+def get_all_jobs():
     """
-    Returns json with details of all jobs
+    Returns the current schedule of the webapp
     ---
 
     tags:
-        - Middle Office
-          schema:
-            type: array
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: string
+            - Middle Office
+
+
     responses:
-        '200':
-          description: OK
+       '200':
+             description: OK
+             schema:
+               type: object
+               properties:
+                     id:
+                       type: string
+                     name:
+                       type: string
+                     func:
+                       type: string
+                     args:
+                       type: object
+                     kwargs:
+                       type: object
+                     trigger:
+                       type: string
+                     day_of_week:
+                       type: string
+                     hour:
+                       type: string
+                     minute:
+                       type: string
+                     misfire_grace_time:
+                       type: integer
+                     max_instances:
+                       type: integer
+                     next_run_time:
+                       type: string
 
     """
     return api.get_jobs()
@@ -80,44 +77,46 @@ def get_jobs():
 @middleoffice_blueprint.route("/jobs/<string:id>/", methods=["GET"])
 def get_job(id: str):
     """
-    Returns json with details of the job with the provided ID
+    Returns json with details of the job with the provided id
     ---
 
     tags:
-        - Middle Office
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: string
-    responses:
-        '200':
-          description: OK
+            - Middle Office
 
-        '404':
-          description: Job not found
+
+    responses:
+       '200':
+             description: OK
+             schema:
+               type: object
+               properties:
+                     id:
+                       type: string
+                     name:
+                       type: string
+                     func:
+                       type: string
+                     args:
+                       type: object
+                     kwargs:
+                       type: object
+                     trigger:
+                       type: string
+                     day_of_week:
+                       type: string
+                     hour:
+                       type: string
+                     minute:
+                       type: string
+                     misfire_grace_time:
+                       type: integer
+                     max_instances:
+                       type: integer
+                     next_run_time:
+                       type: string
+
+       '404':
+             description: Job not found
     """
     return api.get_job(id)
 
@@ -125,47 +124,49 @@ def get_job(id: str):
 @middleoffice_blueprint.route("/jobs/<string:id>/pause/", methods=["POST"])
 def pause_job(id: str):
     """
-    Pauses a job, returns json of job details
-
+    Pauses a job and returns json of job details
     ---
+
     tags:
-        - Middle Office
+            - Middle Office
+
 
     responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: string
-        '404':
-          description: Job not found
+       '200':
+             description: OK
+             schema:
+               type: object
+               properties:
+                     id:
+                       type: string
+                     name:
+                       type: string
+                     func:
+                       type: string
+                     args:
+                       type: object
+                     kwargs:
+                       type: object
+                     trigger:
+                       type: string
+                     day_of_week:
+                       type: string
+                     hour:
+                       type: string
+                     minute:
+                       type: string
+                     misfire_grace_time:
+                       type: integer
+                     max_instances:
+                       type: integer
+                     next_run_time:
+                       type: string
 
-        '500':
-          description: Unexpected error
+       '404':
+             description: Job not found
+
+       '500':
+             description: Unexpected error
     """
     return api.pause_job(id)
 
@@ -173,47 +174,50 @@ def pause_job(id: str):
 @middleoffice_blueprint.route("/jobs/<string:id>/resume/", methods=["POST"])
 def resume_job(id: str):
     """
-    Resume a job, returns json of job details
-
+    Resume a job and returns json of job details
     ---
+
     tags:
-        - Middle Office
+            - Middle Office
+
 
     responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: strings
-        '404':
-          description: Job not found
+       '200':
+             description: OK
+             schema:
+               type: object
+               properties:
+                     id:
+                       type: string
+                     name:
+                       type: string
+                     func:
+                       type: string
+                     args:
+                       type: object
+                     kwargs:
+                       type: object
+                     trigger:
+                       type: string
+                     day_of_week:
+                       type: string
+                     hour:
+                       type: string
+                     minute:
+                       type: string
+                     misfire_grace_time:
+                       type: integer
+                     max_instances:
+                       type: integer
+                     next_run_time:
+                       type: string
 
-        '500':
-          description: Unexpected error
+       '404':
+             description: Job not found
+
+       '500':
+             description: Unexpected error
+
     """
     return api.resume_job(id)
 
@@ -221,161 +225,60 @@ def resume_job(id: str):
 @middleoffice_blueprint.route("/jobs/<string:id>/run/", methods=["POST"])
 def run_job(id: str):
     """
-    Run a job, returns json of job details
-
+    Run a job and returns json of job details
     ---
+
     tags:
-        - Middle Office
+            - Middle Office
 
 
     responses:
-        '200':
-          description: OK
-          schema:
-            type: object
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: string
-        '404':
-          description: Job not found
+       '200':
+             description: OK
+             schema:
+               type: object
+               properties:
+                     id:
+                       type: string
+                     name:
+                       type: string
+                     func:
+                       type: string
+                     args:
+                       type: object
+                     kwargs:
+                       type: object
+                     trigger:
+                       type: string
+                     day_of_week:
+                       type: string
+                     hour:
+                       type: string
+                     minute:
+                       type: string
+                     misfire_grace_time:
+                       type: integer
+                     max_instances:
+                       type: integer
+                     next_run_time:
+                       type: string
 
-        '500':
-          description: Unexpected error
+       '404':
+             description: Job not found
+
+       '500':
+             description: Unexpected error
+
     """
     return api.run_job(id)
 
 
-def pause_all_jobs():
-    jobs = json.loads(api.get_jobs().data)
-    for job in jobs:
-        id = job.get("id")
-        result = api.pause_job(id)
-        yield result.response[0]  # type: ignore
-
-
-def resume_all_jobs():
-
-    jobs = api.get_jobs().data.decode()
-
-    for job in jobs:
-        result = api.resume_job(job.get("id"))
-        yield json.dumps(result.response[0])  # type: ignore
-
-
-@middleoffice_blueprint.route("/jobs/pause/", methods=["POST"])
-def streamed_pause_all_jobs():
-    """
-    Pause all jobs, stream json of jobs details
-
-    ---
-    tags:
-        - Middle Office
-
-    responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: string
-
-        '404':
-          description: Job not found
-
-        '500':
-          description: Unexpected error
-    """
-    return stream_with_context(Response(pause_all_jobs(), content_type="application/json"))  # type: ignore
-
-
-@middleoffice_blueprint.route("/jobs/resume/", methods=["POST"])
-def streamed_resume_all_jobs():
-    """
-    Resume all jobs, stream json of jobs details
-
-    ---
-    tags:
-        - Middle Office
-
-    responses:
-        '200':
-          description: OK
-          schema:
-            type: array
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              func:
-                type: string
-              args:
-                type: array
-              kwargs:
-                type: array
-              trigger:
-                type: string
-              day_of_week:
-                type: string
-              hour:
-                type: string
-              minute:
-                type: string
-              misfire_grace_time:
-                type: integer
-              max_instances:
-                type: integer
-              next_run_time:
-                type: string
-        '404':
-          description: Job not found
-
-        '500':
-          description: Unexpected error
-    """
-    return stream_with_context(Response(resume_all_jobs(), content_type="application/json"))  # type: ignore
+""" 
+responses:
+    '200':
+      description: An array of videos
+      schema:
+        type: array
+        items:
+          $ref: '#/definitions/Video' 
+ """
