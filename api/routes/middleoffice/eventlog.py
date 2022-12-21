@@ -116,6 +116,8 @@ def get_eventlogs():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/EventLog'
               
         '400':

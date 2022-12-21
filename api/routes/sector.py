@@ -25,6 +25,8 @@ def get_sectorentry():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/SectorEntry'
     """
     result = SectorEntry.query.all()
@@ -70,6 +72,8 @@ def get_assetsector():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/AssetsSector'
     """
 
@@ -97,6 +101,8 @@ def get_assetsector_methodology(methodology: str):
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/AssetsSector'
         '404':
           description: Bad Request. field `Methodology` must be a string.

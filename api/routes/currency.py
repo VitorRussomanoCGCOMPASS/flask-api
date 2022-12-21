@@ -7,7 +7,6 @@ from api.request_schemas.dateargs import DateSchema, PeriodSchema
 from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
 from app import database
 
-# TODO : FIX REF TO SCHEMAS
 
 currency_blueprint = Blueprint("Currency", __name__, url_prefix="/currencies")
 
@@ -162,6 +161,8 @@ def get_currency_values_id(id: int):
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/CurrencyValues'
               
         '400':
@@ -235,6 +236,8 @@ def get_currency_values_date():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/CurrencyValues'
               
         '400':

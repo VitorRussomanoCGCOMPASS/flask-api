@@ -49,6 +49,8 @@ def get_vna():
         '200':
           description: OK
           schema:
+            type : array
+            items:
                 $ref: '#/definitions/VNA'
     """
     args = request.args

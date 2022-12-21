@@ -21,6 +21,8 @@ def get_holidaycalendars():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/HolidayCalendars'
     """    
     result = HolidayCalendars.query.all()
@@ -116,6 +118,8 @@ def get_holidays_id(id: int):
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/Holidays'
     """    
 
@@ -139,6 +143,8 @@ def get_holidays():
         200:
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/Holidays'
     """    
     result = Holidays.query.all()

@@ -92,6 +92,8 @@ def get_crica():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/Crica'
               
         '400':

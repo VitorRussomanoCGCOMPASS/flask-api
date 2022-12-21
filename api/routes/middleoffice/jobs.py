@@ -43,32 +43,33 @@ def get_all_jobs():
        '200':
              description: OK
              schema:
-               type: object
-               properties:
-                     id:
-                       type: string
-                     name:
-                       type: string
-                     func:
-                       type: string
-                     args:
-                       type: object
-                     kwargs:
-                       type: object
-                     trigger:
-                       type: string
-                     day_of_week:
-                       type: string
-                     hour:
-                       type: string
-                     minute:
-                       type: string
-                     misfire_grace_time:
-                       type: integer
-                     max_instances:
-                       type: integer
-                     next_run_time:
-                       type: string
+               type: array
+               items:
+                 properties:
+                       id:
+                         type: string
+                       name:
+                         type: string
+                       func:
+                         type: string
+                       args:
+                         type: object
+                       kwargs:
+                         type: object
+                       trigger:
+                         type: string
+                       day_of_week:
+                         type: string
+                       hour:
+                         type: string
+                       minute:
+                         type: string
+                       misfire_grace_time:
+                         type: integer
+                       max_instances:
+                         type: integer
+                       next_run_time:
+                         type: string
 
     """
     return api.get_jobs()

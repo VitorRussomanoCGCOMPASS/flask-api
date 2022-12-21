@@ -21,6 +21,8 @@ def get_indexes():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/Indexes'
               
 
@@ -134,6 +136,8 @@ def get_indexes_values():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/IndexValues'
 
         '400':
@@ -209,6 +213,8 @@ def get_indexes_values_id(id: int):
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/IndexValues'
 
         '400':

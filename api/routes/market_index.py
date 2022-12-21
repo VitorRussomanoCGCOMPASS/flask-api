@@ -47,6 +47,8 @@ def get_marketindex():
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/MarketIndex'
 
         '400':
@@ -132,6 +134,8 @@ def get_marketindex_id(index: str):
         '200':
           description: OK
           schema:
+            type: array
+            items:
                 $ref: '#/definitions/MarketIndex'
               
         '400':
