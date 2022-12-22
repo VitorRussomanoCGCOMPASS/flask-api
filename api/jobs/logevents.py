@@ -5,12 +5,13 @@ from api.schemas.eventlog import EventLogSchema
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
-from api.dbconnection import urls
+from api.config import Config
 
+# TODO : IMPLEMENT A ROTATING FILE!
 
 def upload_logevents():
     
-    some_engine = create_engine(urls["localdev"])
+    some_engine = create_engine(Config.SQLALCHEMY_DATABASE_URI)
 
     session_factory = sessionmaker(bind=some_engine)
 

@@ -7,16 +7,17 @@ from marshmallow import ValidationError
 
 # TODO : REVIEW POST METHODS
 
+
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["GET"])
 def get_holidaycalendars():
     """
     Returns all Holiday Calendars
-     
+
     ---
 
     tags:
         - Middle Office
-    
+
     responses:
         '200':
           description: OK
@@ -24,7 +25,7 @@ def get_holidaycalendars():
             type: array
             items:
                 $ref: '#/definitions/HolidayCalendars'
-    """    
+    """
     result = HolidayCalendars.query.all()
     try:
         result = HolidayCalendarsSchema().dump(result, many=True)
@@ -35,11 +36,11 @@ def get_holidaycalendars():
 
 @middleoffice_blueprint.route("/holiday-calendars/<int:id>", methods=["GET"])
 def get_holidaycalendar_id(id: int):
-   
+
     """
     Returns the Holiday Calendars associated with the provided ID.
-    
-  
+
+
     ---
 
     tags:
@@ -51,7 +52,7 @@ def get_holidaycalendar_id(id: int):
         in: path
         type: integer
         required: False
-    
+
     responses:
         '200':
           description: OK
@@ -60,11 +61,8 @@ def get_holidaycalendar_id(id: int):
 
         '404':
           description: Bad Request. field `id` must be an integer
-    """    
-   
-   
-   
-   
+    """
+
     result = HolidayCalendars.query.filter_by(id=id).one()
     result = HolidayCalendarsSchema().dump(result)
     return jsonify(result), 200
@@ -84,15 +82,20 @@ def post_holidaycalendar():
         except ValidationError as err:
             return jsonify({"error": "Bad Request", "message": err.messages}), 400
 
-        try:
-            database.session.add(result)
-            database.session.commit()
-            return jsonify(request.json), 200
-        except Exception as exc:
-            return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
-                400,
-            )
+        holiday_calendar = HolidayCalendars.filter_by(
+            id=request.json["id"], calendar=request.json["calendar"]
+        ).one()
+
+        if holiday_calendar is None:
+            try:
+                database.session.add(result)
+                database.session.commit()
+                return jsonify(request.json), 200
+            except Exception as exc:
+                return (
+                    jsonify({"error": "Server Unavailable", "message": "######"}),
+                    400,
+                )
 
     return jsonify({"error": "Bad Request", "message": "empty json"}), 400
 
@@ -101,7 +104,7 @@ def post_holidaycalendar():
 def get_holidays_id(id: int):
 
     """
-    Returns all Holidays associated with a Calendar. 
+    Returns all Holidays associated with a Calendar.
     ---
 
     tags:
@@ -121,8 +124,7 @@ def get_holidays_id(id: int):
             type: array
             items:
                 $ref: '#/definitions/Holidays'
-    """    
-
+    """
 
     result = Holidays.query.filter_by(calendar_id=id).all()
     result = HolidaysSchema().dump(result, many=True)
@@ -133,7 +135,7 @@ def get_holidays_id(id: int):
 def get_holidays():
 
     """
-    Returns all Holidays associated with a Calendar. 
+    Returns all Holidays associated with a Calendar.
     ---
 
     tags:
@@ -146,7 +148,7 @@ def get_holidays():
             type: array
             items:
                 $ref: '#/definitions/Holidays'
-    """    
+    """
     result = Holidays.query.all()
     result = HolidaysSchema().dump(result, many=True)
     return jsonify(result), 200
@@ -166,14 +168,34 @@ def post_holidays():
         except ValidationError as err:
             return jsonify({"error": "Bad Request", "message": err.messages}), 400
 
-        try:
-            database.session.add(result)
-            database.session.commit()
-            return jsonify(request.json), 200
-        except Exception as exc:
-            return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
-                400,
-            )
+        id = request.json["id"]
+        calendar = request.json["calendar"]
 
+        holiday_calendar = HolidayCalendars.filter_by(id=id, calendar=calendar).one()
+
+        if holiday_calendar is None:
+            try:
+                database.session.add(result)
+                database.session.commit()
+                return jsonify(request.json), 200
+            except Exception as exc:
+                return (
+                    jsonify({"error": "Server Unavailable", "message": "######"}),
+                    400,
+                )
+        else:
+            holiday = Holidays(
+                date=request.json["date"], calendar_id=request.json["calendar_id"]
+            )
+            try:
+                database.session.add(holiday)
+                database.session.commit()
+                return jsonify(request.json), 200
+            except Exception as exc:
+                return (
+                    jsonify({"error": "Server Unavailable", "message": "######"}),
+                    400,
+                )
     return jsonify({"error": "Bad Request", "message": "empty json"}), 400
+
+

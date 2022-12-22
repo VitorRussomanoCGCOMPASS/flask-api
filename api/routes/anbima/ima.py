@@ -22,7 +22,7 @@ def get_ima_date(data_referencia, indice=None):
 
 def get_ima_period(start_date, end_date, indice=None):
     if indice:
-        result = IMA.query.filter(
+        result = IMA.query.filter_by(indice=indice).filter(
             IMA.data_referencia.between(start_date, end_date)
         ).all()
     else:
@@ -52,9 +52,11 @@ def get_comp_date(data_referencia, indice=None):
 
 def get_comp_period(start_date, end_date, indice=None):
     if indice:
-        result = ComponentsIMA.query.filter(
-            ComponentsIMA.data_referencia.between(start_date, end_date)
-        ).all()
+        result = (
+            ComponentsIMA.query.filter_by(indice=indice)
+            .filter(ComponentsIMA.data_referencia.between(start_date, end_date))
+            .all()
+        )
     else:
         result = ComponentsIMA.query.filter(
             ComponentsIMA.data_referencia.between(start_date, end_date)
@@ -64,7 +66,6 @@ def get_comp_period(start_date, end_date, indice=None):
     except TypeError:
         result = ComponentsIMASchema().dump(result)
     return result
-
 
 
 @anbima_blueprint.route("/ima/", methods=["GET"])
@@ -110,7 +111,7 @@ def get_ima():
             type: array
             items:
                 $ref: '#/definitions/IMA'
-              
+
         '400':
           description: Bad Request
 
@@ -131,19 +132,19 @@ def get_ima():
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_ima_period(start_date=start_date,end_date=end_date)
-        return jsonify(result) , 200
-    
+        result = get_ima_period(start_date=start_date, end_date=end_date)
+        return jsonify(result), 200
+
     result = IMA.query.all()
     try:
         result = IMASchema().dump(result, many=True)
     except TypeError:
         result = IMASchema().dump(result)
-    return jsonify(result),200
+    return jsonify(result), 200
 
 
-@anbima_blueprint.route("/ima/<string:indice>", methods=["GET"])
-def get_ima_indice(indice:str):
+@anbima_blueprint.route("/ima/<string:index>", methods=["GET"])
+def get_ima_index(index: str):
     """
     Returns all results of an IMA-related index corresponding to the provided id. May be filtered down by date or period.
     ---
@@ -151,11 +152,11 @@ def get_ima_indice(indice:str):
       - Anbima
 
     parameters:
-      - name: indice
+      - name: index
         in: path
         type: string
         required: False
-    
+
       - name: date
         in: query
         type: string
@@ -190,7 +191,7 @@ def get_ima_indice(indice:str):
             type: array
             items:
                 $ref: '#/definitions/IMA'
-              
+
         '400':
           description: Bad Request
 
@@ -207,24 +208,22 @@ def get_ima_indice(indice:str):
         error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_ima_date(data_referencia=data_referencia,indice=indice)
+        result = get_ima_date(data_referencia=data_referencia, indice=index)
         return jsonify(result), 200
 
     if start_date or end_date:
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_ima_period(start_date=start_date,end_date=end_date,indice=indice)
-        return jsonify(result) , 200
-    
-    result = IMA.query.filter_by(indice=indice).all()
+        result = get_ima_period(start_date=start_date, end_date=end_date, indice=index)
+        return jsonify(result), 200
+
+    result = IMA.query.filter_by(indice=index).all()
     try:
         result = IMASchema().dump(result, many=True)
     except TypeError:
         result = IMASchema().dump(result)
-    return jsonify(result),200
-
-
+    return jsonify(result), 200
 
 
 @anbima_blueprint.route("/ima/components/", methods=["GET"])
@@ -236,7 +235,7 @@ def get_components():
       - Anbima
 
     parameters:
-    
+
       - name: date
         in: query
         type: string
@@ -271,7 +270,7 @@ def get_components():
             type: array
             items:
                 $ref: '#/definitions/ComponentsIMA'
-              
+
         '400':
           description: Bad Request
 
@@ -293,31 +292,31 @@ def get_components():
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_comp_period(start_date=start_date,end_date=end_date)
-        return jsonify(result) , 200
-    
+        result = get_comp_period(start_date=start_date, end_date=end_date)
+        return jsonify(result), 200
+
     result = ComponentsIMA.query.all()
     try:
         result = ComponentsIMASchema().dump(result, many=True)
     except TypeError:
         result = ComponentsIMASchema().dump(result)
-    return jsonify(result),200
+    return jsonify(result), 200
 
 
-@anbima_blueprint.route("/ima/<string:indice>/components/", methods=["GET"])
-def get_components_indice(indice:str):
+@anbima_blueprint.route("/ima/<string:index>/components/", methods=["GET"])
+def get_components_index(index: str):
     """
     Returns the composition of an IMA-related index corresponding to the provided id. May be filtered down by date or period.
     ---
     tags:
       - Anbima
-      
+
     parameters:
-      - name: indice
+      - name: index
         in: path
         type: string
         required: False
-    
+
       - name: date
         in: query
         type: string
@@ -352,7 +351,7 @@ def get_components_indice(indice:str):
             type: array
             items:
                 $ref: '#/definitions/ComponentsIMA'
-              
+
         '400':
           description: Bad Request
 
@@ -369,19 +368,19 @@ def get_components_indice(indice:str):
         error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_ima_date(data_referencia=data_referencia,indice=indice)
+        result = get_ima_date(data_referencia=data_referencia, indice=index)
         return jsonify(result), 200
 
     if start_date or end_date:
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_ima_period(start_date=start_date,end_date=end_date,indice=indice)
-        return jsonify(result) , 200
+        result = get_ima_period(start_date=start_date, end_date=end_date, indice=index)
+        return jsonify(result), 200
 
-    result = ComponentsIMA.query.filter_by(indice=indice).all()
+    result = ComponentsIMA.query.filter_by(indice=index).all()
     try:
         result = ComponentsIMASchema().dump(result, many=True)
     except TypeError:
         result = ComponentsIMASchema().dump(result)
-    return jsonify(result),200
+    return jsonify(result), 200

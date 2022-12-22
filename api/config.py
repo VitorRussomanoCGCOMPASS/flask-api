@@ -46,8 +46,16 @@ class Config(object):
     SWAGGER = {"Title": "API.v1"}
     JOBS = [
         {
-            "id": "id1",
+            "id": "logevents",
             "func": "api.jobs.logevents:upload_logevents",
+            "trigger": "cron",
+            "day_of_week": "mon-fri",
+            "hour":23,
+            "minute":59
+        },
+        {
+            "id": "banxico",
+            "func": "api.jobs.banxico:upload_banxico",
             "trigger": "cron",
             "day_of_week": "mon-fri",
             "hour":14,

@@ -41,7 +41,3 @@ class CDIValueSchema(IndexValuesSchema):
         data["date"] = data["date"].rpartition("T")[0]
         return data
 
-
-
-IndexesSchema().load({"id":1,"index":"A"})
-IndexValuesSchema().load({"value":1,"date":"2022-01-01"})
