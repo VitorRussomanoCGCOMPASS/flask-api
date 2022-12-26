@@ -6,9 +6,6 @@ from api.schemas.holidays import HolidaysSchema, HolidayCalendarsSchema
 from marshmallow import ValidationError
 
 
-# TODO : REVIEW POST METHODS
-
-
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["GET"])
 def get_holidaycalendars():
     """
@@ -68,40 +65,66 @@ def get_holidaycalendar_id(id: int):
 
 @middleoffice_blueprint.route("/holiday-calendars/", methods=["POST"])
 def post_holidaycalendar():
+
+    """
+    Posts a new Holiday Calendar
+    ---
+    tags:
+        - Middle Office
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: calendar
+          description: The calendar to create
+          schema:
+                $ref: '#/definitions/HolidayCalendars'
+
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/HolidayCalendars'
+
+        '400':
+            description: Bad Request.
+    """
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    if request.json:
-        try:
-            result = HolidayCalendarsSchema(session=database.session).load(request.json)
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err.messages}), 400
-        
-        calendar = request.json['calendar']
- 
-        
-        existing_calendar = HolidayCalendars.query.filter_by(calendar=calendar).one_or_none()
 
-        if existing_calendar is not None:
-            existing_calendar = HolidayCalendarsSchema().dump(existing_calendar)
-            return jsonify({'error':"Bad Request","message":f"Calendar: {existing_calendar} already exists"}) ,400
-                
-        try:
-            database.session.add(result)
-            database.session.commit()
-            return jsonify(request.json), 200
-        
-        except Exception as exc:
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
+   
+    try:
+        result = HolidayCalendarsSchema(session=database.session).load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+
+    if "id" in request.json:
+        id = request.json["id"]
+        existing_calendar = HolidayCalendars.query.filter_by(id=id).one_or_none()
+        if existing_calendar:
             return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": f"Calendar: with id {id} already exists",
+                    }
+                ),
                 400,
             )
-            
 
-    return jsonify({"error": "Bad Request", "message": "empty json"}), 400
+    database.session.add(result)
+    database.session.commit()
+    return jsonify(request.json), 200
+
 
 
 @middleoffice_blueprint.route("/holiday-calendars/<int:id>/holidays/", methods=["GET"])
@@ -160,26 +183,59 @@ def get_holidays():
 
 @middleoffice_blueprint.route("/holiday-calendars/holidays/", methods=["POST"])
 def post_holidays():
+    # TODO: RESPONSES
+
+    """
+    Posts a new Holiday
+    ---
+    tags:
+        - Middle Office
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: holiday
+          description: A holiday to create associated with a calendar
+          schema:
+                $ref: '#/definitions/Holidays'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/Holidays'
+
+        '400':
+            description: Bad Request
+    """
     content_type = request.headers.get("Content-Type")
+
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    if request.json:
-        try:
-            result = HolidaysSchema(session=database.session).load(request.json)
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err.messages}), 400
-        try:
-            database.session.add(result)
-            database.session.commit()
-            return jsonify(request.json), 200
-        except Exception as exc:
-            return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
-                400,
-            )
-    return jsonify({"error": "Bad Request", "message": "empty json"}), 400
 
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
 
+    try:
+        result = HolidaysSchema(session=database.session).load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+
+    calendar = request.json["calendar"]["calendar"]
+
+    existing_calendar = HolidayCalendars.query.filter_by(
+        calendar=calendar
+    ).one_or_none()
+
+    if existing_calendar:
+        request.json["calendar"] = HolidayCalendarsSchema().dump(existing_calendar)
+        result = HolidaysSchema(session=database.session).load(request.json)
+
+    database.session.add(result)
+    database.session.commit()
+    return jsonify(request.json), 200
