@@ -10,43 +10,46 @@ def get_ima_date(data_referencia, indice=None):
     if indice:
         result = IMA.query.filter_by(
             data_referencia=data_referencia, indice=indice
-        ).one()
+        ).one_or_none()
+        result = IMASchema().dump(result)
+
     else:
         result = IMA.query.filter_by(data_referencia=data_referencia).all()
-    try:
         result = IMASchema().dump(result, many=True)
-    except TypeError:
-        result = IMASchema().dump(result)
+
     return result
 
 
 def get_ima_period(start_date, end_date, indice=None):
+   
     if indice:
-        result = IMA.query.filter_by(indice=indice).filter(
-            IMA.data_referencia.between(start_date, end_date)
-        ).all()
+        result = (
+            IMA.query.filter_by(indice=indice)
+            .filter(IMA.data_referencia.between(start_date, end_date))
+            .all()
+        )
+   
     else:
         result = IMA.query.filter(
             IMA.data_referencia.between(start_date, end_date)
         ).all()
-    try:
-        result = IMASchema().dump(result, many=True)
-    except TypeError:
-        result = IMASchema().dump(result)
+   
+    result = IMASchema().dump(result, many=True)
     return result
 
 
 def get_comp_date(data_referencia, indice=None):
+
     if indice:
         result = ComponentsIMA.query.filter_by(
             data_referencia=data_referencia, indice=indice
-        ).one()
+        ).one_or_none()
+        result = ComponentsIMA().dump(result)
+
     else:
         result = ComponentsIMA.query.filter_by(data_referencia=data_referencia).all()
-    try:
         result = ComponentsIMA().dump(result, many=True)
-    except TypeError:
-        result = ComponentsIMA().dump(result)
+    
     return result
 
 
@@ -57,14 +60,13 @@ def get_comp_period(start_date, end_date, indice=None):
             .filter(ComponentsIMA.data_referencia.between(start_date, end_date))
             .all()
         )
+  
     else:
         result = ComponentsIMA.query.filter(
             ComponentsIMA.data_referencia.between(start_date, end_date)
         ).all()
-    try:
-        result = ComponentsIMASchema().dump(result, many=True)
-    except TypeError:
-        result = ComponentsIMASchema().dump(result)
+  
+    result = ComponentsIMASchema().dump(result, many=True)
     return result
 
 
@@ -136,10 +138,7 @@ def get_ima():
         return jsonify(result), 200
 
     result = IMA.query.all()
-    try:
-        result = IMASchema().dump(result, many=True)
-    except TypeError:
-        result = IMASchema().dump(result)
+    result = IMASchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -219,10 +218,7 @@ def get_ima_index(index: str):
         return jsonify(result), 200
 
     result = IMA.query.filter_by(indice=index).all()
-    try:
-        result = IMASchema().dump(result, many=True)
-    except TypeError:
-        result = IMASchema().dump(result)
+    result = IMASchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -296,10 +292,7 @@ def get_components():
         return jsonify(result), 200
 
     result = ComponentsIMA.query.all()
-    try:
-        result = ComponentsIMASchema().dump(result, many=True)
-    except TypeError:
-        result = ComponentsIMASchema().dump(result)
+    result = ComponentsIMASchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -379,8 +372,5 @@ def get_components_index(index: str):
         return jsonify(result), 200
 
     result = ComponentsIMA.query.filter_by(indice=index).all()
-    try:
-        result = ComponentsIMASchema().dump(result, many=True)
-    except TypeError:
-        result = ComponentsIMASchema().dump(result)
+    result = ComponentsIMASchema().dump(result, many=True)
     return jsonify(result), 200

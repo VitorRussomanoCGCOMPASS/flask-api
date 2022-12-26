@@ -114,10 +114,7 @@ def get_assetsector_methodology(methodology: str):
         .filter_by(methodology=methodology)
         .all()
     )
-    try:
-        result_json = assetsector_schema.dump(result, many=True)
-    except TypeError:
-        result_json = assetsector_schema.dump(result)
+    result_json = assetsector_schema.dump(result, many=True)
     return jsonify(result_json), 200
 
 

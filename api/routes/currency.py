@@ -50,7 +50,7 @@ def get_currency_id(id: int):
         '404':
           description: Bad Request. field `id` must be an integer
     """
-    result = Currency.query.filter_by(id=id).one()
+    result = Currency.query.filter_by(id=id).one_or_none()
     result = CurrencySchema().dump(result)
     return jsonify(result), 200
 
@@ -81,6 +81,7 @@ def post_currency():
 
 
 def get_currency_period(start_date, end_date, currency_id):
+
     if currency_id:
         result = (
             CurrencyValues.query.filter(
@@ -89,14 +90,13 @@ def get_currency_period(start_date, end_date, currency_id):
             .filter_by(currency_id=currency_id)
             .all()
         )
+
     else:
         result = CurrencyValues.query.filter(
             CurrencyValues.date.between(start_date, end_date)
         ).all()
-    try:
-        result = CurrencyValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = CurrencyValuesSchema().dump(result)
+
+    result = CurrencyValuesSchema().dump(result, many=True)
     return result
 
 
@@ -105,15 +105,14 @@ def get_currency_date(date, currency_id):
     if currency_id:
         result = CurrencyValues.query.filter_by(
             currency_id=currency_id, date=date
-        ).first_or_404()
+        ).one_or_none()
+        result = CurrencyValuesSchema().dump(result)
+
 
     else:
         result = CurrencyValues.query.filter_by(date=date).all()
-
-    try:
         result = CurrencyValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = CurrencyValuesSchema().dump(result)
+
     return result
 
 
@@ -191,10 +190,7 @@ def get_currency_values_id(id: int):
         return jsonify(result), 200
 
     result = CurrencyValues.query.filter_by(currency_id=id).all()
-    try:
-        result = CurrencyValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = CurrencyValuesSchema().dump(result)
+    result = CurrencyValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
 

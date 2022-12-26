@@ -65,10 +65,7 @@ def get_marketindex():
         if error:
             return jsonify({"error": "Bad request", "message": error}), 400
         result = MarketIndex.query.filter_by(**args).all()
-        try:
-            result = MarketIndexSchema().dump(result, many=True)
-        except TypeError:
-            result = MarketIndexSchema().dump(result)
+        result = MarketIndexSchema().dump(result, many=True)
         return jsonify(result), 200
 
     if start_date or end_date:
@@ -77,12 +74,10 @@ def get_marketindex():
             return jsonify({"error": "Bad request", "message": error}), 400
         result = MarketIndex.query.filter(
             MarketIndex.date.between(start_date, end_date)
-        )
+        ).all()
 
-        try:
-            result = MarketIndexSchema().dump(result, many=True)
-        except TypeError:
-            result = MarketIndexSchema().dump(result)
+        result = MarketIndexSchema().dump(result, many=True)
+        return jsonify(result),200
 
     result = MarketIndex.query.all()
     result = MarketIndexSchema().dump(result, many=True)
@@ -154,7 +149,7 @@ def get_marketindex_id(index: str):
         if errors:
             return jsonify({"error": "Bad request", "message": errors}), 400
 
-        result = MarketIndex.query.filter_by(**args, index=index).one()
+        result = MarketIndex.query.filter_by(**args, index=index).one_or_none()
         result = MarketIndexSchema().dump(result)
         return jsonify(result), 200
 
@@ -167,13 +162,9 @@ def get_marketindex_id(index: str):
             .filter_by(index=index)
             .all()
         )
-        try:
-            result = MarketIndexSchema().dump(result, many=True)
-        except TypeError:
-            result = MarketIndexSchema().dump(result)
+        result = MarketIndexSchema().dump(result, many=True)
         return jsonify(result), 200
 
     result = MarketIndex.query.filter_by(index=index).all()
     result = MarketIndexSchema().dump(result, many=True)
-
     return jsonify(result), 200

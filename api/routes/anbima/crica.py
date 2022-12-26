@@ -8,60 +8,62 @@ from api.request_schemas.dateargs import DateSchema, PeriodSchema
 
 
 def get_crica_period(start_date, end_date, emissor=None, codigo_ativo=None):
+
     if codigo_ativo:
         result = (
             Crica.query.filter(Crica.data_referencia.between(start_date, end_date))
             .filter_by(codigo_ativo=codigo_ativo)
             .all()
         )
+
     elif emissor:
         result = (
             Crica.query.filter(Crica.data_referencia.between(start_date, end_date))
             .filter_by(emissor=emissor)
             .all()
         )
+
     else:
         result = Crica.query.filter(
             Crica.data_referencia.between(start_date, end_date)
         ).all()
 
-    try:
-        result = CricaSchema().dump(result, many=True)
-    except TypeError:
-        result = CricaSchema().dump(result)
+    result = CricaSchema().dump(result, many=True)
     return result
 
 
 def get_crica_date(data_referencia, emissor=None, codigo_ativo=None):
+    
+    
     if codigo_ativo:
         result = Crica.query.filter_by(
             data_referencia=data_referencia, codigo_ativo=codigo_ativo
-        ).one()
-
+        ).one_or_none()
+        result = CricaSchema().dump(result)
+        
+    
     elif emissor:
         result = Crica.query.filter_by(
             data_referencia=data_referencia, emissor=emissor
         ).all()
+        
+        result = CricaSchema().dump(result, many=True)
+    
+    
     else:
         result = Crica.query.filter_by(data_referencia=data_referencia).all()
-
-        
-    try:
         result = CricaSchema().dump(result, many=True)
-    except TypeError:
-        result = CricaSchema().dump(result)
     return result
 
 
 def get_crica_all(emissor=None):
+
     if emissor:
         result = Crica.query.filter_by(emissor=emissor).all()
     else:
         result = Crica.query.all()
-    try:
-        result = CricaSchema().dump(result, many=True)
-    except TypeError:
-        result = CricaSchema().dump(result)
+
+    result = CricaSchema().dump(result, many=True)
     return result
 
 
@@ -230,8 +232,5 @@ def get_crica_cod(codigo_ativo: str):
         return jsonify(result), 200
 
     result = Crica.query.filter_by(codigo_ativo=codigo_ativo).all()
-    try:
-        result = CricaSchema().dump(result, many=True)
-    except TypeError:
-        result = CricaSchema().dump(result)
+    result = CricaSchema().dump(result, many=True)
     return jsonify(result), 200

@@ -63,10 +63,7 @@ def get_vna():
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = VNA.query.filter_by(data_referencia=data_referencia).all()
-        try:
-            result = VNASchema().dump(result, many=True)
-        except TypeError:
-            result = VNASchema().dump(result)
+        result = VNASchema().dump(result, many=True)
         return jsonify(result), 200
 
     if start_date or end_date:
@@ -76,10 +73,7 @@ def get_vna():
         result = VNA.query.filter(
             VNA.data_referencia.between(start_date, end_date)
         ).all()
-        try:
-            result = VNASchema().dump(result, many=True)
-        except TypeError:
-            result = VNASchema().dump(result)
+        result = VNASchema().dump(result, many=True)
         return jsonify(result), 200
 
     result = VNA.query.all()
@@ -151,7 +145,7 @@ def get_vna_id(codigo_selic: str):
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = VNA.query.filter_by(
             data_referencia=data_referencia, codigo_selic=codigo_selic
-        ).one()
+        ).one_or_none()
         result = VNASchema().dump(result)
         return jsonify(result), 200
 
@@ -164,10 +158,7 @@ def get_vna_id(codigo_selic: str):
             .filter_by(codigo_selic=codigo_selic)
             .all()
         )
-        try:
-            result = VNASchema().dump(result, many=True)
-        except TypeError:
-            result = VNASchema().dump(result)
+        result = VNASchema().dump(result, many=True)
         return jsonify(result), 200
 
     result = VNA.query.filter_by(codigo_selic=codigo_selic).all()

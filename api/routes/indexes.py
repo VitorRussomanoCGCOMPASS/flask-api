@@ -28,10 +28,7 @@ def get_indexes():
 
     """
     result = Indexes.query.all()
-    try:
-        result = IndexesSchema().dump(result, many=True)
-    except TypeError:
-        result = IndexesSchema().dump(result)
+    result = IndexesSchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -58,7 +55,7 @@ def get_indexes_id(id: int):
           description: Bad Request. field `id` must be an integer 
     
     """
-    result = Indexes.query.filter_by(id=id).one()
+    result = Indexes.query.filter_by(id=id).one_or_none()
     result = IndexesSchema().dump(result)
     return jsonify(result), 200
 
@@ -74,10 +71,8 @@ def get_index_period(start_date, end_date, index_id):
         result = IndexValues.query.filter(
             IndexValues.date.between(start_date, end_date)
         ).all()
-    try:
-        result = IndexValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = IndexValuesSchema().dump(result)
+
+    result = IndexValuesSchema().dump(result, many=True)
     return result
 
 
@@ -86,15 +81,12 @@ def get_index_date(date, index_id):
     if index_id:
         result = IndexValues.query.filter_by(
             index_id=index_id, date=date
-        ).first_or_404()
+        ).one_or_none()
+        result = IndexValuesSchema().dump(result)
 
     else:
         result = IndexValues.query.filter_by(date=date).all()
-
-    try:
         result = IndexValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = IndexValuesSchema().dump(result)
     return result
 
 
@@ -155,6 +147,7 @@ def get_indexes_values():
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = get_index_date(date=date, index_id=None)
         return jsonify(result), 200
+
     if start_date or end_date:
         error = PeriodSchema().validate(args)
         if error:
@@ -163,10 +156,7 @@ def get_indexes_values():
         return jsonify(result), 200
 
     result = IndexValues.query.all()
-    try:
-        result = IndexValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = IndexValuesSchema().dump(result)
+    result = IndexValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -241,10 +231,7 @@ def get_indexes_values_id(id: int):
         return jsonify(result), 200
 
     result = IndexValues.query.filter_by(index_id=id).all()
-    try:
-        result = IndexValuesSchema().dump(result, many=True)
-    except TypeError:
-        result = IndexValuesSchema().dump(result)
+    result = IndexValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
 

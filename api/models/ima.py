@@ -61,7 +61,7 @@ class IMA(Base):
     """
 
     __tablename__ = "ima_anbima"
-
+    
     indice = Column(db.String(30))
     data_referencia = Column(db.Date)
     variacao_ult12m = Column(db.Float)
@@ -79,7 +79,7 @@ class IMA(Base):
     yield_col = Column("yield", db.Float, nullable=True)
     redemption_yield = Column(db.Float, nullable=True)
 
-    components = relationship("ComponentsIMA", backref="ima_anbima", lazy=True)
+    components = relationship("ComponentsIMA", backref="ima_anbima")
     __table_args__ = (PrimaryKeyConstraint(indice, data_referencia), {})
 
     def __repr__(self) -> str:
