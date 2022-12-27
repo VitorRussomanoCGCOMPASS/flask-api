@@ -4,18 +4,15 @@ from api.models.indexes import Indexes, IndexValues
 from api.schemas.base_schema import CustomSchema
 
 
-# TODO: SHOULD NOT BE THIS ONE PRE_LOADER, IT IS SPECIFIC FOR CDI
-# TODO; RENAME THE TABLE
+from app import database
 
 
 class IndexesSchema(CustomSchema):
     class Meta:
         model = Indexes
         unknown = RAISE
-
-    @post_load
-    def make_object(self, data, **kwargs) -> Indexes:
-        return Indexes(**data)
+        load_instance = True
+        sqla_session = database.session
 
 
 class IndexValuesSchema(CustomSchema):
@@ -23,16 +20,10 @@ class IndexValuesSchema(CustomSchema):
         model = IndexValues
         unknown = RAISE
         dateformat = "%Y-%m-%d"
+        load_instance = True
+        load_relationships = True
 
     index = fields.Nested(IndexesSchema)
-
-    @pre_load
-    def pre_loader(self, data, many, **kwargs):
-        return data
-
-    @post_load
-    def make_object(self, data, **kwargs) -> IndexValues:
-        return IndexValues(**data)
 
 
 class CDIValueSchema(IndexValuesSchema):
@@ -40,4 +31,3 @@ class CDIValueSchema(IndexValuesSchema):
     def pre_loader(self, data, many, **kwargs):
         data["date"] = data["date"].rpartition("T")[0]
         return data
-

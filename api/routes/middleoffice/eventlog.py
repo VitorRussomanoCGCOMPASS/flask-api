@@ -68,7 +68,7 @@ def get_currenteventlogs():
     """
 
     eventlogs = []
-    with open("api/jobs/eventslog.json") as file:
+    with open("api/jobs/eventslog.json",mode='r') as file:
         for line in file:
             eventlogs.append(json.loads(line))
     return jsonify(eventlogs), 200

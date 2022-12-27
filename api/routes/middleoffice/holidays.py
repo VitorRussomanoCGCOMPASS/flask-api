@@ -183,7 +183,6 @@ def get_holidays():
 
 @middleoffice_blueprint.route("/holiday-calendars/holidays/", methods=["POST"])
 def post_holidays():
-    # TODO: RESPONSES
 
     """
     Posts a new Holiday
@@ -211,7 +210,7 @@ def post_holidays():
             description: Bad Request
     """
     content_type = request.headers.get("Content-Type")
-
+        
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
@@ -220,7 +219,7 @@ def post_holidays():
 
     if not request.json:
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
-
+    
     try:
         result = HolidaysSchema(session=database.session).load(request.json)
     except ValidationError as err:

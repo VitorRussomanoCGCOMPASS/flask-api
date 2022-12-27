@@ -57,26 +57,62 @@ def get_currency_id(id: int):
 
 @currency_blueprint.route("/", methods=["POST"])
 def post_currency():
+    """
 
+    Posts a new Currency 
+    ---
+
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: currency
+          description: The new currency to create
+          schema:
+                $ref: '#/definitions/Currency'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/Currency'
+
+        '400':
+            description: Bad Request
+    """    
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    if request.json:
-        try:
-            result = CurrencySchema().load(request.json)
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err.messages}), 400
-        try:
-            database.session.add(result)
-            database.session.commit()
-        except Exception as exc:
+
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
+
+    try:
+        result = CurrencySchema().load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+
+    if 'id' in request.json:
+        id = request.json['id']
+        existing_currency = Currency.query.filter_by(id=id).one_or_none()
+        if existing_currency:
             return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": f"Currency: with id {id} already exists",
+                    }
+                ),
                 400,
             )
+
+    database.session.add(result)
+    database.session.commit()
     return jsonify(request.json), 200
 
 
@@ -127,7 +163,6 @@ def get_currency_values_id(id: int):
         in: path
         type: integer
         required: False
-
 
       - name: date
         in: query
@@ -263,3 +298,61 @@ def get_currency_values_date():
     result = CurrencyValues.query.all()
     result = CurrencyValuesSchema().dump(result, many=True)
     return jsonify(result), 200
+
+
+@currency_blueprint.route('/values/',methods=['POST'])
+def post_currency_values():
+    
+    """
+    Posts a new value to a currency
+    ---
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: currency value
+          description: A value to entry associated with a currency 
+          schema:
+                $ref: '#/definitions/CurrencyValues'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/CurrencyValues'
+
+        '400':
+            description: Bad Request
+    """
+    content_type = request.headers.get("Content-Type")
+        
+    if content_type != "application/json":
+        return (
+            jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
+            400,
+        )
+
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
+    
+    try:
+        result = CurrencyValuesSchema(session=database.session).load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+    
+
+    
+    currency = request.json['currency']['currency']
+    existing_currency= Currency.query.filter_by(
+        currency = currency
+    ).one_or_none()
+
+    if existing_currency:
+        request.json["currency"] = CurrencySchema().dump(existing_currency)
+        result = CurrencyValuesSchema(session=database.session).load(request.json)
+
+    database.session.add(result)
+    database.session.commit()
+    return jsonify(request.json), 200

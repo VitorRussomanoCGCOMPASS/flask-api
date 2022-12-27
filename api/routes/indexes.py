@@ -7,8 +7,6 @@ from api.request_schemas.dateargs import DateSchema, PeriodSchema
 
 indexes_blueprint = Blueprint("Indexes", __name__, url_prefix="/indexes")
 
-# TODO : CREATE POST METHODS
-
 
 @indexes_blueprint.route("/", methods=["GET"])
 def get_indexes():
@@ -24,7 +22,7 @@ def get_indexes():
             type: array
             items:
                 $ref: '#/definitions/Indexes'
-              
+
 
     """
     result = Indexes.query.all()
@@ -43,7 +41,7 @@ def get_indexes_id(id: int):
         in: path
         type: integer
         required: False
- 
+
 
     responses:
         '200':
@@ -52,8 +50,8 @@ def get_indexes_id(id: int):
                 $ref: '#/definitions/Indexes'
 
         '404':
-          description: Bad Request. field `id` must be an integer 
-    
+          description: Bad Request. field `id` must be an integer
+
     """
     result = Indexes.query.filter_by(id=id).one_or_none()
     result = IndexesSchema().dump(result)
@@ -79,9 +77,7 @@ def get_index_period(start_date, end_date, index_id):
 def get_index_date(date, index_id):
 
     if index_id:
-        result = IndexValues.query.filter_by(
-            index_id=index_id, date=date
-        ).one_or_none()
+        result = IndexValues.query.filter_by(index_id=index_id, date=date).one_or_none()
         result = IndexValuesSchema().dump(result)
 
     else:
@@ -237,49 +233,114 @@ def get_indexes_values_id(id: int):
 
 @indexes_blueprint.route("/", methods=["POST"])
 def post_index():
+    """
 
+    Posts a new Index 
+    ---
+
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: index 
+          description: The new index to create
+          schema:
+                $ref: '#/definitions/Indexes'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/Indexes'
+
+        '400':
+            description: Bad Request
+    """    
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    if request.json:
-        try:
-            result = IndexesSchema().load(request.json)
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err.messages}), 400
-        try:
-            database.session.add(result)
-            database.session.commit()
-        except Exception as exc:
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
+
+    try:
+        result = IndexesSchema().load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+    if 'id' in request.json:
+        id = request.json['id']
+        existing_index = Indexes.query.filter_by(id=id).one_or_none()
+        if existing_index:
             return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
+                jsonify(
+                    {
+                        "error": "Bad Request",
+                        "message": f"Index: with id {id} already exists",
+                    }
+                ),
                 400,
             )
+
+    database.session.add(result)
+    database.session.commit()
     return jsonify(request.json), 200
 
 
 @indexes_blueprint.route("/values/", methods=["POST"])
 def post_indexes_values():
+    
+    """
+    Posts a new value to a index
+    ---
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: index value
+          description: A value to entry associated with a index 
+          schema:
+                $ref: '#/definitions/IndexesValues'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/IndexesValues'
+
+        '400':
+            description: Bad Request
+    """
     content_type = request.headers.get("Content-Type")
+        
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    if request.json:
-        try:
-            result = IndexValuesSchema().load(request.json)
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err.messages}), 400
-        try:
-            database.session.add(result)
-            database.session.commit()
-        except Exception as exc:
-            return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
-                400,
-            )
-    return jsonify(request.json), 200
+
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
     
+    try:
+        result = IndexValuesSchema(session=database.session).load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+
+    index = request.json['index']['index']
+    existing_index= Indexes.query.filter_by(
+        index =index
+    ).one_or_none()
+    
+    if existing_index:
+        request.json["index"] = IndexesSchema().dump(existing_index)
+        result = IndexValuesSchema(session=database.session).load(request.json)
+
+    database.session.add(result)
+    database.session.commit()
+    return jsonify(request.json), 200

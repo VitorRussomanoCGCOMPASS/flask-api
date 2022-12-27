@@ -18,7 +18,6 @@ class HolidaysSchema(CustomSchema):
         dateformat = "%Y-%m-%d"
         load_instance= True
         load_relationships = True
-        sqla_session= database.session
     
     calendar = fields.Nested(HolidayCalendarsSchema,required=True)
 
