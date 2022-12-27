@@ -1,7 +1,7 @@
 from api.schemas.base_schema import CustomSchema
 from api.models.holidays import HolidayCalendars, Holidays
 # from api.schemas.base_schema import SmartNested
-from marshmallow import fields
+from marshmallow import fields, RAISE
 
 from app import database
 
@@ -11,6 +11,7 @@ class HolidayCalendarsSchema(CustomSchema):
         model = HolidayCalendars
         load_instance=True
         sqla_session =database.session 
+        unknown =RAISE
       
 class HolidaysSchema(CustomSchema):
     class Meta:
@@ -18,6 +19,7 @@ class HolidaysSchema(CustomSchema):
         dateformat = "%Y-%m-%d"
         load_instance= True
         load_relationships = True
+        unknown =RAISE
     
     calendar = fields.Nested(HolidayCalendarsSchema,required=True)
 

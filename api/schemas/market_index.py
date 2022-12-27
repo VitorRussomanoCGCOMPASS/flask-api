@@ -27,3 +27,4 @@ class MarketIndexSchema(CustomSchema):
     @post_load
     def make_objects(self, data, many, **kwargs):
         return MarketIndex(**data)
+

@@ -1,4 +1,5 @@
-from marshmallow import RAISE, fields, post_load, pre_load
+from marshmallow import RAISE, fields, post_load, pre_load, EXCLUDE
+
 
 from api.models.indexes import Indexes, IndexValues
 from api.schemas.base_schema import CustomSchema
@@ -27,6 +28,8 @@ class IndexValuesSchema(CustomSchema):
 
 
 class CDIValueSchema(IndexValuesSchema):
+    class Meta:
+        unknown= EXCLUDE
     @pre_load
     def pre_loader(self, data, many, **kwargs):
         data["date"] = data["date"].rpartition("T")[0]

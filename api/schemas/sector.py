@@ -1,31 +1,25 @@
 from api.models.sector import SectorEntry, AssetsSector
 from api.schemas.base_schema import CustomSchema
-from marshmallow import fields, pre_load, post_load, EXCLUDE
+from marshmallow import fields,RAISE
+
+
+from app import database
+
 
 
 class SectorEntrySchema(CustomSchema):
     class Meta:
         model = SectorEntry
-
-    @pre_load
-    def pre_loader(self, data, many, **kwargs):
-        return data
-
-    @post_load
-    def post_loader(self, data, **kwargs) -> SectorEntry:
-        return SectorEntry(**data)
-
+        unknown =RAISE
+        load_instance= True
+        sqla_session = database.session
 
 class AssetsSectorSchema(CustomSchema):
     class Meta:
         model = AssetsSector
-
+        unknwon =RAISE
+        load_instance=True
+        load_relationships =True
+    
+        
     sector_entry = fields.Nested(SectorEntrySchema)
-
-    @pre_load
-    def pre_loader(self, data, many, **kwargs):
-        return data
-
-    @post_load
-    def post_loader(self, data, **kwargs) -> AssetsSector:
-        return AssetsSector(**data)
