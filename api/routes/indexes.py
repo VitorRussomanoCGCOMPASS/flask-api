@@ -305,13 +305,13 @@ def post_indexes_values():
           name: index value
           description: A value to entry associated with a index 
           schema:
-                $ref: '#/definitions/IndexesValues'
+                $ref: '#/definitions/IndexValues'
     responses:
         '200':
             description: OK
             schema:
                 type: object
-                $ref : '#/definitions/IndexesValues'
+                $ref : '#/definitions/IndexValues'
 
         '400':
             description: Bad Request
