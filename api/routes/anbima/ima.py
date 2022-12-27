@@ -44,11 +44,11 @@ def get_comp_date(data_referencia, indice=None):
         result = ComponentsIMA.query.filter_by(
             data_referencia=data_referencia, indice=indice
         ).one_or_none()
-        result = ComponentsIMA().dump(result)
+        result = ComponentsIMASchema().dump(result)
 
     else:
         result = ComponentsIMA.query.filter_by(data_referencia=data_referencia).all()
-        result = ComponentsIMA().dump(result, many=True)
+        result = ComponentsIMASchema().dump(result, many=True)
     
     return result
 
@@ -112,7 +112,38 @@ def get_ima():
           schema:
             type: array
             items:
-                $ref: '#/definitions/IMA'
+                properties:
+                    convexidade:
+                      type: integer
+                    data_referencia:
+                      type: string
+                    duration:
+                      type: integer
+                    indice:
+                        type: string
+                    numero_indice:
+                      type: integer
+                    peso_indice:
+                      type: integer
+                    pmr:
+                      type: integer
+                    quantidade_titulos:
+                      type: integer
+                    valor_mercado:
+                      type: integer
+                    variacao_anual:
+                      type: integer
+                    variacao_diaria:
+                      type: integer
+                    variacao_mensal:
+                      type: integer
+                    variacao_ult12m:
+                      type: integer
+                    variacao_ult24m:
+                      type: integer
+                    yield:
+                      type: integer
+
 
         '400':
           description: Bad Request
@@ -189,7 +220,40 @@ def get_ima_index(index: str):
           schema:
             type: array
             items:
-                $ref: '#/definitions/IMA'
+                properties:
+                    convexidade:
+                      type: integer
+                    data_referencia:
+                      type: string
+                    duration:
+                      type: integer
+                    indice:
+                        type: string
+                    numero_indice:
+                      type: integer
+                    peso_indice:
+                      type: integer
+                    pmr:
+                      type: integer
+                    quantidade_titulos:
+                      type: integer
+                    valor_mercado:
+                      type: integer
+                    variacao_anual:
+                      type: integer
+                    variacao_diaria:
+                      type: integer
+                    variacao_mensal:
+                      type: integer
+                    variacao_ult12m:
+                      type: integer
+                    variacao_ult24m:
+                      type: integer
+                    yield:
+                      type: integer
+
+
+            
 
         '400':
           description: Bad Request

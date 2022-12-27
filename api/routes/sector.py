@@ -9,9 +9,6 @@ from app import database
 
 sector_blueprint = Blueprint("sector", __name__, url_prefix="/sectors")
 
-sectorentry_schema = SectorEntrySchema()
-assetsector_schema = AssetsSectorSchema()
-
 
 @sector_blueprint.route("/", methods=["GET"])
 def get_sectorentry():
@@ -20,7 +17,7 @@ def get_sectorentry():
     ---
 
 
-        
+
     responses:
         '200':
           description: OK
@@ -30,7 +27,7 @@ def get_sectorentry():
                 $ref: '#/definitions/SectorEntry'
     """
     result = SectorEntry.query.all()
-    result = sectorentry_schema.dump(result, many=True)
+    result = SectorEntrySchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -48,7 +45,7 @@ def get_sector_entry_methodology(methodology: str):
         required: False
 
 
-        
+
     responses:
         '200':
           description: OK
@@ -57,7 +54,7 @@ def get_sector_entry_methodology(methodology: str):
 
     """
     result = SectorEntry.query.filter_by(methodology=methodology).all()
-    result = sectorentry_schema.dump(result, many=True)
+    result = SectorEntrySchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -67,7 +64,7 @@ def get_assetsector():
     Returns all assets and their sectors and subsectors classification
     ---
 
-        
+
     responses:
         '200':
           description: OK
@@ -78,7 +75,7 @@ def get_assetsector():
     """
 
     result = AssetsSector.query.options(joinedload(AssetsSector.sector_entry)).all()
-    result = assetsector_schema.dump(result, many=True)
+    result = AssetsSectorSchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -96,7 +93,7 @@ def get_assetsector_methodology(methodology: str):
         required: False
 
 
-         
+
     responses:
         '200':
           description: OK
@@ -114,30 +111,59 @@ def get_assetsector_methodology(methodology: str):
         .filter_by(methodology=methodology)
         .all()
     )
-    result_json = assetsector_schema.dump(result, many=True)
+    result_json = AssetsSectorSchema().dump(result, many=True)
     return jsonify(result_json), 200
 
 
-@sector_blueprint.route("/assets/", methods=["POST"])
-def create_assetsector():
+@sector_blueprint.route("/", methods=["POST"])
+def create_sectorentry():
+
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
             400,
         )
-    if request.json:
 
-        try:
-            result = assetsector_schema.load(request.json)
-        except ValidationError as err:
-            return jsonify({"error": "Bad Request", "message": err.messages}), 400
-        try:
-            database.session.add(result)
-            database.session.commit()
-        except Exception as exc:
-            return (
-                jsonify({"error": "Server Unavailable", "message": "######"}),
-                400,
-            )
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
+
+    try:
+        result = SectorEntrySchema().load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+
+    database.session.add(result)
+    database.session.commit()
+    return jsonify(request.json), 200
+
+
+sector_blueprint.route("/assets/", methods=["POST"])
+
+
+def create_assetsector():
+
+    content_type = request.headers.get("Content-Type")
+    if content_type != "application/json":
+        return (
+            jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
+            400,
+        )
+
+    if not request.json:
+        return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
+
+    try:
+        result = AssetsSectorSchema(database.session).load(request.json)
+    except ValidationError as err:
+        return jsonify({"error": "Bad Request", "message": err.messages}), 400
+    sector_entry = request.json["sector_entry"]
+
+    existing_sectorentry = SectorEntry.query.filter_by(**sector_entry).one_or_none()
+    if existing_sectorentry:
+        request.json["sector_entry"] = SectorEntrySchema().dump(existing_sectorentry)
+        result = AssetsSectorSchema(session=database.session).load(request.json)
+
+    database.session.add(result)
+    database.session.commit()
     return jsonify(request.json), 200
