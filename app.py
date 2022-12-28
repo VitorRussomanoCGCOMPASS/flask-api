@@ -35,7 +35,7 @@ from api.schemas.ima import  IMASchema, ComponentsIMASchema
 
 def create_template(app: Flask):
     spec = APISpec(
-        title="Compass BR",
+        title="Compass Brazil API",
         version="1.0",
         openapi_version="2.0",
         plugins=[MarshmallowPlugin()],

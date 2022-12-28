@@ -117,7 +117,30 @@ def get_assetsector_methodology(methodology: str):
 
 @sector_blueprint.route("/", methods=["POST"])
 def create_sectorentry():
+    """
+    Create a new sector entry
+    ---
 
+
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: sector 
+          description: The new sector classification to create
+          schema:
+                $ref: '#/definitions/SectorEntry'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/SectorEntry'
+
+        '400':
+            description: Bad Request
+    """    
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
@@ -138,11 +161,31 @@ def create_sectorentry():
     return jsonify(request.json), 200
 
 
-sector_blueprint.route("/assets/", methods=["POST"])
-
-
+@sector_blueprint.route("/assets/", methods=["POST"])
 def create_assetsector():
+    """
+    Registry a asset to a sector classification
+    ---
 
+    consumes:
+        - application/json
+
+    parameters:
+        - in: body
+          name: asset sector classification
+          description: The asset along with the sector classification 
+          schema:
+                $ref: '#/definitions/AssetsSector'
+    responses:
+        '200':
+            description: OK
+            schema:
+                type: object
+                $ref : '#/definitions/AssetsSector'
+
+        '400':
+            description: Bad Request
+    """
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
