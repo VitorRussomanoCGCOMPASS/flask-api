@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 
-from api.models.crica import Crica
+from api.models.cricra import CriCra
 from api.routes.anbima import anbima_blueprint
-from api.schemas.crica import CricaSchema
+from api.schemas.cricra import CriCraSchema
 from marshmallow import fields
 from api.request_schemas.dateargs import DateSchema, PeriodSchema
 
@@ -11,24 +11,24 @@ def get_crica_period(start_date, end_date, emissor=None, codigo_ativo=None):
 
     if codigo_ativo:
         result = (
-            Crica.query.filter(Crica.data_referencia.between(start_date, end_date))
+            CriCra.query.filter(CriCra.data_referencia.between(start_date, end_date))
             .filter_by(codigo_ativo=codigo_ativo)
             .all()
         )
 
     elif emissor:
         result = (
-            Crica.query.filter(Crica.data_referencia.between(start_date, end_date))
+            CriCra.query.filter(CriCra.data_referencia.between(start_date, end_date))
             .filter_by(emissor=emissor)
             .all()
         )
 
     else:
-        result = Crica.query.filter(
-            Crica.data_referencia.between(start_date, end_date)
+        result = CriCra.query.filter(
+            CriCra.data_referencia.between(start_date, end_date)
         ).all()
 
-    result = CricaSchema().dump(result, many=True)
+    result = CriCraSchema().dump(result, many=True)
     return result
 
 
@@ -36,38 +36,38 @@ def get_crica_date(data_referencia, emissor=None, codigo_ativo=None):
     
     
     if codigo_ativo:
-        result = Crica.query.filter_by(
+        result = CriCra.query.filter_by(
             data_referencia=data_referencia, codigo_ativo=codigo_ativo
         ).one_or_none()
-        result = CricaSchema().dump(result)
+        result = CriCraSchema().dump(result)
         
     
     elif emissor:
-        result = Crica.query.filter_by(
+        result = CriCra.query.filter_by(
             data_referencia=data_referencia, emissor=emissor
         ).all()
         
-        result = CricaSchema().dump(result, many=True)
+        result = CriCraSchema().dump(result, many=True)
     
     
     else:
-        result = Crica.query.filter_by(data_referencia=data_referencia).all()
-        result = CricaSchema().dump(result, many=True)
+        result = CriCra.query.filter_by(data_referencia=data_referencia).all()
+        result = CriCraSchema().dump(result, many=True)
     return result
 
 
 def get_crica_all(emissor=None):
 
     if emissor:
-        result = Crica.query.filter_by(emissor=emissor).all()
+        result = CriCra.query.filter_by(emissor=emissor).all()
     else:
-        result = Crica.query.all()
+        result = CriCra.query.all()
 
-    result = CricaSchema().dump(result, many=True)
+    result = CriCraSchema().dump(result, many=True)
     return result
 
 
-@anbima_blueprint.route("/crica/", methods=["GET"])
+@anbima_blueprint.route("/cricra/", methods=["GET"])
 def get_crica():
     """
     Returns the bid, ask and indicative rates as well as Unit Prices corresponding to the real state and agribusiness receivables calculated by Anbima. May be filtered down by date or period.
@@ -117,7 +117,7 @@ def get_crica():
           schema:
             type: array
             items:
-                $ref: '#/definitions/Crica'
+                $ref: '#/definitions/CriCra'
 
         '400':
           description: Bad Request
@@ -152,7 +152,7 @@ def get_crica():
     return jsonify(result), 200
 
 
-@anbima_blueprint.route("/crica/<string:codigo_ativo>", methods=["GET"])
+@anbima_blueprint.route("/cricra/<string:codigo_ativo>", methods=["GET"])
 def get_crica_cod(codigo_ativo: str):
 
     """
@@ -199,7 +199,7 @@ def get_crica_cod(codigo_ativo: str):
         '200':
           description: OK
           schema:
-                $ref: '#/definitions/Crica'
+                $ref: '#/definitions/CriCra'
 
         '400':
           description: Bad Request
@@ -231,6 +231,6 @@ def get_crica_cod(codigo_ativo: str):
         )
         return jsonify(result), 200
 
-    result = Crica.query.filter_by(codigo_ativo=codigo_ativo).all()
-    result = CricaSchema().dump(result, many=True)
+    result = CriCra.query.filter_by(codigo_ativo=codigo_ativo).all()
+    result = CriCraSchema().dump(result, many=True)
     return jsonify(result), 200

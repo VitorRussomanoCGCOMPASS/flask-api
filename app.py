@@ -29,7 +29,7 @@ from api.schemas.holidays import HolidayCalendarsSchema, HolidaysSchema
 from api.schemas.sector import SectorEntrySchema, AssetsSectorSchema
 from api.schemas.market_index import MarketIndexSchema
 from api.schemas.vna import VNASchema
-from api.schemas.crica import CricaSchema
+from api.schemas.cricra import CriCraSchema
 from api.schemas.ima import  IMASchema, ComponentsIMASchema 
 
 
@@ -55,7 +55,7 @@ def create_template(app: Flask):
             AssetsSectorSchema,
             MarketIndexSchema,
             VNASchema,
-            CricaSchema,
+            CriCraSchema,
             ComponentsIMASchema,
             IMASchema
         ],

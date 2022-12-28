@@ -2,12 +2,14 @@ from api.models.base_model import Base,Column
 import sqlalchemy as db
 
 
+# FIXME: CRICRA
 
-class Crica(Base):
+
+class CriCra(Base):
     """
     Attributes
     ----------
-    __tablename__ = "crica_anbima"
+    __tablename__ = "cricra_anbima"
 
     Primary keys
     -----------
@@ -66,7 +68,7 @@ class Crica(Base):
 
     """
 
-    __tablename__ = "crica_anbima"
+    __tablename__ = "cricra_anbima"
 
     codigo_ativo = Column(db.String(30), primary_key=True)
     data_referencia = Column(db.Date, primary_key=True)
