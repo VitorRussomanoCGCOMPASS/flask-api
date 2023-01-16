@@ -137,3 +137,4 @@ endpoints
 airflow
 jobs
 teste.py
+migrations
