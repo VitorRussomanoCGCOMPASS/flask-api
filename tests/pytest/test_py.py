@@ -1,4 +1,4 @@
-from api.models.sector import SectorEntry
+from flask_api.models.sector import SectorEntry
 from pytest import fixture
 
 

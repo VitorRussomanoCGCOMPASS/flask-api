@@ -1,5 +1,5 @@
-from api.config import Config
-from api.dbconnection import urls
+from flask_api.config import Config
+from flask_api.dbconnection import urls
 
 
 class TestConfig(Config):
@@ -7,13 +7,11 @@ class TestConfig(Config):
     SQLALCHEMY_DATABASE_URI = urls["localdev"]
 
 
-
-
 import pytest
 from sqlalchemy import event
 
-from api.models.base_model import database as _db
-from app import create_app
+from flask_api.models.base_model import database as _db
+from flask_api.app import create_app
 
 
 @pytest.fixture(scope="session")
