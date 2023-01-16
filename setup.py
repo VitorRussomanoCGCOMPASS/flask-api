@@ -6,5 +6,5 @@ setuptools.setup(
     url='https://github.com/VitorRussomanoCGCOMPASS/flask_api.git',
     author='VitorRussomanoCGCOMPASS',
     author_email='VitorIbanez@cgcompass.com',
-    packages=['flask_api']
+    packages=['flask_api','flask_api.models']
 )
