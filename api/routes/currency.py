@@ -5,6 +5,7 @@ from api.models.currency import Currency, CurrencyValues
 from api.request_schemas.dateargs import DateSchema, PeriodSchema
 
 from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
+
 from app import database
 
 
@@ -24,7 +25,7 @@ def get_currency():
                 $ref: '#/definitions/Currency'
 
     """
-    result = Currency.query.all()
+    result = database.session.query(Currency).all()
     result = CurrencySchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -50,7 +51,8 @@ def get_currency_id(id: int):
         '404':
           description: Bad Request. field `id` must be an integer
     """
-    result = Currency.query.filter_by(id=id).one_or_none()
+    result = database.session.query(Currency).filter_by(id=id).one_or_none()
+    #     result = Currency.query.filter_by(id=id).one_or_none()
     result = CurrencySchema().dump(result)
     return jsonify(result), 200
 
@@ -59,7 +61,7 @@ def get_currency_id(id: int):
 def post_currency():
     """
 
-    Posts a new Currency 
+    Posts a new Currency
     ---
 
 
@@ -81,7 +83,7 @@ def post_currency():
 
         '400':
             description: Bad Request
-    """    
+    """
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
@@ -97,8 +99,8 @@ def post_currency():
     except ValidationError as err:
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
 
-    if 'id' in request.json:
-        id = request.json['id']
+    if "id" in request.json:
+        id = request.json["id"]
         existing_currency = Currency.query.filter_by(id=id).one_or_none()
         if existing_currency:
             return (
@@ -110,7 +112,6 @@ def post_currency():
                 ),
                 400,
             )
-
     database.session.add(result)
     database.session.commit()
     return jsonify(request.json), 200
@@ -143,7 +144,6 @@ def get_currency_date(date, currency_id):
             currency_id=currency_id, date=date
         ).one_or_none()
         result = CurrencyValuesSchema().dump(result)
-
 
     else:
         result = CurrencyValues.query.filter_by(date=date).all()
@@ -198,7 +198,7 @@ def get_currency_values_id(id: int):
             type: array
             items:
                 $ref: '#/definitions/CurrencyValues'
-              
+
         '400':
           description: Bad Request
 
@@ -224,7 +224,8 @@ def get_currency_values_id(id: int):
         result = get_currency_period(start_date, end_date, id)
         return jsonify(result), 200
 
-    result = CurrencyValues.query.filter_by(currency_id=id).all()
+    result = database.session.query(CurrencyValues).filter_by(currency_id=id).all()
+    #   result = CurrencyValues.query.filter_by(currency_id=id).all()
     result = CurrencyValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -270,7 +271,7 @@ def get_currency_values_date():
             type: array
             items:
                 $ref: '#/definitions/CurrencyValues'
-              
+
         '400':
           description: Bad Request
 
@@ -294,15 +295,14 @@ def get_currency_values_date():
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = get_currency_period(start_date, end_date, currency_id=None)
         return jsonify(result), 200
-
-    result = CurrencyValues.query.all()
+    result = database.session.query(CurrencyValues).all()
     result = CurrencyValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
 
-@currency_blueprint.route('/values/',methods=['POST'])
+@currency_blueprint.route("/values/", methods=["POST"])
 def post_currency_values():
-    
+
     """
     Posts a new value to a currency
     ---
@@ -313,7 +313,7 @@ def post_currency_values():
     parameters:
         - in: body
           name: currency value
-          description: A value to entry associated with a currency 
+          description: A value to entry associated with a currency
           schema:
                 $ref: '#/definitions/CurrencyValues'
     responses:
@@ -327,7 +327,7 @@ def post_currency_values():
             description: Bad Request
     """
     content_type = request.headers.get("Content-Type")
-        
+
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
@@ -336,18 +336,14 @@ def post_currency_values():
 
     if not request.json:
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
-    
+
     try:
         result = CurrencyValuesSchema(session=database.session).load(request.json)
     except ValidationError as err:
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
-    
 
-    
-    currency = request.json['currency']['currency']
-    existing_currency= Currency.query.filter_by(
-        currency = currency
-    ).one_or_none()
+    currency = request.json["currency"]["currency"]
+    existing_currency = Currency.query.filter_by(currency=currency).one_or_none()
 
     if existing_currency:
         request.json["currency"] = CurrencySchema().dump(existing_currency)

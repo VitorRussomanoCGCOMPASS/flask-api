@@ -1,12 +1,15 @@
 """  Validate query arguments with dates """
-from marshmallow import RAISE, Schema, ValidationError, fields, validates_schema
+from marshmallow import RAISE, ValidationError, fields, validates_schema
+from api.request_schemas.add_fields import AdditionalFieldsSchema
 
 
-class PeriodSchema(Schema):
+
+class PeriodSchema(AdditionalFieldsSchema):
     class Meta:
         dateformat = "%Y-%m-%d"
         unknown = RAISE
-
+    
+ 
     start_date = fields.Date(required=True)
     end_date = fields.Date(required=True)
 
@@ -17,7 +20,7 @@ class PeriodSchema(Schema):
             raise ValidationError("Start date should be greater than End date")
 
 
-class DateSchema(Schema):
+class DateSchema(AdditionalFieldsSchema):
     class Meta:
         dateformat = "%Y-%m-%d"
         unknown = RAISE

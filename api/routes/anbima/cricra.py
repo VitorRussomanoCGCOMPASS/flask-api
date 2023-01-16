@@ -33,37 +33,23 @@ def get_crica_period(start_date, end_date, emissor=None, codigo_ativo=None):
 
 
 def get_crica_date(data_referencia, emissor=None, codigo_ativo=None):
-    
-    
+
     if codigo_ativo:
         result = CriCra.query.filter_by(
             data_referencia=data_referencia, codigo_ativo=codigo_ativo
         ).one_or_none()
         result = CriCraSchema().dump(result)
-        
-    
+
     elif emissor:
         result = CriCra.query.filter_by(
             data_referencia=data_referencia, emissor=emissor
         ).all()
-        
+
         result = CriCraSchema().dump(result, many=True)
-    
-    
+
     else:
         result = CriCra.query.filter_by(data_referencia=data_referencia).all()
         result = CriCraSchema().dump(result, many=True)
-    return result
-
-
-def get_crica_all(emissor=None):
-
-    if emissor:
-        result = CriCra.query.filter_by(emissor=emissor).all()
-    else:
-        result = CriCra.query.all()
-
-    result = CriCraSchema().dump(result, many=True)
     return result
 
 
@@ -77,13 +63,13 @@ def get_crica():
 
     parameters:
 
-      - name: issuer 
+      - name: issuer
         in: query
         type: string
         required: False
         description:
             Securitization company responsible for issuing the paper
- 
+
       - name: date
         in: query
         type: string
@@ -122,6 +108,7 @@ def get_crica():
         '400':
           description: Bad Request
     """
+
     args = request.args
 
     data_referencia = args.get("date", type=str)
@@ -129,26 +116,34 @@ def get_crica():
     end_date = args.get("end_date", type=str)
     emissor = args.get("issuer", type=str)
 
-    DateSchema._declared_fields.update({"issuer": fields.Str()})
-    PeriodSchema._declared_fields.update({"issuer": fields.Str()})
-
     if data_referencia:
-        error = DateSchema().validate(args)
+
+        error = DateSchema({"issuer": fields.Str()}).validate(args)
+
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_crica_date(data_referencia=data_referencia, emissor=emissor)
+
+        result = get_crica_date(**args)
+
         return jsonify(result), 200
 
     if start_date or end_date:
-        error = PeriodSchema().validate(args)
+
+        error = PeriodSchema({"issuer": fields.Str()}).validate(args)
+
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = get_crica_period(
-            start_date=start_date, end_date=end_date, emissor=emissor
-        )
+
+        result = get_crica_period(**args)
+        
         return jsonify(result), 200
 
-    result = get_crica_all(emissor)
+    if emissor:
+        result = CriCra.query.filter_by(emissor=emissor).all()
+    else:
+        result = CriCra.query.all()
+
+    result = CriCraSchema().dump(result, many=True)
     return jsonify(result), 200
 
 
@@ -199,6 +194,7 @@ def get_crica_cod(codigo_ativo: str):
         '200':
           description: OK
           schema:
+                type: array
                 $ref: '#/definitions/CriCra'
 
         '400':

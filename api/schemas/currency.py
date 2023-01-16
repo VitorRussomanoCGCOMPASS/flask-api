@@ -2,6 +2,7 @@ from api.schemas.base_schema import CustomSchema
 from api.models.currency import Currency, CurrencyValues
 from marshmallow import RAISE, fields, pre_load, post_load
 
+
 from app import database
 
 

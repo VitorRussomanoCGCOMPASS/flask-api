@@ -1,11 +1,14 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.ext.declarative import declarative_base
+# from flask_sqlalchemy import SQLAlchemy
 import sqlalchemy as db
+from sqlalchemy import MetaData
+from sqlalchemy.ext.declarative import declarative_base
 
-# from sqlalchemy import MetaData
+metadata = MetaData()
+Base = declarative_base(metadata=metadata)  
 
-Base = declarative_base()
-database = SQLAlchemy(model_class=Base)
+# database = SQLAlchemy(model_class=Base)
+
+
 
 
 def Column(*args, **kwargs):

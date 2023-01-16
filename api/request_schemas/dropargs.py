@@ -13,3 +13,4 @@ class DropSchema(Schema):
         return {
             key: value for key, value in data.items() if value not in self.SKIP_VALUES
         }
+

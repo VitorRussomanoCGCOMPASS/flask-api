@@ -2,8 +2,6 @@ from api.models.base_model import Base,Column
 import sqlalchemy as db
 
 
-# FIXME: CRICRA
-
 
 class CriCra(Base):
     """

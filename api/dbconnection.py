@@ -8,8 +8,9 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import sessionmaker
 
 CONNECTION_STRING = (
-    "DRIVER={0};SERVER=" + "{1}" + ";DATABASE=" + "{2}" + ";TRUSTED_CONNECTION=yes"
+    "DRIVER={0};SERVER=" + "{1}" + ";DATABASE=" + "{2}"
 )
+
 
 
 urls = {
@@ -26,12 +27,11 @@ urls = {
         "mssql+pyodbc",
         query={
             "odbc_connect": CONNECTION_STRING.format(
-                "{SQL Server}", "DESKTOP-46RDGH3", "testing"
+                "{SQL Server}", "DESKTOP-46RDGH3", "testing" 
             )
         },
     ),
 }
-
 
 class DatabaseNotRegistred(Exception):
     """
