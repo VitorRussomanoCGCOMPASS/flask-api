@@ -1,32 +1,37 @@
 from flask import Blueprint, jsonify, request
+from marshmallow import fields
 
 from api.models.cricra import CriCra
+from api.request_schemas.dateargs import DateSchema, PeriodSchema
 from api.routes.anbima import anbima_blueprint
 from api.schemas.cricra import CriCraSchema
-from marshmallow import fields
-from api.request_schemas.dateargs import DateSchema, PeriodSchema
+from app import database
 
 
 def get_crica_period(start_date, end_date, emissor=None, codigo_ativo=None):
 
     if codigo_ativo:
         result = (
-            CriCra.query.filter(CriCra.data_referencia.between(start_date, end_date))
+            database.session.query(CriCra)
+            .filter(CriCra.data_referencia.between(start_date, end_date))
             .filter_by(codigo_ativo=codigo_ativo)
             .all()
         )
 
     elif emissor:
         result = (
-            CriCra.query.filter(CriCra.data_referencia.between(start_date, end_date))
+            database.session.query(CriCra)
+            .filter(CriCra.data_referencia.between(start_date, end_date))
             .filter_by(emissor=emissor)
             .all()
         )
 
     else:
-        result = CriCra.query.filter(
-            CriCra.data_referencia.between(start_date, end_date)
-        ).all()
+        result = (
+            database.session.query(CriCra)
+            .filter(CriCra.data_referencia.between(start_date, end_date))
+            .all()
+        )
 
     result = CriCraSchema().dump(result, many=True)
     return result
@@ -35,20 +40,28 @@ def get_crica_period(start_date, end_date, emissor=None, codigo_ativo=None):
 def get_crica_date(data_referencia, emissor=None, codigo_ativo=None):
 
     if codigo_ativo:
-        result = CriCra.query.filter_by(
-            data_referencia=data_referencia, codigo_ativo=codigo_ativo
-        ).one_or_none()
+        result = (
+            database.session.query(CriCra)
+            .filter_by(data_referencia=data_referencia, codigo_ativo=codigo_ativo)
+            .one_or_none()
+        )
         result = CriCraSchema().dump(result)
 
     elif emissor:
-        result = CriCra.query.filter_by(
-            data_referencia=data_referencia, emissor=emissor
-        ).all()
+        result = (
+            database.session.query(CriCra)
+            .filter_by(data_referencia=data_referencia, emissor=emissor)
+            .all()
+        )
 
         result = CriCraSchema().dump(result, many=True)
 
     else:
-        result = CriCra.query.filter_by(data_referencia=data_referencia).all()
+        result = (
+            database.session.query(CriCra)
+            .filter_by(data_referencia=data_referencia)
+            .all()
+        )
         result = CriCraSchema().dump(result, many=True)
     return result
 
@@ -135,13 +148,13 @@ def get_crica():
             return jsonify({"error": "Bad Request", "message": error}), 400
 
         result = get_crica_period(**args)
-        
+
         return jsonify(result), 200
 
     if emissor:
-        result = CriCra.query.filter_by(emissor=emissor).all()
+        result = database.session.query(CriCra).filter_by(emissor=emissor).all()
     else:
-        result = CriCra.query.all()
+        result = database.session.query(CriCra).all()
 
     result = CriCraSchema().dump(result, many=True)
     return jsonify(result), 200
@@ -227,6 +240,6 @@ def get_crica_cod(codigo_ativo: str):
         )
         return jsonify(result), 200
 
-    result = CriCra.query.filter_by(codigo_ativo=codigo_ativo).all()
+    result = database.session.query(CriCra).filter_by(codigo_ativo=codigo_ativo).all()
     result = CriCraSchema().dump(result, many=True)
     return jsonify(result), 200

@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, request
 from api.models.market_index import MarketIndex
 from api.request_schemas.dateargs import DateSchema, PeriodSchema
 from api.schemas.market_index import MarketIndexSchema
+from app import database
 
 marketindex_blueprint = Blueprint("MarketIndex", __name__, url_prefix="/marketindex")
 
@@ -64,7 +65,7 @@ def get_marketindex():
         error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad request", "message": error}), 400
-        result = MarketIndex.query.filter_by(**args).all()
+        result = database.session.query(MarketIndex).filter_by(**args).all()
         result = MarketIndexSchema().dump(result, many=True)
         return jsonify(result), 200
 
@@ -72,14 +73,14 @@ def get_marketindex():
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad request", "message": error}), 400
-        result = MarketIndex.query.filter(
+        result = database.session.query(MarketIndex).filter(
             MarketIndex.date.between(start_date, end_date)
         ).all()
 
         result = MarketIndexSchema().dump(result, many=True)
         return jsonify(result),200
 
-    result = MarketIndex.query.all()
+    result = database.session.query(MarketIndex).all()
     result = MarketIndexSchema().dump(result, many=True)
 
     return jsonify(result), 200
@@ -149,7 +150,7 @@ def get_marketindex_id(index: str):
         if errors:
             return jsonify({"error": "Bad request", "message": errors}), 400
 
-        result = MarketIndex.query.filter_by(**args, index=index).one_or_none()
+        result = database.session.query(MarketIndex).filter_by(**args, index=index).one_or_none()
         result = MarketIndexSchema().dump(result)
         return jsonify(result), 200
 
@@ -158,13 +159,13 @@ def get_marketindex_id(index: str):
         if errors:
             return jsonify({"error": "Bad request", "message": errors}), 400
         result = (
-            MarketIndex.query.filter(MarketIndex.date.between(start_date, end_date))
+            database.session.query(MarketIndex).filter(MarketIndex.date.between(start_date, end_date))
             .filter_by(index=index)
             .all()
         )
         result = MarketIndexSchema().dump(result, many=True)
         return jsonify(result), 200
 
-    result = MarketIndex.query.filter_by(index=index).all()
+    result = database.session.query(MarketIndex).filter_by(index=index).all()
     result = MarketIndexSchema().dump(result, many=True)
     return jsonify(result), 200

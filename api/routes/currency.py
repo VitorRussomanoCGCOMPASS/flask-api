@@ -18,7 +18,8 @@ def get_currency():
     Returns all Currencies
     ---
 
-    responses:
+    responses:from app import database
+
         '200':
           description: OK
           schema:
@@ -121,7 +122,7 @@ def get_currency_period(start_date, end_date, currency_id):
 
     if currency_id:
         result = (
-            CurrencyValues.query.filter(
+            database.session.query(CurrencyValues).filter(
                 CurrencyValues.date.between(start_date, end_date)
             )
             .filter_by(currency_id=currency_id)
@@ -129,7 +130,7 @@ def get_currency_period(start_date, end_date, currency_id):
         )
 
     else:
-        result = CurrencyValues.query.filter(
+        result = database.session.query(CurrencyValues).filter(
             CurrencyValues.date.between(start_date, end_date)
         ).all()
 
@@ -140,13 +141,13 @@ def get_currency_period(start_date, end_date, currency_id):
 def get_currency_date(date, currency_id):
 
     if currency_id:
-        result = CurrencyValues.query.filter_by(
+        result = database.session.query(CurrencyValues).filter_by(
             currency_id=currency_id, date=date
         ).one_or_none()
         result = CurrencyValuesSchema().dump(result)
 
     else:
-        result = CurrencyValues.query.filter_by(date=date).all()
+        result = database.session.query(CurrencyValues).filter_by(date=date).all()
         result = CurrencyValuesSchema().dump(result, many=True)
 
     return result
@@ -225,7 +226,7 @@ def get_currency_values_id(id: int):
         return jsonify(result), 200
 
     result = database.session.query(CurrencyValues).filter_by(currency_id=id).all()
-    #   result = CurrencyValues.query.filter_by(currency_id=id).all()
+    #   result = database.session.query(CurrencyValues).filter_by(currency_id=id).all()
     result = CurrencyValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 

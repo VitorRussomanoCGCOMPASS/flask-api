@@ -1,13 +1,9 @@
-import logging
-import logging.config
-
 from flasgger import Swagger
 from flasgger import APISpec
 
 from flask import Flask
-from flask_apscheduler import APScheduler
 
-from api.config import DEFAULT_LOGGER, Config
+from api.config import Config
 
 from db import database
 
@@ -25,13 +21,9 @@ from api.routes.debentures import debentures_blueprint
 
 from apispec.ext.marshmallow import MarshmallowPlugin
 
-# logging.config.dictConfig(DEFAULT_LOGGER)
-# logger = logging.getLogger("apscheduler")
-
 
 from api.schemas.currency import CurrencySchema, CurrencyValuesSchema
 from api.schemas.indexes import IndexesSchema, IndexValuesSchema
-from api.schemas.eventlog import EventLogSchema
 from api.schemas.holidays import HolidayCalendarsSchema, HolidaysSchema
 from api.schemas.sector import SectorEntrySchema, AssetsSectorSchema
 from api.schemas.market_index import MarketIndexSchema
@@ -60,7 +52,6 @@ def create_template(app: Flask):
             CurrencyValuesSchema,
             IndexesSchema,
             IndexValuesSchema,
-            EventLogSchema,
             HolidayCalendarsSchema,
             HolidaysSchema,
             SectorEntrySchema,
@@ -78,11 +69,6 @@ def create_template(app: Flask):
     return template
 
 
-
-
-
-
-
 def create_app(config_class=Config) -> Flask:
     app = Flask(__name__)
     app.config.from_object(config_class)
@@ -95,26 +81,15 @@ def create_app(config_class=Config) -> Flask:
     app.register_blueprint(anbima_blueprint)
     app.register_blueprint(debentures_blueprint)
 
-    scheduler = APScheduler()
-    scheduler.init_app(app)
-    scheduler.start()
-
     template = create_template(app)
     swagger = Swagger(app, template=template)
-    
 
     database.init_app(app)
-    
-
-        
 
     return app
-
 
 
 if __name__ == "__main__":
     app = create_app(config_class=Config)
 
     app.run(debug=True)
-
-

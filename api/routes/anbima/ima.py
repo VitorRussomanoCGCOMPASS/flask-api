@@ -4,17 +4,17 @@ from api.models.ima import IMA, ComponentsIMA
 from api.routes.anbima import anbima_blueprint
 from api.schemas.ima import ComponentsIMASchema, IMASchema
 from api.request_schemas.dateargs import DateSchema, PeriodSchema
-
+from app import database
 
 def get_ima_date(data_referencia, indice=None):
     if indice:
-        result = IMA.query.filter_by(
+        result =database.session.query(IMA).filter_by(
             data_referencia=data_referencia, indice=indice
         ).one_or_none()
         result = IMASchema().dump(result)
 
     else:
-        result = IMA.query.filter_by(data_referencia=data_referencia).all()
+        result =database.session.query(IMA).filter_by(data_referencia=data_referencia).all()
         result = IMASchema().dump(result, many=True)
 
     return result
@@ -24,13 +24,13 @@ def get_ima_period(start_date, end_date, indice=None):
    
     if indice:
         result = (
-            IMA.query.filter_by(indice=indice)
+           database.session.query(IMA).filter_by(indice=indice)
             .filter(IMA.data_referencia.between(start_date, end_date))
             .all()
         )
    
     else:
-        result = IMA.query.filter(
+        result =database.session.query(IMA).filter(
             IMA.data_referencia.between(start_date, end_date)
         ).all()
    
@@ -41,13 +41,13 @@ def get_ima_period(start_date, end_date, indice=None):
 def get_comp_date(data_referencia, indice=None):
 
     if indice:
-        result = ComponentsIMA.query.filter_by(
+        result = database.session.query(ComponentsIMA).filter_by(
             data_referencia=data_referencia, indice=indice
         ).one_or_none()
         result = ComponentsIMASchema().dump(result)
 
     else:
-        result = ComponentsIMA.query.filter_by(data_referencia=data_referencia).all()
+        result = database.session.query(ComponentsIMA).filter_by(data_referencia=data_referencia).all()
         result = ComponentsIMASchema().dump(result, many=True)
     
     return result
@@ -56,13 +56,13 @@ def get_comp_date(data_referencia, indice=None):
 def get_comp_period(start_date, end_date, indice=None):
     if indice:
         result = (
-            ComponentsIMA.query.filter_by(indice=indice)
+            database.session.query(ComponentsIMA).filter_by(indice=indice)
             .filter(ComponentsIMA.data_referencia.between(start_date, end_date))
             .all()
         )
   
     else:
-        result = ComponentsIMA.query.filter(
+        result = database.session.query(ComponentsIMA).filter(
             ComponentsIMA.data_referencia.between(start_date, end_date)
         ).all()
   
@@ -168,7 +168,7 @@ def get_ima():
         result = get_ima_period(start_date=start_date, end_date=end_date)
         return jsonify(result), 200
 
-    result = IMA.query.all()
+    result =database.session.query(IMA).all()
     result = IMASchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -281,7 +281,7 @@ def get_ima_index(index: str):
         result = get_ima_period(start_date=start_date, end_date=end_date, indice=index)
         return jsonify(result), 200
 
-    result = IMA.query.filter_by(indice=index).all()
+    result =database.session.query(IMA).filter_by(indice=index).all()
     result = IMASchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -355,7 +355,7 @@ def get_components():
         result = get_comp_period(start_date=start_date, end_date=end_date)
         return jsonify(result), 200
 
-    result = ComponentsIMA.query.all()
+    result = database.session.query(ComponentsIMA).all()
     result = ComponentsIMASchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -435,6 +435,6 @@ def get_components_index(index: str):
         result = get_ima_period(start_date=start_date, end_date=end_date, indice=index)
         return jsonify(result), 200
 
-    result = ComponentsIMA.query.filter_by(indice=index).all()
+    result = database.session.query(ComponentsIMA).filter_by(indice=index).all()
     result = ComponentsIMASchema().dump(result, many=True)
     return jsonify(result), 200

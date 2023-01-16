@@ -25,7 +25,7 @@ def get_indexes():
 
 
     """
-    result = Indexes.query.all()
+    result = database.session.query(Indexes).all()
     result = IndexesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -53,7 +53,7 @@ def get_indexes_id(id: int):
           description: Bad Request. field `id` must be an integer
 
     """
-    result = Indexes.query.filter_by(id=id).one_or_none()
+    result = database.session.query(Indexes).filter_by(id=id).one_or_none()
     result = IndexesSchema().dump(result)
     return jsonify(result), 200
 
@@ -61,12 +61,12 @@ def get_indexes_id(id: int):
 def get_index_period(start_date, end_date, index_id):
     if index_id:
         result = (
-            IndexValues.query.filter(IndexValues.date.between(start_date, end_date))
+           database.session.query(IndexValues).filter(IndexValues.date.between(start_date, end_date))
             .filter_by(index_id=index_id)
             .all()
         )
     else:
-        result = IndexValues.query.filter(
+        result =database.session.query(IndexValues).filter(
             IndexValues.date.between(start_date, end_date)
         ).all()
 
@@ -77,11 +77,11 @@ def get_index_period(start_date, end_date, index_id):
 def get_index_date(date, index_id):
 
     if index_id:
-        result = IndexValues.query.filter_by(index_id=index_id, date=date).one_or_none()
+        result =database.session.query(IndexValues).filter_by(index_id=index_id, date=date).one_or_none()
         result = IndexValuesSchema().dump(result)
 
     else:
-        result = IndexValues.query.filter_by(date=date).all()
+        result =database.session.query(IndexValues).filter_by(date=date).all()
         result = IndexValuesSchema().dump(result, many=True)
     return result
 
@@ -151,7 +151,7 @@ def get_indexes_values():
         result = get_index_period(start_date, end_date, index_id=None)
         return jsonify(result), 200
 
-    result = IndexValues.query.all()
+    result =database.session.query(IndexValues).all()
     result = IndexValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -226,7 +226,7 @@ def get_indexes_values_id(id: int):
         result = get_index_period(start_date, end_date, index_id=id)
         return jsonify(result), 200
 
-    result = IndexValues.query.filter_by(index_id=id).all()
+    result =database.session.query(IndexValues).filter_by(index_id=id).all()
     result = IndexValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -273,7 +273,7 @@ def post_index():
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
     if 'id' in request.json:
         id = request.json['id']
-        existing_index = Indexes.query.filter_by(id=id).one_or_none()
+        existing_index = database.session.query(Indexes).filter_by(id=id).one_or_none()
         if existing_index:
             return (
                 jsonify(
@@ -333,7 +333,7 @@ def post_indexes_values():
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
 
     index = request.json['index']['index']
-    existing_index= Indexes.query.filter_by(
+    existing_index= database.session.query(Indexes).filter_by(
         index =index
     ).one_or_none()
     

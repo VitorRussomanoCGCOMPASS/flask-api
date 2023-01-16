@@ -12,18 +12,18 @@ debentures_blueprint = Blueprint("Debentures", __name__, url_prefix="/debentures
 def get_debentures_date(date, issuer=None, codigo_ativo=None):
 
     if issuer:
-        result = Debentures.query.filter_by(
+        result =database.session.query(Debentures).filter_by(
             data_referencia=date, issuer=issuer
         ).one_or_none()
         result = DebenturesSchema().dump(result)
         return result
     
     elif codigo_ativo:
-        result = Debentures.query.filter_by(
+        result =database.session.query(Debentures).filter_by(
             data_referencia=date, codigo_ativo=codigo_ativo
         ).all()
     else:
-        result = Debentures.query.filter_by(data_referencia=date).all()
+        result =database.session.query(Debentures).filter_by(data_referencia=date).all()
 
     result = DebenturesSchema().dump(result, many=True)
     return result
@@ -32,7 +32,7 @@ def get_debentures_date(date, issuer=None, codigo_ativo=None):
 def get_debentures_period(start_date, end_date, issuer=None, codigo_ativo=None):
     if issuer:
         result = (
-            Debentures.query.filter(
+           database.session.query(Debentures).filter(
                 Debentures.data_referencia.between(start_date, end_date)
             )
             .filter_by(issuer=issuer)
@@ -40,14 +40,14 @@ def get_debentures_period(start_date, end_date, issuer=None, codigo_ativo=None):
         )
     if codigo_ativo:
         result = (
-            Debentures.query.filter(
+           database.session.query(Debentures).filter(
                 Debentures.data_referencia.between(start_date, end_date)
             )
             .filter_by(codigo_ativo=codigo_ativo)
             .all()
         )
     else:
-        result = Debentures.query.filter(
+        result =database.session.query(Debentures).filter(
             Debentures.data_referencia.between(start_date, end_date)
         ).all()
 
@@ -130,9 +130,9 @@ def get_debentures():
         return jsonify(result), 200
 
     if issuer:
-        result = Debentures.query.filter_by(emissor=issuer).all()
+        result =database.session.query(Debentures).filter_by(emissor=issuer).all()
     else:
-        result = Debentures.query.all()
+        result =database.session.query(Debentures).all()
 
     result = DebenturesSchema().dump(result, many=True)
     return jsonify(result), 200
@@ -217,7 +217,7 @@ def get_debentures_cod(codigo_ativo: str):
         args["codigo_ativo"] = codigo_ativo
         result = get_debentures_period(**args)
 
-    result = Debentures.query.filter_by(codigo_ativo=codigo_ativo).all()
+    result =database.session.query(Debentures).filter_by(codigo_ativo=codigo_ativo).all()
     result = DebenturesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -288,7 +288,7 @@ def update_debentures(codigo_ativo: str):
     if error:
         return jsonify({"error": "Bad Request", "message": error}), 400
 
-    existing_debenture = Debentures.query.filter_by(
+    existing_debenture =database.session.query(Debentures).filter_by(
         codigo_ativo=codigo_ativo, data_referencia=data_referencia
     ).one_or_none()
     if existing_debenture:

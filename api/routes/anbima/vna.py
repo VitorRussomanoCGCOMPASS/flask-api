@@ -5,6 +5,7 @@ from api.request_schemas.dateargs import DateSchema, PeriodSchema
 from api.routes.anbima import anbima_blueprint
 from api.schemas.vna import VNASchema
 
+from app import database
 
 @anbima_blueprint.route("/vna/", methods=["GET"])
 def get_vna():
@@ -62,7 +63,7 @@ def get_vna():
         error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = VNA.query.filter_by(data_referencia=data_referencia).all()
+        result =database.session.query(VNA).filter_by(data_referencia=data_referencia).all()
         result = VNASchema().dump(result, many=True)
         return jsonify(result), 200
 
@@ -70,13 +71,13 @@ def get_vna():
         error = PeriodSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = VNA.query.filter(
+        result =database.session.query(VNA).filter(
             VNA.data_referencia.between(start_date, end_date)
         ).all()
         result = VNASchema().dump(result, many=True)
         return jsonify(result), 200
 
-    result = VNA.query.all()
+    result =database.session.query(VNA).all()
     result = VNASchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -143,7 +144,7 @@ def get_vna_id(codigo_selic: str):
         error = DateSchema().validate(args)
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
-        result = VNA.query.filter_by(
+        result =database.session.query(VNA).filter_by(
             data_referencia=data_referencia, codigo_selic=codigo_selic
         ).one_or_none()
         result = VNASchema().dump(result)
@@ -154,13 +155,13 @@ def get_vna_id(codigo_selic: str):
         if error:
             return jsonify({"error": "Bad Request", "message": error}), 400
         result = (
-            VNA.query.filter(VNA.data_referencia.between(start_date, end_date))
+           database.session.query(VNA).filter(VNA.data_referencia.between(start_date, end_date))
             .filter_by(codigo_selic=codigo_selic)
             .all()
         )
         result = VNASchema().dump(result, many=True)
         return jsonify(result), 200
 
-    result = VNA.query.filter_by(codigo_selic=codigo_selic).all()
+    result =database.session.query(VNA).filter_by(codigo_selic=codigo_selic).all()
     result = VNASchema().dump(result, many=True)
     return jsonify(result), 200
