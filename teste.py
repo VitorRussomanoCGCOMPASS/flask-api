@@ -12,3 +12,5 @@ engine =create_engine(Config.SQLALCHEMY_DATABASE_URI)
 session = Session(engine)
 currencies = session.query(Currency).all()
 session.close()
+
+
