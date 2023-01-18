@@ -71,15 +71,15 @@ def create_template(app: Flask):
 
 def create_app(config_class=Config) -> Flask:
     app = Flask(__name__)
+    
     app.config.from_object(config_class)
-
-    app.register_blueprint(sector_blueprint)
+    app.register_blueprint(sector_blueprint)   
     app.register_blueprint(marketindex_blueprint)
     app.register_blueprint(middleoffice_blueprint)
-    app.register_blueprint(currency_blueprint)
     app.register_blueprint(indexes_blueprint)
     app.register_blueprint(anbima_blueprint)
     app.register_blueprint(debentures_blueprint)
+    app.register_blueprint(currency_blueprint)
 
     template = create_template(app)
     swagger = Swagger(app, template=template)

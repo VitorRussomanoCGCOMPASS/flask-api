@@ -23,3 +23,5 @@ def Column(*args, **kwargs):
     """
     kwargs.setdefault("nullable", False)
     return db.Column(*args, **kwargs)
+
+

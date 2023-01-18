@@ -239,13 +239,14 @@ def post_debentures():
                 $ref: '#/definitions/OtherDebentures'
     responses:
         '200':
-            description: OK
-            schema:
-                type: object
+          description: OK
+          schema:
+            type: object
+            items:
                 $ref : '#/definitions/OtherDebentures'
 
         '400':
-            description: Bad Request
+          description: Bad Request
     """
     content_type = request.headers.get("Content-Type")
 

@@ -197,7 +197,7 @@ def create_assetsector():
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
 
     try:
-        result = AssetsSectorSchema(database.session).load(request.json)
+        result = AssetsSectorSchema(session=database.session).load(request.json)
     except ValidationError as err:
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
     sector_entry = request.json["sector_entry"]

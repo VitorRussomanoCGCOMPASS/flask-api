@@ -18,7 +18,7 @@ def get_currency():
     Returns all Currencies
     ---
 
-    responses:from flask_api.app import database
+    responses:
 
         '200':
           description: OK

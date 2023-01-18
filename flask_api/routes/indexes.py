@@ -61,14 +61,17 @@ def get_indexes_id(id: int):
 def get_index_period(start_date, end_date, index_id):
     if index_id:
         result = (
-           database.session.query(IndexValues).filter(IndexValues.date.between(start_date, end_date))
+            database.session.query(IndexValues)
+            .filter(IndexValues.date.between(start_date, end_date))
             .filter_by(index_id=index_id)
             .all()
         )
     else:
-        result =database.session.query(IndexValues).filter(
-            IndexValues.date.between(start_date, end_date)
-        ).all()
+        result = (
+            database.session.query(IndexValues)
+            .filter(IndexValues.date.between(start_date, end_date))
+            .all()
+        )
 
     result = IndexValuesSchema().dump(result, many=True)
     return result
@@ -77,11 +80,15 @@ def get_index_period(start_date, end_date, index_id):
 def get_index_date(date, index_id):
 
     if index_id:
-        result =database.session.query(IndexValues).filter_by(index_id=index_id, date=date).one_or_none()
+        result = (
+            database.session.query(IndexValues)
+            .filter_by(index_id=index_id, date=date)
+            .one_or_none()
+        )
         result = IndexValuesSchema().dump(result)
 
     else:
-        result =database.session.query(IndexValues).filter_by(date=date).all()
+        result = database.session.query(IndexValues).filter_by(date=date).all()
         result = IndexValuesSchema().dump(result, many=True)
     return result
 
@@ -151,7 +158,7 @@ def get_indexes_values():
         result = get_index_period(start_date, end_date, index_id=None)
         return jsonify(result), 200
 
-    result =database.session.query(IndexValues).all()
+    result = database.session.query(IndexValues).all()
     result = IndexValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -226,7 +233,7 @@ def get_indexes_values_id(id: int):
         result = get_index_period(start_date, end_date, index_id=id)
         return jsonify(result), 200
 
-    result =database.session.query(IndexValues).filter_by(index_id=id).all()
+    result = database.session.query(IndexValues).filter_by(index_id=id).all()
     result = IndexValuesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -235,7 +242,7 @@ def get_indexes_values_id(id: int):
 def post_index():
     """
 
-    Posts a new Index 
+    Posts a new Index
     ---
 
 
@@ -244,7 +251,7 @@ def post_index():
 
     parameters:
         - in: body
-          name: index 
+          name: index
           description: The new index to create
           schema:
                 $ref: '#/definitions/Indexes'
@@ -257,7 +264,7 @@ def post_index():
 
         '400':
             description: Bad Request
-    """    
+    """
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
         return (
@@ -271,8 +278,8 @@ def post_index():
         result = IndexesSchema().load(request.json)
     except ValidationError as err:
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
-    if 'id' in request.json:
-        id = request.json['id']
+    if "id" in request.json:
+        id = request.json["id"]
         existing_index = database.session.query(Indexes).filter_by(id=id).one_or_none()
         if existing_index:
             return (
@@ -292,7 +299,7 @@ def post_index():
 
 @indexes_blueprint.route("/values/", methods=["POST"])
 def post_indexes_values():
-    
+
     """
     Posts a new value to a index
     ---
@@ -303,7 +310,7 @@ def post_indexes_values():
     parameters:
         - in: body
           name: index value
-          description: A value to entry associated with a index 
+          description: A value to entry associated with a index
           schema:
                 $ref: '#/definitions/IndexValues'
     responses:
@@ -317,7 +324,7 @@ def post_indexes_values():
             description: Bad Request
     """
     content_type = request.headers.get("Content-Type")
-        
+
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
@@ -326,17 +333,17 @@ def post_indexes_values():
 
     if not request.json:
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
-    
+
     try:
         result = IndexValuesSchema(session=database.session).load(request.json)
     except ValidationError as err:
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
 
-    index = request.json['index']['index']
-    existing_index= database.session.query(Indexes).filter_by(
-        index =index
-    ).one_or_none()
-    
+    index = request.json["index"]["index"]
+    existing_index = (
+        database.session.query(Indexes).filter_by(index=index).one_or_none()
+    )
+
     if existing_index:
         request.json["index"] = IndexesSchema().dump(existing_index)
         result = IndexValuesSchema(session=database.session).load(request.json)

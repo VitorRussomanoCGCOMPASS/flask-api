@@ -84,13 +84,13 @@ def post_holidaycalendar():
 
     responses:
         '200':
-            description: OK
-            schema:
+          description: OK
+          schema:
                 type: object
-                $ref : '#/definitions/HolidayCalendars'
+                $ref: '#/definitions/HolidayCalendars'
 
-        '400':
-            description: Bad Request.
+        '404':
+          description: Bad Request.
     """
     content_type = request.headers.get("Content-Type")
     if content_type != "application/json":
@@ -101,7 +101,7 @@ def post_holidaycalendar():
 
     if not request.json:
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
-   
+
     try:
         result = HolidayCalendarsSchema(session=database.session).load(request.json)
     except ValidationError as err:
@@ -124,7 +124,6 @@ def post_holidaycalendar():
     database.session.add(result)
     database.session.commit()
     return jsonify(request.json), 200
-
 
 
 @middleoffice_blueprint.route("/holiday-calendars/<int:id>/holidays/", methods=["GET"])
@@ -199,18 +198,19 @@ def post_holidays():
           description: A holiday to create associated with a calendar
           schema:
                 $ref: '#/definitions/Holidays'
+
     responses:
         '200':
-            description: OK
-            schema:
+          description: OK
+          schema:
                 type: object
-                $ref : '#/definitions/Holidays'
+                $ref: '#/definitions/Holidays'
 
-        '400':
-            description: Bad Request
+        '404':
+          description: Bad Request.
     """
     content_type = request.headers.get("Content-Type")
-        
+
     if content_type != "application/json":
         return (
             jsonify({"error": "Bad Request", "message": "Content-Type not supported"}),
@@ -219,7 +219,7 @@ def post_holidays():
 
     if not request.json:
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
-    
+
     try:
         result = HolidaysSchema(session=database.session).load(request.json)
     except ValidationError as err:

@@ -92,4 +92,3 @@ class CriCra(Base):
     referencia_ntnb = Column(db.Date, nullable=True)
     tipo_contrato = Column(db.String, nullable=True)
 
-
