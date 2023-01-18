@@ -1,10 +1,10 @@
 from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError, fields
 
-from flask_api.models.debentures import Debentures, OtherDebentures
-from flask_api.schemas.debentures import DebenturesSchema, OtherDebenturesSchema
 from flask_api.app import database
+from flask_api.models.debentures import Debentures
 from flask_api.request_schemas.dateargs import DateSchema, PeriodSchema
+from flask_api.schemas.debentures import DebenturesSchema
 
 debentures_blueprint = Blueprint("Debentures", __name__, url_prefix="/debentures")
 
@@ -12,18 +12,24 @@ debentures_blueprint = Blueprint("Debentures", __name__, url_prefix="/debentures
 def get_debentures_date(date, issuer=None, codigo_ativo=None):
 
     if issuer:
-        result =database.session.query(Debentures).filter_by(
-            data_referencia=date, issuer=issuer
-        ).one_or_none()
+        result = (
+            database.session.query(Debentures)
+            .filter_by(data_referencia=date, issuer=issuer)
+            .one_or_none()
+        )
         result = DebenturesSchema().dump(result)
         return result
-    
+
     elif codigo_ativo:
-        result =database.session.query(Debentures).filter_by(
-            data_referencia=date, codigo_ativo=codigo_ativo
-        ).all()
+        result = (
+            database.session.query(Debentures)
+            .filter_by(data_referencia=date, codigo_ativo=codigo_ativo)
+            .all()
+        )
     else:
-        result =database.session.query(Debentures).filter_by(data_referencia=date).all()
+        result = (
+            database.session.query(Debentures).filter_by(data_referencia=date).all()
+        )
 
     result = DebenturesSchema().dump(result, many=True)
     return result
@@ -32,24 +38,24 @@ def get_debentures_date(date, issuer=None, codigo_ativo=None):
 def get_debentures_period(start_date, end_date, issuer=None, codigo_ativo=None):
     if issuer:
         result = (
-           database.session.query(Debentures).filter(
-                Debentures.data_referencia.between(start_date, end_date)
-            )
+            database.session.query(Debentures)
+            .filter(Debentures.data_referencia.between(start_date, end_date))
             .filter_by(issuer=issuer)
             .all()
         )
     if codigo_ativo:
         result = (
-           database.session.query(Debentures).filter(
-                Debentures.data_referencia.between(start_date, end_date)
-            )
+            database.session.query(Debentures)
+            .filter(Debentures.data_referencia.between(start_date, end_date))
             .filter_by(codigo_ativo=codigo_ativo)
             .all()
         )
     else:
-        result =database.session.query(Debentures).filter(
-            Debentures.data_referencia.between(start_date, end_date)
-        ).all()
+        result = (
+            database.session.query(Debentures)
+            .filter(Debentures.data_referencia.between(start_date, end_date))
+            .all()
+        )
 
     result = DebenturesSchema().dump(result, many=True)
     return result
@@ -102,7 +108,7 @@ def get_debentures():
           schema:
             type: array
             items:
-                $ref : '#/definitions/AnbimaDebentures'
+                $ref : '#/definitions/Debentures'
 
         '400':
           description: Bad Request
@@ -130,9 +136,9 @@ def get_debentures():
         return jsonify(result), 200
 
     if issuer:
-        result =database.session.query(Debentures).filter_by(emissor=issuer).all()
+        result = database.session.query(Debentures).filter_by(emissor=issuer).all()
     else:
-        result =database.session.query(Debentures).all()
+        result = database.session.query(Debentures).all()
 
     result = DebenturesSchema().dump(result, many=True)
     return jsonify(result), 200
@@ -185,7 +191,7 @@ def get_debentures_cod(codigo_ativo: str):
           schema:
             type: array
             items:
-                $ref : '#/definitions/AnbimaDebentures'
+                $ref : '#/definitions/Debentures'
 
         '400':
           description: Bad Request
@@ -217,7 +223,9 @@ def get_debentures_cod(codigo_ativo: str):
         args["codigo_ativo"] = codigo_ativo
         result = get_debentures_period(**args)
 
-    result =database.session.query(Debentures).filter_by(codigo_ativo=codigo_ativo).all()
+    result = (
+        database.session.query(Debentures).filter_by(codigo_ativo=codigo_ativo).all()
+    )
     result = DebenturesSchema().dump(result, many=True)
     return jsonify(result), 200
 
@@ -236,14 +244,14 @@ def post_debentures():
         - in: body
           name: debenture
           schema:
-                $ref: '#/definitions/OtherDebentures'
+                $ref: '#/definitions/Debentures'
     responses:
         '200':
           description: OK
           schema:
             type: object
             items:
-                $ref : '#/definitions/OtherDebentures'
+                $ref : '#/definitions/Debentures'
 
         '400':
           description: Bad Request
@@ -259,7 +267,7 @@ def post_debentures():
     if not request.json:
         return (jsonify({"error": "Bad Request", "message": "Empty data"}), 400)
     try:
-        result = OtherDebenturesSchema().load(request.json)
+        result = DebenturesSchema().load(request.json)
     except ValidationError as err:
         return jsonify({"error": "Bad Request", "message": err.messages}), 400
 
@@ -289,9 +297,11 @@ def update_debentures(codigo_ativo: str):
     if error:
         return jsonify({"error": "Bad Request", "message": error}), 400
 
-    existing_debenture =database.session.query(Debentures).filter_by(
-        codigo_ativo=codigo_ativo, data_referencia=data_referencia
-    ).one_or_none()
+    existing_debenture = (
+        database.session.query(Debentures)
+        .filter_by(codigo_ativo=codigo_ativo, data_referencia=data_referencia)
+        .one_or_none()
+    )
     if existing_debenture:
         existing_debenture = DebenturesSchema().dump(existing_debenture)
         existing_debenture.__dict__.update(request.json)
