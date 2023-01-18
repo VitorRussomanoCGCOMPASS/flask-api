@@ -1,7 +1,7 @@
 from flask_api.models.base_model import Base, Column
 import sqlalchemy as db
 
-# TODO : FIX EVERY DEBENTURE RELATED (SCHEMA AND ENDPOINTS.)
+# COMPLETE : FIX EVERY DEBENTURE RELATED (SCHEMA AND ENDPOINTS.)
 class Debentures(Base):
 
     __tablename__ = "debentures"
@@ -13,7 +13,6 @@ class Debentures(Base):
     duration = Column(db.Integer, nullable=True)
     taxa_indicativa = Column(db.Float)
     percentual_taxa = Column(db.String)
-    precification_method = Column(db.String)
 
     data_vencimento = Column(db.Date)
     data_finalizado = Column(db.Date)
