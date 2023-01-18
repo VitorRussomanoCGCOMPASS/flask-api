@@ -1,4 +1,4 @@
-from flask_api.models.base_model import Base, Column
+from flask_api.models.base_model import Base
 import sqlalchemy as db
 
 class VNA(Base):
@@ -9,17 +9,17 @@ class VNA(Base):
 
     Primary keys
     -----------
-    data_referencia : Column(db.Date)
+    data_referencia : db.Column(db.Date)
 
-    codigo_selic: Column(db.Integer)
+    codigo_selic: db.Column(db.Integer)
 
     Others
     ------
-    tipo_titulo: Column(db.String)
-    index: Column(db.Float)
-    tipo_correcao: Column(db.String)
-    data_validade: Column(db.Date)
-    vna: Column(db.Float)
+    tipo_titulo: db.Column(db.String)
+    index: db.Column(db.Float)
+    tipo_correcao: db.Column(db.String)
+    data_validade: db.Column(db.Date)
+    vna: db.Column(db.Float)
 
     Relationships
     --------------
@@ -33,10 +33,10 @@ class VNA(Base):
 
     __tablename__ = "anbima_vna"
 
-    data_referencia = Column(db.Date, primary_key=True)
-    tipo_titulo = Column(db.String(50))
-    codigo_selic = Column(db.String(6), primary_key=True)
-    index = Column(db.Float)
-    tipo_correcao = Column(db.String)
-    data_validade = Column(db.Date)
-    vna = Column(db.Float)
+    data_referencia = db.Column(db.Date, primary_key=True)
+    tipo_titulo = db.Column(db.String(50))
+    codigo_selic = db.Column(db.String(6), primary_key=True)
+    index = db.Column(db.Float)
+    tipo_correcao = db.Column(db.String)
+    data_validade = db.Column(db.Date)
+    vna = db.Column(db.Float)

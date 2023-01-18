@@ -1,4 +1,4 @@
-from flask_api.models.base_model import Base,Column
+from flask_api.models.base_model import Base
 import sqlalchemy as db
 
 
@@ -11,49 +11,49 @@ class CriCra(Base):
 
     Primary keys
     -----------
-    data_referencia : Column(db.Date)
+    data_referencia : db.Column(db.Date)
         Reference date of the information provided
-    codigo_ativo: Column(db.String)
+    codigo_ativo: db.Column(db.String)
         Asset code for the bond
     Others
     ------
-    emissor:Column(db.String)
+    emissor:db.Column(db.String)
         Securitization company responsible for issuing the paper
-    originador: Column(db.String)
-    originador_credito:Column(db.String)
+    originador: db.Column(db.String)
+    originador_credito:db.Column(db.String)
         Company that granted the credit for the
         real estate project or for the rural production
-    serie:Column(db.Integer)
-    emissao:Column(db.Integer)
+    serie:db.Column(db.Integer)
+    emissao:db.Column(db.Integer)
         Issue number
-    data_vencimento:Column(db.Date)
+    data_vencimento:db.Column(db.Date)
         Maturity date
-    taxa_compra:Column(db.Float)
+    taxa_compra:db.Column(db.Float)
         Average Buy rate
-    taxa_venda:Column(db.Float)
+    taxa_venda:db.Column(db.Float)
         Average Sell rate
-    taxa_indicativa:Column(db.Float)
+    taxa_indicativa:db.Column(db.Float)
         Indicative rate calculated by Anbima and used as reference price
-    desvio_padrao:Column(db.Float)
+    desvio_padrao:db.Column(db.Float)
         Sample standard deviation
-    vl_pu: Column(db.Float)
-    pu:Column(db.Float)
+    vl_pu: db.Column(db.Float)
+    pu:db.Column(db.Float)
         Unit price
-    percent_pu_par:Column(db.Float)
+    percent_pu_par:db.Column(db.Float)
         Par value
-    duration:Column(db.Float)
+    duration:db.Column(db.Float)
         Average term in which the holder will recover the investment made when acquiring the paper
-    tipo_remuneracao:Column(db.String)
+    tipo_remuneracao:db.Column(db.String)
         Informs the type of return
-    taxa_correcao:Column(db.Float)
+    taxa_correcao:db.Column(db.Float)
         Issuance rate
-    tipo_contrato: Column(db.String)
+    tipo_contrato: db.Column(db.String)
 
-    percent_reune:Column(db.Float)
+    percent_reune:db.Column(db.Float)
         Percentage of business contribution in the indicative rate
-    data_referencia_ntnb:Column(db.Date)
+    data_referencia_ntnb:db.Column(db.Date)
 
-    referencia_ntnb:Column(db.Date)
+    referencia_ntnb:db.Column(db.Date)
         Marutiry of the bond when remuneration is based on IPCA
     Relationships
     --------------
@@ -68,27 +68,27 @@ class CriCra(Base):
 
     __tablename__ = "cricra_anbima"
 
-    codigo_ativo = Column(db.String(30), primary_key=True)
-    data_referencia = Column(db.Date, primary_key=True)
-    emissor = Column(db.String)
-    originador = Column(db.String)
-    originador_credito = Column(db.String)
-    serie = Column(db.Integer)
-    emissao = Column(db.Integer)
-    data_vencimento = Column(db.Date)
-    taxa_compra = Column(db.Float, nullable=True)
-    taxa_venda = Column(db.Float, nullable=True)
-    taxa_indicativa = Column(db.Float, nullable=True)
-    desvio_padrao = Column(db.Float, nullable=True)
-    vl_pu = Column(db.Float, nullable=True)
-    pu = Column(db.Float, nullable=True)
-    percent_pu_par = Column(db.Float, nullable=True)
-    duration = Column(db.Float, nullable=True)
-    tipo_remuneracao = Column(db.String)
-    taxa_correcao = Column(db.Float)
-    data_finalizado = Column(db.Date)  # Type: '2022-10-06T19:18:55.213514' #cade
-    percent_reune = Column(db.Float, nullable=True)
-    data_referencia_ntnb = Column(db.Date, nullable=True)
-    referencia_ntnb = Column(db.Date, nullable=True)
-    tipo_contrato = Column(db.String, nullable=True)
+    codigo_ativo = db.Column(db.String(30), primary_key=True)
+    data_referencia = db.Column(db.Date, primary_key=True)
+    emissor = db.Column(db.String)
+    originador = db.Column(db.String)
+    originador_credito = db.Column(db.String)
+    serie = db.Column(db.Integer)
+    emissao = db.Column(db.Integer)
+    data_vencimento = db.Column(db.Date)
+    taxa_compra = db.Column(db.Float, nullable=True)
+    taxa_venda = db.Column(db.Float, nullable=True)
+    taxa_indicativa = db.Column(db.Float, nullable=True)
+    desvio_padrao = db.Column(db.Float, nullable=True)
+    vl_pu = db.Column(db.Float, nullable=True)
+    pu = db.Column(db.Float, nullable=True)
+    percent_pu_par = db.Column(db.Float, nullable=True)
+    duration = db.Column(db.Float, nullable=True)
+    tipo_remuneracao = db.Column(db.String)
+    taxa_correcao = db.Column(db.Float)
+    data_finalizado = db.Column(db.Date)  # Type: '2022-10-06T19:18:55.213514' #cade
+    percent_reune = db.Column(db.Float, nullable=True)
+    data_referencia_ntnb = db.Column(db.Date, nullable=True)
+    referencia_ntnb = db.Column(db.Date, nullable=True)
+    tipo_contrato = db.Column(db.String, nullable=True)
 
