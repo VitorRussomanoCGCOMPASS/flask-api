@@ -138,3 +138,4 @@ airflow
 jobs
 teste.py
 migrations
+node_modules

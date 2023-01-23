@@ -59,9 +59,6 @@ class CriCra(Base):
     --------------
     None
 
-    Methods
-    -------
-    find_by_date()
 
 
     """

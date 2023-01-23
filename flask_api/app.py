@@ -30,11 +30,7 @@ from flask_api.schemas.market_index import MarketIndexSchema
 from flask_api.schemas.vna import VNASchema
 from flask_api.schemas.cricra import CriCraSchema
 from flask_api.schemas.ima import IMASchema, ComponentsIMASchema
-from flask_api.schemas.debentures import (
-    DebenturesSchema,
-    OtherDebenturesSchema,
-    AnbimaDebenturesSchema,
-)
+from flask_api.schemas.debentures import DebenturesSchema
 
 
 def create_template(app: Flask):
@@ -62,8 +58,6 @@ def create_template(app: Flask):
             ComponentsIMASchema,
             IMASchema,
             DebenturesSchema,
-            OtherDebenturesSchema,
-            AnbimaDebenturesSchema,
         ],
     )
     return template
