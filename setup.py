@@ -9,5 +9,6 @@ setuptools.setup(
     packages=[
         "flask_api",
         "flask_api.models",
+        "flask_api.schemas"
     ],
 )
