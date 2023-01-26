@@ -1,9 +1,9 @@
 from flask_api.models.sector import SectorEntry, AssetsSector
 from flask_api.schemas.base_schema import CustomSchema
-from marshmallow import fields,RAISE
+from marshmallow import RAISE
 
 
-from flask_api.app import database
+from marshmallow_sqlalchemy.fields import Nested
 
 
 
@@ -12,7 +12,6 @@ class SectorEntrySchema(CustomSchema):
         model = SectorEntry
         unknown =RAISE
         load_instance= True
-        sqla_session = database.session
 
 class AssetsSectorSchema(CustomSchema):
     class Meta:
@@ -22,4 +21,4 @@ class AssetsSectorSchema(CustomSchema):
         load_relationships =True
     
         
-    sector_entry = fields.Nested(SectorEntrySchema)
+    sector_entry = Nested(SectorEntrySchema)
