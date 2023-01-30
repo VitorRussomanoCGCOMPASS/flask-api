@@ -5,3 +5,4 @@ import flask_api.models.debentures
 import flask_api.models.vna
 import flask_api.models.indexes
 import flask_api.models.cotista_op
+import flask_api.models.funds
