@@ -7,7 +7,7 @@ class Funds(Base):
     __tablename__ = "funds"
     
     britech_id = db.Column(db.Integer, primary_key=True)
-    cnpj = db.Column(db.Integer)
+    cnpj = db.Column(db.String)
     apelido = db.Column(db.String)
     cotista_id = db.Column(db.Integer,nullable=True)
     inception_date = db.Column(db.Date)
