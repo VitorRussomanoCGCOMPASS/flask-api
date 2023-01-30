@@ -18,5 +18,5 @@ class FundsValues(Base):
     __tablename__ = "Funds_values"
 
     date = db.Column(db.Date, primary_key=True)
-    funds_id = db.Column(db.Integer, db.ForeignKey("Funds.id"), primary_key=True)
+    funds_id = db.Column(db.Integer, db.ForeignKey("Funds.IdFundo"), primary_key=True)
     ValorCota = db.Column(db.Float)
