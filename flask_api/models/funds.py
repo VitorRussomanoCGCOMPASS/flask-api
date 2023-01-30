@@ -9,7 +9,7 @@ class Funds(Base):
     IdFundo = db.Column(db.Integer, primary_key=True)
     cnpj = db.Column(db.Integer)
     apelido = db.Column(db.String)
-    IdCotista = db.Column(db.Integer)
+    IdCotista = db.Column(db.Integer,nullable=True)
     DataInicio = db.Column(db.Date)
 
     values = relationship("FundsValues")
