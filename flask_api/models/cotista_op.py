@@ -6,7 +6,7 @@ class CotistaOp(Base):
 
     __tablename__ = "cotista_op"
 
-    IdOperacao = db.Column(db.Integer, primary_key=True)
+    IdOperacao = db.Column(db.Integer, primary_key=True,autoincrement=False)
     IdCotista = db.Column(db.Integer)
     ApelidoCotista = db.Column(db.String)
     IdCarteira = db.Column(db.Integer)

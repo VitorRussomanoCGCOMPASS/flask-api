@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Funds(Base):
     __tablename__ = "funds"
     
-    britech_id = db.Column(db.Integer, primary_key=True)
+    britech_id = db.Column(db.Integer, primary_key=True,autoincrement=False)
     cnpj = db.Column(db.String)
     apelido = db.Column(db.String)
     cotista_id = db.Column(db.Integer,nullable=True)
