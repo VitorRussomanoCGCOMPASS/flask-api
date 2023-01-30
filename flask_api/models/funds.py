@@ -10,6 +10,7 @@ class Funds(Base):
     cnpj = db.Column(db.Integer)
     apelido = db.Column(db.String)
     IdCotista = db.Column(db.Integer)
+    DataInicio = db.Column(db.Date)
 
     values = relationship("FundsValues")
 
