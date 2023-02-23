@@ -57,7 +57,6 @@ class DistribuidorQuotaholder(Base):
     NomeCotista = db.Column(db.String)
     
     CpfcnpjDistribuidor = db.Column(db.String, db.ForeignKey("distribuidor_entry.Cpfcnpj"))
-    NomeDistribuidor = db.Column(db.String, db.ForeignKey("distribuidor_entry.name"))
 
     operations = relationship('CotistaOP')
 
