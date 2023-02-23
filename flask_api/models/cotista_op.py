@@ -76,7 +76,7 @@ class CotistaOP(Base):
 
 
     IdOperacao = db.Column(db.Integer, primary_key=True,autoincrement=False)
-    IdCotista = db.Column(db.Integer)
+    IdCotista = db.Column(db.Integer, db.ForeignKey('distribuidor_quotaholder.IdCotista'))
     NomeCotista = db.Column(db.String)
     CodigoInterface=  db.Column(db.String)
     IdCarteira = db.Column(db.Integer)
