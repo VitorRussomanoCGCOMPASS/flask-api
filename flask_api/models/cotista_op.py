@@ -71,7 +71,7 @@ class DistribuidorRates(Base):
     end_date = db.Column(db.Date)
 
 
-class CotistaOP(Base):
+class CotistaOp(Base):
     __tablename__ = 'cotista_op'
 
 
