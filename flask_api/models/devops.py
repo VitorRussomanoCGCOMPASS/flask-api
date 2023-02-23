@@ -9,3 +9,5 @@ class DevOps(Base):
     name = Column((db.String))
     dag = Column(db.String(50), primary_key=True)
     task_group = Column(db.String(50), primary_key=True, nullable=True)
+    type = Column(db.String)
+    

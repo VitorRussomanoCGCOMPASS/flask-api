@@ -9,7 +9,6 @@ class Funds(Base):
     britech_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     cnpj = db.Column(db.String)
     apelido = db.Column(db.String)
-    cotista_id = db.Column(db.Integer, nullable=True)
     inception_date = db.Column(db.Date)
     status = db.Column(db.String)
     name = db.Column(db.String)
