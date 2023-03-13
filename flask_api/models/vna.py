@@ -31,7 +31,8 @@ class VNA(Base):
 
     """
 
-    __tablename__ = "anbima_vna"
+    __tablename__ = "vna_anbima"
+    
 
     data_referencia = db.Column(db.Date, primary_key=True)
     tipo_titulo = db.Column(db.String(50))
