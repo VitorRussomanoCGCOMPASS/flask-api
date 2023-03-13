@@ -79,7 +79,7 @@ def create_app(config_class=Config) -> Flask:
     swagger = Swagger(app, template=template)
 
     database.init_app(app)
-
+    
     return app
 
 
