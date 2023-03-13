@@ -113,3 +113,4 @@ class CotistaOp(Base):
     CodigoAnbima = db.Column(db.String)
     MovimentoCarteira = db.Column(db.String,nullable=True)
     SituacaoOperacao = db.Column(db.Integer)
+
