@@ -19,5 +19,4 @@ class Holidays(Base):
         db.Integer, db.ForeignKey("holidays_calendars.id"), autoincrement=True,primary_key=True
     )
 
-
-
+from sqlalchemy import insert, text, Text

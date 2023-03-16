@@ -11,3 +11,4 @@ class DevOps(Base):
     task_group = Column(db.String(50), primary_key=True, nullable=True)
     type = Column(db.String)
     
+    
