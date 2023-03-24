@@ -40,8 +40,9 @@ class CotistaOp_old(Base):
 
 class DistribuidorEntry(Base):
     __tablename__ =  'distribuidor_entry'
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)
 
-    Cpfcnpj = db.Column(db.String(50),primary_key=True)
+    Cpfcnpj = db.Column(db.String(50))
     name = db.Column(db.String)
 
     rates = relationship('DistribuidorRates')
@@ -52,19 +53,18 @@ class DistribuidorEntry(Base):
 class DistribuidorQuotaholder(Base):
     __tablename__ = 'distribuidor_quotaholder'
 
+    IdDistribuidor = db.Column(db.Integer, db.ForeignKey("distribuidor_entry.id"))
     IdCotista = db.Column(db.Integer,autoincrement=True,primary_key=True)
     CpfcnpjCotista = db.Column(db.String(50))
     NomeCotista = db.Column(db.String)
     
-    CpfcnpjDistribuidor = db.Column(db.String, db.ForeignKey("distribuidor_entry.Cpfcnpj"))
-
     operations = relationship('CotistaOP')
 
 
 class DistribuidorRates(Base):
     __tablename__ = 'distribuidor_rates'
 
-    cpfcnpjDistribuidor = db.Column(db.String, db.ForeignKey('distribuidor_entry.Cpfcnpj'),primary_key=True)
+    IdDistribuidor = db.Column(db.Integer, db.ForeignKey('distribuidor_entry.id'),primary_key=True)
     
     rate = db.Column(db.Float)
     initial_date = db.Column(db.Date,primary_key=True)
@@ -73,7 +73,6 @@ class DistribuidorRates(Base):
 
 class CotistaOp(Base):
     __tablename__ = 'cotista_op'
-
 
     IdOperacao = db.Column(db.Integer, primary_key=True,autoincrement=False)
     IdCotista = db.Column(db.Integer, db.ForeignKey('distribuidor_quotaholder.IdCotista'))
@@ -114,3 +113,25 @@ class CotistaOp(Base):
     MovimentoCarteira = db.Column(db.String,nullable=True)
     SituacaoOperacao = db.Column(db.Integer)
 
+db_url = "tcp:cg-lz-core-db-sql001.public.568a9b46c7aa.database.windows.net,3342"
+db_username = "vitor.ibanez@cgcompass.com"
+db_password= "Changepass*23"
+
+
+from sqlalchemy import create_engine
+from sqlalchemy.engine import URL
+
+connection_string = f'DRIVER=ODBC Driver 17 for SQL Server;SERVER={db_url};'
+connection_string += 'UID=' + db_username + ';'
+connection_string += 'PWD=' +db_password + ';'
+connection_string += f'DATABASE=DB_Brasil;'
+connection_string += ';Authentication=ActiveDirectoryPassword'
+
+# create sqlalchemy engine connection URL
+connection_url = URL.create(
+    "mssql+pyodbc", query={"odbc_connect": connection_string})
+
+
+engine = create_engine(connection_url)
+
+CotistaOp.__table__.create(engine)

@@ -13,18 +13,19 @@ class Funds(Base):
     status = db.Column(db.String)
     name = db.Column(db.String)
     type = db.Column(db.String)
-     
+    conversion_days = db.Column(db.Integer)
+
     values = relationship("FundsValues")
 
 
 class FundsValues(Base):
     __tablename__ = "funds_values"
 
-    funds_id = db.Column(
+    CarteiraId = db.Column(
         db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
     )
 
-    date = db.Column(db.Date, primary_key=True)
+    Data = db.Column(db.Date, primary_key=True)
     CotaAbertura = db.Column(db.Float)
     CotaFechamento = db.Column(db.Float)
     CotaBruta = db.Column(db.Float)
@@ -39,8 +40,3 @@ class FundsValues(Base):
     ProventoAcumulado = db.Column(db.Float)
     IdSerieOffShore = db.Column(db.Integer)
     
-
-
-
-
-
