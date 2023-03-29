@@ -9,19 +9,17 @@ class Funds(Base):
     britech_id = db.Column(db.Integer, primary_key=True, autoincrement=False)
     cnpj = db.Column(db.String)
     apelido = db.Column(db.String)
-    inception_date = db.Column(db.Date)
-    status = db.Column(db.String)
     name = db.Column(db.String)
     type = db.Column(db.String)
-    conversion_days = db.Column(db.Integer)
+    inception_date = db.Column(db.Date)
+    closure_date = db.Column(db.Date)
 
     values = relationship("FundsValues")
-
 
 class FundsValues(Base):
     __tablename__ = "funds_values"
 
-    CarteiraId = db.Column(
+    IdCarteira = db.Column(
         db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
     )
 
