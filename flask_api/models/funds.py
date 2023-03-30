@@ -17,13 +17,10 @@ class Funds(Base):
 
     values = relationship("FundsValues")
 
+class FundsValuesBase(Base):
+    __abstract__ = True
 
-class FundsValues(Base):
-    __tablename__ = "funds_values"
-    IdCarteira = db.Column(
-        db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
-    )
-
+    IdCarteira = db.Column(db.Integer, primary_key=True, autoincrement=False)
     Data = db.Column(db.Date, primary_key=True)
     CotaAbertura = db.Column(db.Float)
     CotaFechamento = db.Column(db.Float)
@@ -39,8 +36,12 @@ class FundsValues(Base):
     ProventoAcumulado = db.Column(db.Float)
     IdSerieOffShore = db.Column(db.Integer)
 
+class FundsValues(FundsValuesBase):
+    __tablename__ = "funds_values"
+    IdCarteira = db.Column(
+        db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
+    )
 
-class TempFundsValues(Base):
-    __table__ = FundsValues
+class TempFundsValues(FundsValuesBase):
     __tablename__ = "temp_" + FundsValues.__tablename__ 
 
