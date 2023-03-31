@@ -5,7 +5,28 @@ from sqlalchemy.orm import relationship
 from flask_api.models.base_model import Base
 
 
-class IMA(Base):
+class IMABase(Base):
+    __abstract__ = True
+
+    indice = db.Column(db.String(30), primary_key=True)
+    data_referencia = db.Column(db.Date, primary_key=True)
+    variacao_ult12m = db.Column(db.Float)
+    variacao_ult24m = db.Column(db.Float)
+    numero_indice = db.Column(db.Float)
+    variacao_diaria = db.Column(db.Float)
+    variacao_anual = db.Column(db.Float)
+    variacao_mensal = db.Column(db.Float)
+    peso_indice = db.Column(db.Float, nullable=True)
+    quantidade_titulos = db.Column(db.Float)
+    valor_mercado = db.Column(db.Float)
+    pmr = db.Column(db.Float)
+    convexidade = db.Column(db.Float, nullable=True)
+    duration = db.Column(db.Float)
+    yield_col = db.Column("yield", db.Float, nullable=True)
+    redemption_yield = db.Column(db.Float, nullable=True)
+
+
+class IMA(IMABase):
     """
     Attributes
     ----------
@@ -61,33 +82,37 @@ class IMA(Base):
     """
 
     __tablename__ = "ima_anbima"
-    
-    indice = db.Column(db.String(30))
-    data_referencia = db.Column(db.Date)
-    variacao_ult12m = db.Column(db.Float)
-    variacao_ult24m = db.Column(db.Float)
-    numero_indice = db.Column(db.Float)
-    variacao_diaria = db.Column(db.Float)
-    variacao_anual = db.Column(db.Float)
-    variacao_mensal = db.Column(db.Float)
-    peso_indice = db.Column(db.Float, nullable=True)
-    quantidade_titulos = db.Column(db.Float)
-    valor_mercado = db.Column(db.Float)
-    pmr = db.Column(db.Float)
-    convexidade = db.Column(db.Float, nullable=True)
-    duration = db.Column(db.Float)
-    yield_col = db.Column("yield", db.Float, nullable=True)
-    redemption_yield = db.Column(db.Float, nullable=True)
 
     components = relationship("ComponentsIMA", backref="ima_anbima")
-    __table_args__ = (PrimaryKeyConstraint(indice, data_referencia), {})
-
-    def __repr__(self) -> str:
-        return f"{self.indice} at {self.data_referencia}"
 
 
+class TempIMA(IMABase):
+    __tablename__ = "temp_" + IMA.__tablename__
 
-class ComponentsIMA(Base):
+
+class ComponentsIMABase(Base):
+    __abstract__ = True
+
+    indice = db.Column(db.String(30), primary_key=True)
+    data_referencia = db.Column(db.Date, primary_key=True)
+    tipo_titulo = db.Column(db.String(30), primary_key=True)
+    data_vencimento = db.Column(db.Date, primary_key=True)
+    codigo_selic = db.Column(db.Integer)
+    codigo_isin = db.Column(db.String)
+    taxa_indicativa = db.Column(db.Float)
+    pu = db.Column(db.Float)
+    pu_juros = db.Column(db.Float)
+    quantidade_componentes = db.Column(db.Float)
+    quantidade_teorica = db.Column(db.Float)
+    valor_mercado = db.Column(db.Float)
+    peso_componente = db.Column(db.Float)
+    prazo_vencimento = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    pmr = db.Column(db.Float)
+    convexidade = db.Column(db.Float)
+
+
+class ComponentsIMA(ComponentsIMABase):
     """
 
     Attributes
@@ -140,6 +165,7 @@ class ComponentsIMA(Base):
     """
 
     __tablename__ = "components_ima_anbima"
+
     indice = db.Column(db.String(30), primary_key=True)
     data_referencia = db.Column(db.Date, primary_key=True)
 
@@ -150,23 +176,6 @@ class ComponentsIMA(Base):
         {},
     )
 
-    tipo_titulo = db.Column(db.String(30), primary_key=True)
-    data_vencimento = db.Column(db.Date, primary_key=True)
-    codigo_selic = db.Column(db.Integer)
-    codigo_isin = db.Column(db.String)
-    taxa_indicativa = db.Column(db.Float)
-    pu = db.Column(db.Float)
-    pu_juros = db.Column(db.Float)
-    quantidade_componentes = db.Column(db.Float)
-    quantidade_teorica = db.Column(db.Float)
-    valor_mercado = db.Column(db.Float)
-    peso_componente = db.Column(db.Float)
-    prazo_vencimento = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    pmr = db.Column(db.Float)
-    convexidade = db.Column(db.Float)
 
-    def __repr__(self) -> str:
-        return f"{self.codigo_isin} named {self.tipo_titulo} expiring at {self.data_vencimento}"
-
-
+class TempComponentsIMA(ComponentsIMABase):
+    __tablename__ = "temp_" + ComponentsIMA.__tablename__

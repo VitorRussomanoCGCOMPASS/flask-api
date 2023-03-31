@@ -1,9 +1,38 @@
-from flask_api.models.base_model import Base
 import sqlalchemy as db
 
+from flask_api.models.base_model import Base
 
 
-class CriCra(Base):
+class CriCraBase(Base):
+
+    __abstract__ = True
+
+    codigo_ativo = db.Column(db.String(30), primary_key=True)
+    data_referencia = db.Column(db.Date, primary_key=True)
+    emissor = db.Column(db.String)
+    originador = db.Column(db.String)
+    originador_credito = db.Column(db.String)
+    serie = db.Column(db.Integer)
+    emissao = db.Column(db.Integer)
+    data_vencimento = db.Column(db.Date)
+    taxa_compra = db.Column(db.Float, nullable=True)
+    taxa_venda = db.Column(db.Float, nullable=True)
+    taxa_indicativa = db.Column(db.Float, nullable=True)
+    desvio_padrao = db.Column(db.Float, nullable=True)
+    vl_pu = db.Column(db.Float, nullable=True)
+    pu = db.Column(db.Float, nullable=True)
+    percent_pu_par = db.Column(db.Float, nullable=True)
+    duration = db.Column(db.Float, nullable=True)
+    tipo_remuneracao = db.Column(db.String)
+    taxa_correcao = db.Column(db.Float)
+    data_finalizado = db.Column(db.Date)
+    percent_reune = db.Column(db.Float, nullable=True)
+    data_referencia_ntnb = db.Column(db.Date, nullable=True)
+    referencia_ntnb = db.Column(db.Date, nullable=True)
+    tipo_contrato = db.Column(db.String, nullable=True)
+
+
+class CriCra(CriCraBase):
     """
     Attributes
     ----------
@@ -65,27 +94,6 @@ class CriCra(Base):
 
     __tablename__ = "cricra_anbima"
 
-    codigo_ativo = db.Column(db.String(30), primary_key=True)
-    data_referencia = db.Column(db.Date, primary_key=True)
-    emissor = db.Column(db.String)
-    originador = db.Column(db.String)
-    originador_credito = db.Column(db.String)
-    serie = db.Column(db.Integer)
-    emissao = db.Column(db.Integer)
-    data_vencimento = db.Column(db.Date)
-    taxa_compra = db.Column(db.Float, nullable=True)
-    taxa_venda = db.Column(db.Float, nullable=True)
-    taxa_indicativa = db.Column(db.Float, nullable=True)
-    desvio_padrao = db.Column(db.Float, nullable=True)
-    vl_pu = db.Column(db.Float, nullable=True)
-    pu = db.Column(db.Float, nullable=True)
-    percent_pu_par = db.Column(db.Float, nullable=True)
-    duration = db.Column(db.Float, nullable=True)
-    tipo_remuneracao = db.Column(db.String)
-    taxa_correcao = db.Column(db.Float)
-    data_finalizado = db.Column(db.Date)  # Type: '2022-10-06T19:18:55.213514' #cade
-    percent_reune = db.Column(db.Float, nullable=True)
-    data_referencia_ntnb = db.Column(db.Date, nullable=True)
-    referencia_ntnb = db.Column(db.Date, nullable=True)
-    tipo_contrato = db.Column(db.String, nullable=True)
 
+class TempCriCra(CriCraBase):
+    __tablename__ = "temp_" + CriCra.__tablename__

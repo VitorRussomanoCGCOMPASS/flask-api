@@ -18,7 +18,7 @@ class DistribuidorQuotaholder(Base):
     __tablename__ = "distribuidor_quotaholder"
 
     IdDistribuidor = db.Column(db.Integer, db.ForeignKey("distribuidor_entry.id"))
-    IdCotista = db.Column(db.Integer, autoincrement=True, primary_key=True)
+    IdCotista = db.Column(db.Integer, autoincrement=False, primary_key=True)
     CpfcnpjCotista = db.Column(db.String(50))
     NomeCotista = db.Column(db.String)
 
@@ -29,7 +29,7 @@ class DistribuidorRates(Base):
     __tablename__ = "distribuidor_rates"
 
     IdDistribuidor = db.Column(
-        db.Integer, db.ForeignKey("distribuidor_entry.id"), primary_key=True
+        db.Integer, db.ForeignKey("distribuidor_entry.id"), primary_key=True, autoincrement=False
     )
 
     rate = db.Column(db.Float)

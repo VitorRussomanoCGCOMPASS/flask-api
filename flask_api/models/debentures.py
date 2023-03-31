@@ -1,10 +1,9 @@
 from flask_api.models.base_model import Base
 import sqlalchemy as db
 
-# COMPLETE : FIX EVERY DEBENTURE RELATED (SCHEMA AND ENDPOINTS.)
-class Debentures(Base):
 
-    __tablename__ = "debentures"
+class DebenturesBase(Base):
+    __abstract__ = True
     codigo_ativo = db.Column(db.String(30), primary_key=True)
     data_referencia = db.Column(db.Date, primary_key=True)
 
@@ -25,3 +24,11 @@ class Debentures(Base):
     percent_reune = db.Column(db.Float, nullable=True)
     emissor = db.Column(db.String)
     referencia_ntnb = db.Column(db.Date, nullable=True)
+
+
+class Debentures(DebenturesBase):
+    __tablename__ = "debentures"
+
+
+class TempDebentures(DebenturesBase):
+    __tablename__ = "temp_" + Debentures.__tablename__
