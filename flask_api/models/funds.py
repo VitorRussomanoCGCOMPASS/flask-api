@@ -16,6 +16,7 @@ class Funds(Base):
     closure_date = db.Column(db.Date)
 
     values = relationship("FundsValues")
+    distribution_rate = relationship("distribuidor_rates")
 
 class FundsValuesBase(Base):
     __abstract__ = True

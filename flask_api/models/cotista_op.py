@@ -1,6 +1,8 @@
-from flask_api.models.base_model import Base
 import sqlalchemy as db
 from sqlalchemy.orm import relationship
+
+from flask_api.models.base_model import Base
+from flask_api.models.funds import Funds
 
 
 class DistribuidorEntry(Base):
@@ -10,7 +12,16 @@ class DistribuidorEntry(Base):
     Cpfcnpj = db.Column(db.String(50))
     name = db.Column(db.String)
 
-    rates = relationship("DistribuidorRates")
+    admin_rate = relationship(
+        "DistribuidorRates",
+        primaryjoin="DistribuidorEntry.admin_rate = DistribuidorRates.admin_rate ",
+    )
+
+    perfomance_rate = relationship(
+        "DistribuidorRates",
+        primaryjoin="DistribuidorEntry.perfomance_rate = DistribuidorRates.perfomance_rate ",
+    )
+
     quotaholder = relationship("DistribuidorQuotaholder")
 
 
@@ -18,8 +29,8 @@ class DistribuidorQuotaholder(Base):
     __tablename__ = "distribuidor_quotaholder"
 
     IdDistribuidor = db.Column(db.Integer, db.ForeignKey("distribuidor_entry.id"))
-    IdCotista = db.Column(db.Integer, autoincrement=False, primary_key=True)
-    CpfcnpjCotista = db.Column(db.String(50))
+
+    CpfcnpjCotista = db.Column(db.String(20), primary_key=True)
     NomeCotista = db.Column(db.String)
 
     operations = relationship("CotistaOP")
@@ -29,12 +40,19 @@ class DistribuidorRates(Base):
     __tablename__ = "distribuidor_rates"
 
     IdDistribuidor = db.Column(
-        db.Integer, db.ForeignKey("distribuidor_entry.id"), primary_key=True, autoincrement=False
+        db.Integer,
+        db.ForeignKey("distribuidor_entry.id"),
+        primary_key=True,
+        autoincrement=False,
     )
 
-    rate = db.Column(db.Float)
+    IdBritech = db.Column(db.Integer, db.ForeignKey("funds.britech_id"))
+
+    admin_rate = db.Column(db.Float)
+    perfomance_rate = db.Column(db.Float)
+
     initial_date = db.Column(db.Date, primary_key=True)
-    end_date = db.Column(db.Date)
+    end_date = db.Column(db.Date, nullable=True)
 
 
 class CotistaOpBase(Base):
@@ -68,7 +86,7 @@ class CotistaOpBase(Base):
     Observacao = db.Column(db.String, nullable=True)
     DadosBancarios = db.Column(db.String, nullable=True)
     CpfcnpjCarteira = db.Column(db.String)
-    CpfcnpjCotista = db.Column(db.String)
+    CpfcnpjCotista = db.Column(db.String(20))
     Fonte = db.Column(db.Integer)
     IdConta = db.Column(db.Integer, nullable=True)
     IdContaCotista = db.Column(db.Integer)
@@ -83,8 +101,8 @@ class CotistaOpBase(Base):
 class CotistaOp(CotistaOpBase):
     __tablename__ = "cotista_op"
 
-    IdCotista = db.Column(
-        db.Integer, db.ForeignKey("distribuidor_quotaholder.IdCotista")
+    CpfcnpjCotista = db.Column(
+        db.String(20), db.ForeignKey("distribuidor_quotaholder.CpfcnpjCotista")
     )
 
 
