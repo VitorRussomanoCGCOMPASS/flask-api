@@ -179,3 +179,11 @@ class ComponentsIMA(ComponentsIMABase):
 
 class TempComponentsIMA(ComponentsIMABase):
     __tablename__ = "temp_" + ComponentsIMA.__tablename__
+
+
+
+class TempProcessingIMA(ComponentsIMABase, IMABase):
+    __tablename__ = "temp_processing_" + IMA.__tablename__
+
+
+TempProcessingIMA.__tablename__
