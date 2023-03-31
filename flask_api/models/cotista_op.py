@@ -61,7 +61,7 @@ class CotistaOpBase(Base):
     ValorIR = db.Column(db.Float)
     ValorIOF = db.Column(db.Float)
     ValorCPMF = db.Column(db.Float)
-    ValorPerfomance = db.Column(db.Float)
+    ValorPerformance = db.Column(db.Float)
     PrejuizoUsado = db.Column(db.Float)
     RendimentoResgate = db.Column(db.Float)
     VariacaoResgate = db.Column(db.Float)
