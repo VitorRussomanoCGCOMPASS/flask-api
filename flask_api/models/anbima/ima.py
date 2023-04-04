@@ -16,14 +16,14 @@ class StageRawIMA(Base):
     variacao_diaria = db.Column(db.Float)
     variacao_anual = db.Column(db.Float)
     variacao_mensal = db.Column(db.Float)
-    peso_indice = db.Column(db.Float, nullable=True)
+    peso_indice = db.Column(db.Float, default=None)
     quantidade_titulos = db.Column(db.Float)
     valor_mercado = db.Column(db.Float)
     pmr = db.Column(db.Float)
-    convexidade = db.Column(db.Float, nullable=True)
+    convexidade = db.Column(db.Float, default=None)
     duration = db.Column(db.Float)
-    _yield = db.Column("yield", db.Float, nullable=True)
-    redemption_yield = db.Column(db.Float, nullable=True)
+    _yield = db.Column("yield", db.Float, default=None)
+    redemption_yield = db.Column(db.Float, default=None)
     componentes =  db.Column(db.JSON)
 
 
