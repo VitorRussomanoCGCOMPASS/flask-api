@@ -106,5 +106,5 @@ class CotistaOp(CotistaOpBase):
     )
 
 
-class TempCotistaOp(CotistaOpBase):
-    __tablename__ = "temp_" + CotistaOp.__tablename__
+class StageCotistaOp(CotistaOpBase):
+    __tablename__ = "stage_" + CotistaOp.__tablename__

@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 
-from flask_api.models.vna import VNA
+from flask_api.models.anbima import VNA
 from flask_api.request_schemas.dateargs import DateSchema, PeriodSchema
 from flask_api.routes.anbima import anbima_blueprint
 from flask_api.schemas.vna import VNASchema

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from marshmallow import fields
 
-from flask_api.models.cricra import CriCra
+from flask_api.models.anbima import CriCra
 from flask_api.request_schemas.dateargs import DateSchema, PeriodSchema
 from flask_api.routes.anbima import anbima_blueprint
 from flask_api.schemas.cricra import CriCraSchema

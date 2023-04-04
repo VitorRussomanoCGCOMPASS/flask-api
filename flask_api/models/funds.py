@@ -43,6 +43,6 @@ class FundsValues(FundsValuesBase):
         db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
     )
 
-class TempFundsValues(FundsValuesBase):
-    __tablename__ = "temp_" + FundsValues.__tablename__ 
+class StageFundsValues(FundsValuesBase):
+    __tablename__ = "stage_" + FundsValues.__tablename__ 
 

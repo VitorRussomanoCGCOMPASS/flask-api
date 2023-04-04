@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, request
 from marshmallow import ValidationError, fields
 
 from flask_api.app import database
-from flask_api.models.debentures import Debentures
+from flask_api.models.anbima import Debentures
 from flask_api.request_schemas.dateargs import DateSchema, PeriodSchema
 from flask_api.schemas.debentures import DebenturesSchema
 
@@ -302,6 +302,7 @@ def update_debentures(codigo_ativo: str):
         .filter_by(codigo_ativo=codigo_ativo, data_referencia=data_referencia)
         .one_or_none()
     )
+
     if existing_debenture:
         existing_debenture = DebenturesSchema().dump(existing_debenture)
         existing_debenture.__dict__.update(request.json)
@@ -323,3 +324,4 @@ def update_debentures(codigo_ativo: str):
         ),
         400,
     )
+
