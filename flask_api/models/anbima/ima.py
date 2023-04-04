@@ -3,6 +3,9 @@ from sqlalchemy import ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 
 from flask_api.models.base_model import Base
+from sqlalchemy import null 
+
+
 
 
 class StageRawIMA(Base):
@@ -16,18 +19,15 @@ class StageRawIMA(Base):
     variacao_diaria = db.Column(db.Float)
     variacao_anual = db.Column(db.Float)
     variacao_mensal = db.Column(db.Float)
-    peso_indice = db.Column(db.Float, nullable=True,default=None)
+    peso_indice = db.Column(db.Float, nullable=True,default=null())
     quantidade_titulos = db.Column(db.Float)
     valor_mercado = db.Column(db.Float)
     pmr = db.Column(db.Float)
-    convexidade = db.Column(db.Float,nullable=True,default=None)
+    convexidade = db.Column(db.Float,nullable=True,default=null())
     duration = db.Column(db.Float)
-    _yield = db.Column("yield", db.Float, nullable=True, default=None)
-    redemption_yield = db.Column(db.Float, nullable=True, default=None)
+    yield_col = db.Column("yield", db.Float, nullable=True, default=null())
+    redemption_yield = db.Column(db.Float, nullable=True, default = null())
     componentes =  db.Column(db.JSON)
-
-
-
 
 class IMABase(Base):
     __abstract__ = True

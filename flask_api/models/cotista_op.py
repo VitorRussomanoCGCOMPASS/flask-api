@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 
 from flask_api.models.base_model import Base
 from flask_api.models.funds import Funds
-
+from sqlalchemy import null
 
 class DistribuidorEntry(Base):
     __tablename__ = "distribuidor_entry"
@@ -108,3 +108,12 @@ class CotistaOp(CotistaOpBase):
 
 class StageCotistaOp(CotistaOpBase):
     __tablename__ = "stage_" + CotistaOp.__tablename__
+    TipoResgate = db.Column(db.Integer, nullable=True,default=null())
+    IdPosicaoResgatada = db.Column(db.Integer, nullable=True,default=null())
+    Observacao = db.Column(db.String, nullable=True,default=null())
+    DadosBancarios = db.Column(db.String, nullable=True,default=null())
+    IdConta = db.Column(db.Integer, nullable=True,default=null())
+    CotaInformada = db.Column(db.Float, nullable=True,default=null())
+    IdAgenda = db.Column(db.Integer, nullable=True,default=null())
+    IdOperacaoResgatada = db.Column(db.Integer, nullable=True,default=null())
+    MovimentoCarteira = db.Column(db.String, nullable=True,default=null())

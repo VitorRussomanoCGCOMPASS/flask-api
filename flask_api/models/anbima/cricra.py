@@ -1,6 +1,7 @@
 import sqlalchemy as db
 
 from flask_api.models.base_model import Base
+from sqlalchemy import null
 
 
 class CriCraBase(Base):
@@ -97,3 +98,16 @@ class CriCra(CriCraBase):
 
 class StageCriCra(CriCraBase):
     __tablename__ = "stage_" + CriCra.__tablename__
+    
+    taxa_compra = db.Column(db.Float, nullable=True, default=null())
+    taxa_venda = db.Column(db.Float, nullable=True, default=null())
+    taxa_indicativa = db.Column(db.Float, nullable=True, default=null())
+    desvio_padrao = db.Column(db.Float, nullable=True, default=null())
+    vl_pu = db.Column(db.Float, nullable=True, default=null())
+    pu = db.Column(db.Float, nullable=True, default=null())
+    percent_pu_par = db.Column(db.Float, nullable=True, default=null())
+    duration = db.Column(db.Float, nullable=True, default=null())
+    percent_reune = db.Column(db.Float, nullable=True, default=null())
+    data_referencia_ntnb = db.Column(db.Date, nullable=True, default=null())
+    referencia_ntnb = db.Column(db.Date, nullable=True, default=null())
+    tipo_contrato = db.Column(db.String, nullable=True, default=null())
