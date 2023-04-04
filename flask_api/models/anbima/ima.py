@@ -1,5 +1,5 @@
 import sqlalchemy as db
-from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
+from sqlalchemy import ForeignKeyConstraint
 from sqlalchemy.orm import relationship
 
 from flask_api.models.base_model import Base
@@ -46,7 +46,7 @@ class IMABase(Base):
     pmr = db.Column(db.Float)
     convexidade = db.Column(db.Float, nullable=True)
     duration = db.Column(db.Float)
-    yield_col = db.Column("yield", db.Float, nullable=True)
+    _yield= db.Column("yield", db.Float, nullable=True)
     redemption_yield = db.Column(db.Float, nullable=True)
 
 
