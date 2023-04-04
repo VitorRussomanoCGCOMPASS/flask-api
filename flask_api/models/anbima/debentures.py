@@ -16,19 +16,20 @@ class DebenturesBase(Base):
     data_vencimento = db.Column(db.Date)
     data_finalizado = db.Column(db.Date)
     taxa_compra = db.Column(db.Float, nullable=True)
+    
     taxa_venda = db.Column(db.Float, nullable=True)
     desvio_padrao = db.Column(db.Float)
     val_min_intervalo = db.Column(db.Float)
     val_max_intervalo = db.Column(db.Float)
     percent_pu_par = db.Column(db.Float, nullable=True)
-    percent_reune = db.Column(db.Float, nullable=True)
+    percent_reune = db.Column(db.VARCHAR, nullable=True)
     emissor = db.Column(db.String)
     referencia_ntnb = db.Column(db.Date, nullable=True)
 
 
 class Debentures(DebenturesBase):
     __tablename__ = "debentures"
+    percent_reune = db.Column(db.Float, nullable=True)
 
-
-class TempDebentures(DebenturesBase):
-    __tablename__ = "temp_" + Debentures.__tablename__
+class StageDebentures(DebenturesBase):
+    __tablename__ = "stage_" + Debentures.__tablename__

@@ -5,6 +5,30 @@ from sqlalchemy.orm import relationship
 from flask_api.models.base_model import Base
 
 
+class StageRawIMA(Base):
+    __tablename__ = 'stage_raw_anbima_ima'
+    
+    indice = db.Column(db.String(30), primary_key=True)
+    data_referencia = db.Column(db.Date, primary_key=True)
+    variacao_ult12m = db.Column(db.Float)
+    variacao_ult24m = db.Column(db.Float)
+    numero_indice = db.Column(db.Float)
+    variacao_diaria = db.Column(db.Float)
+    variacao_anual = db.Column(db.Float)
+    variacao_mensal = db.Column(db.Float)
+    peso_indice = db.Column(db.Float, nullable=True)
+    quantidade_titulos = db.Column(db.Float)
+    valor_mercado = db.Column(db.Float)
+    pmr = db.Column(db.Float)
+    convexidade = db.Column(db.Float, nullable=True)
+    duration = db.Column(db.Float)
+    _yield = db.Column("yield", db.Float, nullable=True)
+    redemption_yield = db.Column(db.Float, nullable=True)
+    componentes =  db.Column(db.JSON)
+
+
+
+
 class IMABase(Base):
     __abstract__ = True
 
@@ -73,21 +97,16 @@ class IMA(IMABase):
     ------------
     components:  One to many with components_ima_anbima
 
-    Methods
-    -------
-    find_all()
-
-    find_by_id()
 
     """
 
-    __tablename__ = "ima_anbima"
+    __tablename__ = "anbima_ima"
 
-    components = relationship("ComponentsIMA", backref="ima_anbima")
+    components = relationship("ComponentsIMA", backref="anbima_ima")
 
 
-class TempIMA(IMABase):
-    __tablename__ = "temp_" + IMA.__tablename__
+class StageIMA(IMABase):
+    __tablename__ = "stage_" + IMA.__tablename__
 
 
 class ComponentsIMABase(Base):
@@ -164,7 +183,7 @@ class ComponentsIMA(ComponentsIMABase):
     find_by_type(date: datetime.date, expiration: datetime.date,debenture_type: str, session: Session)
     """
 
-    __tablename__ = "components_ima_anbima"
+    __tablename__ = "anbima_ima_components"
 
     indice = db.Column(db.String(30), primary_key=True)
     data_referencia = db.Column(db.Date, primary_key=True)
@@ -177,13 +196,8 @@ class ComponentsIMA(ComponentsIMABase):
     )
 
 
-class TempComponentsIMA(ComponentsIMABase):
-    __tablename__ = "temp_" + ComponentsIMA.__tablename__
+class StageComponentsIMA(ComponentsIMABase):
+    __tablename__ = "stage_" + ComponentsIMA.__tablename__
 
 
 
-class TempProcessingIMA(ComponentsIMABase, IMABase):
-    __tablename__ = "temp_processing_" + IMA.__tablename__
-
-
-TempProcessingIMA.__tablename__

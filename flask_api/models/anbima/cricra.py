@@ -12,7 +12,7 @@ class CriCraBase(Base):
     emissor = db.Column(db.String)
     originador = db.Column(db.String)
     originador_credito = db.Column(db.String)
-    serie = db.Column(db.Integer)
+    serie = db.Column(db.VARCHAR)
     emissao = db.Column(db.Integer)
     data_vencimento = db.Column(db.Date)
     taxa_compra = db.Column(db.Float, nullable=True)
@@ -92,8 +92,8 @@ class CriCra(CriCraBase):
 
     """
 
-    __tablename__ = "cricra_anbima"
+    __tablename__ = "anbima_cricra"
+    serie = db.Column(db.Integer)
 
-
-class TempCriCra(CriCraBase):
-    __tablename__ = "temp_" + CriCra.__tablename__
+class StageCriCra(CriCraBase):
+    __tablename__ = "stage_" + CriCra.__tablename__
