@@ -1,21 +1,24 @@
 import sqlalchemy as db
 
 from flask_api.models.base_model import Base
-from sqlalchemy import null
-
 
 class CriCraBase(Base):
 
     __abstract__ = True
-
-    codigo_ativo = db.Column(db.String(30), primary_key=True)
+    codigo_ativo = db.Column(db.String(50), primary_key=True)
     data_referencia = db.Column(db.Date, primary_key=True)
-    emissor = db.Column(db.String)
-    originador = db.Column(db.String)
-    originador_credito = db.Column(db.String)
-    serie = db.Column(db.VARCHAR)
-    emissao = db.Column(db.Integer)
+
+    emissor = db.Column(db.VARCHAR(255))
+    originador = db.Column(db.VARCHAR(255))
+    originador_credito = db.Column(db.VARCHAR(255))
+    serie = db.Column(db.NVARCHAR)
+    emissao = db.Column(db.NVARCHAR)
+    tipo_contrato = db.Column(db.String)
     data_vencimento = db.Column(db.Date)
+    tipo_remuneracao = db.Column(db.String)
+    taxa_correcao = db.Column(db.Float)
+    data_finalizado = db.Column(db.String)
+    
     taxa_compra = db.Column(db.Float, nullable=True)
     taxa_venda = db.Column(db.Float, nullable=True)
     taxa_indicativa = db.Column(db.Float, nullable=True)
@@ -24,13 +27,10 @@ class CriCraBase(Base):
     pu = db.Column(db.Float, nullable=True)
     percent_pu_par = db.Column(db.Float, nullable=True)
     duration = db.Column(db.Float, nullable=True)
-    tipo_remuneracao = db.Column(db.String)
-    taxa_correcao = db.Column(db.Float)
-    data_finalizado = db.Column(db.Date)
     percent_reune = db.Column(db.Float, nullable=True)
     data_referencia_ntnb = db.Column(db.Date, nullable=True)
     referencia_ntnb = db.Column(db.Date, nullable=True)
-    tipo_contrato = db.Column(db.String, nullable=True)
+
 
 
 class CriCra(CriCraBase):
@@ -96,18 +96,7 @@ class CriCra(CriCraBase):
     __tablename__ = "anbima_cricra"
     serie = db.Column(db.Integer)
 
+
 class StageCriCra(CriCraBase):
     __tablename__ = "stage_" + CriCra.__tablename__
-    
-    taxa_compra = db.Column(db.Float, nullable=True, default=null())
-    taxa_venda = db.Column(db.Float, nullable=True, default=null())
-    taxa_indicativa = db.Column(db.Float, nullable=True, default=null())
-    desvio_padrao = db.Column(db.Float, nullable=True, default=null())
-    vl_pu = db.Column(db.Float, nullable=True, default=null())
-    pu = db.Column(db.Float, nullable=True, default=null())
-    percent_pu_par = db.Column(db.Float, nullable=True, default=null())
-    duration = db.Column(db.Float, nullable=True, default=null())
-    percent_reune = db.Column(db.Float, nullable=True, default=null())
-    data_referencia_ntnb = db.Column(db.Date, nullable=True, default=null())
-    referencia_ntnb = db.Column(db.Date, nullable=True, default=null())
-    tipo_contrato = db.Column(db.String, nullable=True, default=null())
+

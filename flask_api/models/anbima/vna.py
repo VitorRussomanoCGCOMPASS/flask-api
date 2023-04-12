@@ -50,6 +50,7 @@ class VNA(VNABase):
 
 class StageVNA(VNABase):
     __tablename__ = "stage_" + VNA.__tablename__
+    
     rowid  = db.Column(db.Integer,primary_key=True, autoincrement=True)
     titulos = db.Column(db.JSON)
     

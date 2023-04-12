@@ -1,6 +1,5 @@
 from flask_api.models.base_model import Base
 import sqlalchemy as db
-from sqlalchemy import null
 
 class DebenturesBase(Base):
     __abstract__ = True
@@ -37,10 +36,3 @@ class StageDebentures(DebenturesBase):
 
 
     emissor = db.Column(db.String)
-    pu = db.Column(db.Float, nullable=True, default=null())
-    duration = db.Column(db.Integer, nullable=True, default=null())
-    taxa_compra = db.Column(db.Float, nullable=True, default=null())
-    taxa_venda = db.Column(db.Float, nullable=True, default=null())
-    percent_pu_par = db.Column(db.Float, nullable=True, default=null())
-    percent_reune = db.Column(db.VARCHAR, nullable=True, default=null())
-    referencia_ntnb = db.Column(db.Date, nullable=True, default=null())

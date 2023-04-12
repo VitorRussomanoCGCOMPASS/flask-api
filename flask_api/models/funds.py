@@ -22,7 +22,6 @@ class FundsValuesBase(Base):
     __abstract__ = True
 
     IdCarteira = db.Column(db.Integer, primary_key=True, autoincrement=False)
-    Data = db.Column(db.Date, primary_key=True)
     CotaAbertura = db.Column(db.Float)
     CotaFechamento = db.Column(db.Float)
     CotaBruta = db.Column(db.Float)
@@ -43,6 +42,10 @@ class FundsValues(FundsValuesBase):
         db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
     )
 
+    Data = db.Column(db.Date, primary_key=True)
+
+
 class StageFundsValues(FundsValuesBase):
     __tablename__ = "stage_" + FundsValues.__tablename__ 
+    Data = db.Column(db.String(50), primary_key=True)
 
