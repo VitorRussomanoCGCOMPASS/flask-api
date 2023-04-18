@@ -16,7 +16,8 @@ class Holidays(Base):
     date = Column(db.Date, primary_key=True)
     calendar = relationship("HolidayCalendars")
     calendar_id = Column(
-        db.Integer, db.ForeignKey("holidays_calendars.id"), autoincrement=True,primary_key=True
+        db.Integer, db.ForeignKey("holidays_calendars.id"), autoincrement=False,primary_key=True
     )
 
-from sqlalchemy import insert, text, Text
+
+

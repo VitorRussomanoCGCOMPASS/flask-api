@@ -12,4 +12,8 @@ setuptools.setup(
         "flask_api.models.anbima",
         "flask_api.schemas"
     ],
+    entry_points = {
+        "airflow.plugins" : 
+            ["my_plugin = my_plugin:flask_api"]
+    }
 )
