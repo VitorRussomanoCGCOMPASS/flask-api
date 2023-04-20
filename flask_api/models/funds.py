@@ -1,9 +1,10 @@
 from flask_api.models.base_model import Base
 import sqlalchemy as db
 from sqlalchemy.orm import relationship
+from flask_api.models.views import view
+from sqlalchemy import select, union
 
-
-
+# FIXME : DISTRIBUIDOR RATE RELATIONSHIP.
 class Funds(Base):
     __tablename__ = "funds"
 
@@ -16,7 +17,8 @@ class Funds(Base):
     closure_date = db.Column(db.Date)
 
     values = relationship("FundsValues")
-    distribution_rate = relationship("distribuidor_rates")
+    # distribution_rate = relationship("distribuidor_rates")
+
 
 class FundsValuesBase(Base):
     __abstract__ = True
@@ -30,22 +32,34 @@ class FundsValuesBase(Base):
     PatrimonioBruto = db.Column(db.Float)
     QuantidadeFechamento = db.Column(db.Float)
     AjustePL = db.Column(db.Float)
-    CotaImportada =db.Column(db.String)
+    CotaImportada = db.Column(db.String)
     CotaEx = db.Column(db.Float)
     CotaRendimento = db.Column(db.Float)
     ProventoAcumulado = db.Column(db.Float)
     IdSerieOffShore = db.Column(db.Integer)
 
+
 class FundsValues(FundsValuesBase):
     __tablename__ = "funds_values"
     IdCarteira = db.Column(
-        db.Integer, db.ForeignKey("funds.britech_id"), primary_key=True, autoincrement=False
+        db.Integer,
+        db.ForeignKey("funds.britech_id"),
+        primary_key=True,
+        autoincrement=False,
     )
 
     Data = db.Column(db.Date, primary_key=True)
 
 
 class StageFundsValues(FundsValuesBase):
-    __tablename__ = "stage_" + FundsValues.__tablename__ 
+    __tablename__ = "stage_" + FundsValues.__tablename__
     Data = db.Column(db.String(50), primary_key=True)
+
+
+class CompleteFundsValues(Base):
+    __table__ = view(
+        "funds_values_view",
+        Base.metadata,
+        union(select(FundsValues), select(StageFundsValues)),
+    )
 
