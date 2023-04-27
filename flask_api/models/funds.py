@@ -37,7 +37,7 @@ class FundsValuesBase(Base):
     CotaRendimento = db.Column(db.Float)
     ProventoAcumulado = db.Column(db.Float)
     IdSerieOffShore = db.Column(db.Integer)
-
+    
 
 class FundsValues(FundsValuesBase):
     __tablename__ = "funds_values"
@@ -63,3 +63,8 @@ class CompleteFundsValues(Base):
         union(select(FundsValues), select(StageFundsValues)),
     )
 
+
+
+
+# Checkpoint object 
+# Bunch of stored procedures
