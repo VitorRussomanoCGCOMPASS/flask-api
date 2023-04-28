@@ -58,7 +58,7 @@ class StageFundsValues(FundsValuesBase):
 
 class CompleteFundsValues(Base):
     __table__ = view(
-        "funds_values_view",
+        "funds_values",
         Base.metadata,
         union(select(FundsValues), select(StageFundsValues)),
     )

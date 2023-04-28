@@ -1,16 +1,14 @@
 import sqlalchemy as db
-from sqlalchemy import ForeignKeyConstraint
+from sqlalchemy import ForeignKeyConstraint, func, null, select
 from sqlalchemy.orm import relationship
 
 from flask_api.models.base_model import Base
-from sqlalchemy import null 
-
-
+from flask_api.models.views import view
 
 
 class StageRawIMA(Base):
-    __tablename__ = 'stage_raw_anbima_ima'
-    
+    __tablename__ = "stage_anbima_ima"
+
     indice = db.Column(db.String(30), primary_key=True)
     data_referencia = db.Column(db.Date, primary_key=True)
     variacao_ult12m = db.Column(db.Float)
@@ -19,15 +17,16 @@ class StageRawIMA(Base):
     variacao_diaria = db.Column(db.Float)
     variacao_anual = db.Column(db.Float)
     variacao_mensal = db.Column(db.Float)
-    peso_indice = db.Column(db.Float, nullable=True,default=null())
+    peso_indice = db.Column(db.Float, nullable=True, default=null())
     quantidade_titulos = db.Column(db.Float)
     valor_mercado = db.Column(db.Float)
     pmr = db.Column(db.Float)
-    convexidade = db.Column(db.Float,nullable=True,default=null())
+    convexidade = db.Column(db.Float, nullable=True, default=null())
     duration = db.Column(db.Float)
     yield_col = db.Column("yield", db.Float, nullable=True, default=null())
-    redemption_yield = db.Column(db.Float, nullable=True, default = null())
-    componentes =  db.Column(db.JSON)
+    redemption_yield = db.Column(db.Float, nullable=True, default=null())
+    componentes = db.Column(db.JSON)
+
 
 class IMABase(Base):
     __abstract__ = True
@@ -46,7 +45,7 @@ class IMABase(Base):
     pmr = db.Column(db.Float)
     convexidade = db.Column(db.Float, nullable=True)
     duration = db.Column(db.Float)
-    _yield= db.Column("yield", db.Float, nullable=True)
+    _yield = db.Column("yield", db.Float, nullable=True)
     redemption_yield = db.Column(db.Float, nullable=True)
 
 
@@ -105,33 +104,9 @@ class IMA(IMABase):
     components = relationship("ComponentsIMA", backref="anbima_ima")
 
 
-class StageIMA(IMABase):
-    __tablename__ = "stage_" + IMA.__tablename__
 
 
-class ComponentsIMABase(Base):
-    __abstract__ = True
-
-    indice = db.Column(db.String(30), primary_key=True)
-    data_referencia = db.Column(db.Date, primary_key=True)
-    tipo_titulo = db.Column(db.String(30), primary_key=True)
-    data_vencimento = db.Column(db.Date, primary_key=True)
-    codigo_selic = db.Column(db.Integer)
-    codigo_isin = db.Column(db.String)
-    taxa_indicativa = db.Column(db.Float)
-    pu = db.Column(db.Float)
-    pu_juros = db.Column(db.Float)
-    quantidade_componentes = db.Column(db.Float)
-    quantidade_teorica = db.Column(db.Float)
-    valor_mercado = db.Column(db.Float)
-    peso_componente = db.Column(db.Float)
-    prazo_vencimento = db.Column(db.Float)
-    duration = db.Column(db.Float)
-    pmr = db.Column(db.Float)
-    convexidade = db.Column(db.Float)
-
-
-class ComponentsIMA(ComponentsIMABase):
+class ComponentsIMA(Base):
     """
 
     Attributes
@@ -188,6 +163,24 @@ class ComponentsIMA(ComponentsIMABase):
     indice = db.Column(db.String(30), primary_key=True)
     data_referencia = db.Column(db.Date, primary_key=True)
 
+
+    tipo_titulo = db.Column(db.String(30), primary_key=True)
+    data_vencimento = db.Column(db.Date, primary_key=True)
+    codigo_selic = db.Column(db.Integer)
+    codigo_isin = db.Column(db.String)
+    taxa_indicativa = db.Column(db.Float)
+    pu = db.Column(db.Float)
+    pu_juros = db.Column(db.Float)
+    quantidade_componentes = db.Column(db.Float)
+    quantidade_teorica = db.Column(db.Float)
+    valor_mercado = db.Column(db.Float)
+    peso_componente = db.Column(db.Float)
+    prazo_vencimento = db.Column(db.Float)
+    duration = db.Column(db.Float)
+    pmr = db.Column(db.Float)
+    convexidade = db.Column(db.Float)
+
+
     __table_args__ = (
         ForeignKeyConstraint(
             [indice, data_referencia], [IMA.indice, IMA.data_referencia]
@@ -196,8 +189,50 @@ class ComponentsIMA(ComponentsIMABase):
     )
 
 
-class StageComponentsIMA(ComponentsIMABase):
-    __tablename__ = "stage_" + ComponentsIMA.__tablename__
-
-
+class StageComponentsIMAView(Base):
+    __table__ = view(
+        "stage_anbima_componentsIMA",
+        Base.metadata,
+        select(
+            StageRawIMA.data_referencia,
+            StageRawIMA.indice,
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].tipo_titulo").label(
+                "tipo_titulo"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].data_vencimento").label(
+                "data_vencimento"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].codigo_selic").label(
+                "codigo_selic"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].codigo_isin").label(
+                "codigo_isin"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].taxa_indicativa").label(
+                "taxa_indicativa"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].pu").label("pu"),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].pu_juros").label("pu_juros"),
+            func.JSON_VALUE(
+                StageRawIMA.componentes, "$[0].quantidade_componentes"
+            ).label("quantidade_componentes"),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].quantidade_teorica").label(
+                "quantidade_teorica"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].valor_mercado").label(
+                "valor_mercado"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].peso_componente").label(
+                "peso_componente"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].prazo_vencimento").label(
+                "prazo_vencimento"
+            ),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].duration").label("duration"),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].pmr").label("pmr"),
+            func.JSON_VALUE(StageRawIMA.componentes, "$[0].convexidade").label(
+                "convexidade"
+            ),
+        ),
+    )
 

@@ -38,7 +38,11 @@ def view_doesnt_exist(ddl, target, connection, **kw):
 
 
 def view(name, metadata, selectable):
-    _table= table(name)
+    """
+    Automatically adds suffix _view to name
+    """
+    name = name + "_view"
+    _table = table(name)
 
     _table._columns._populate_separate_keys(
         col._make_proxy(_table) for col in selectable.selected_columns

@@ -57,10 +57,22 @@ class StageVNA(VNABase):
     rowid = db.Column(db.Integer, primary_key=True, autoincrement=True)
     titulos = db.Column(db.JSON)
 
-    tipo_titulo = db.Column(db.String(50), nullable=True, default=null())
-    codigo_selic = db.Column(db.String(6), nullable=True, default=null())
-    index = db.Column(db.Float, nullable=True, default=null())
-    tipo_correcao = db.Column(db.String, nullable=True, default=null())
-    data_validade = db.Column(db.Date, nullable=True, default=null())
-    vna = db.Column(db.Float, nullable=True, default=null())
+
+from flask_api.models.views import view
+from sqlalchemy import select, func
+
+class StageVNAView(Base):
+    __table__ = view(
+        "stage_anbima_vna_titulos" ,
+        Base.metadata,
+        select(
+        StageVNA.data_referencia,
+        func.JSON_VALUE(StageVNA.titulos, '$[0].tipo_titulo').label('tipo_titulo'),
+        func.JSON_VALUE(StageVNA.titulos, '$[0].codigo_selic').label('codigo_selic'),
+        func.JSON_VALUE(StageVNA.titulos, '$[0].index').label('index'),
+        func.JSON_VALUE(StageVNA.titulos, '$[0].tipo_correcao').label('tipo_correcao'),
+        func.JSON_VALUE(StageVNA.titulos, '$[0].data_validade').label('data_validade'),
+        func.JSON_VALUE(StageVNA.titulos, '$[0].vna').label('vna'),
+        )
+    )
 
