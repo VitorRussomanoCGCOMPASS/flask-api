@@ -6,7 +6,7 @@ from flask_api.models.base_model import Base
 from flask_api.models.views import view
 
 
-class StageRawIMA(Base):
+class StageIMA(Base):
     __tablename__ = "stage_anbima_ima"
 
     indice = db.Column(db.String(30), primary_key=True)
@@ -194,43 +194,43 @@ class StageComponentsIMAView(Base):
         "stage_anbima_componentsIMA",
         Base.metadata,
         select(
-            StageRawIMA.data_referencia,
-            StageRawIMA.indice,
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].tipo_titulo").label(
+            StageIMA.data_referencia,
+            StageIMA.indice,
+            func.JSON_VALUE(StageIMA.componentes, "$[0].tipo_titulo").label(
                 "tipo_titulo"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].data_vencimento").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].data_vencimento").label(
                 "data_vencimento"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].codigo_selic").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].codigo_selic").label(
                 "codigo_selic"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].codigo_isin").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].codigo_isin").label(
                 "codigo_isin"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].taxa_indicativa").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].taxa_indicativa").label(
                 "taxa_indicativa"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].pu").label("pu"),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].pu_juros").label("pu_juros"),
+            func.JSON_VALUE(StageIMA.componentes, "$[0].pu").label("pu"),
+            func.JSON_VALUE(StageIMA.componentes, "$[0].pu_juros").label("pu_juros"),
             func.JSON_VALUE(
-                StageRawIMA.componentes, "$[0].quantidade_componentes"
+                StageIMA.componentes, "$[0].quantidade_componentes"
             ).label("quantidade_componentes"),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].quantidade_teorica").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].quantidade_teorica").label(
                 "quantidade_teorica"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].valor_mercado").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].valor_mercado").label(
                 "valor_mercado"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].peso_componente").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].peso_componente").label(
                 "peso_componente"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].prazo_vencimento").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].prazo_vencimento").label(
                 "prazo_vencimento"
             ),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].duration").label("duration"),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].pmr").label("pmr"),
-            func.JSON_VALUE(StageRawIMA.componentes, "$[0].convexidade").label(
+            func.JSON_VALUE(StageIMA.componentes, "$[0].duration").label("duration"),
+            func.JSON_VALUE(StageIMA.componentes, "$[0].pmr").label("pmr"),
+            func.JSON_VALUE(StageIMA.componentes, "$[0].convexidade").label(
                 "convexidade"
             ),
         ),
