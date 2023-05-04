@@ -40,5 +40,3 @@ class StageDebentures(DebenturesBase):
     emissor = db.Column(db.String)
     data_finalizado = db.Column(db.String(50))
     data_vencimento = db.Column(db.String(50))
-
-

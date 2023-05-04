@@ -16,6 +16,8 @@ class Indexes(Base):
 class IndexValues(Base):
     __tablename__ = "indexes_values"
     date = Column(db.Date, primary_key=True)
-    index = relationship("Indexes", back_populates="values")
     index_id = Column(db.Integer, db.ForeignKey("indexes.id"), primary_key=True)
     value = Column(db.Float)
+
+    index = relationship("Indexes", back_populates="values")
+
