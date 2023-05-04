@@ -11,13 +11,7 @@ class Currency(Base):
     
     exchange_rates = relationship("ExchangeRates")
 
-class ExchangeRatesBase(Base):
-    __abstract__ = True
-
-    date = Column(db.Date, primary_key=True)
-    value = Column(db.Float)
-
-class ExchangeRates(ExchangeRatesBase):
+class ExchangeRates(Base):
     __tablename__ = "exchange_rates"
 
     domestic_id = Column(db.Integer, db.ForeignKey("currencies.id"), primary_key=True)
@@ -30,9 +24,14 @@ class ExchangeRates(ExchangeRatesBase):
         "Currency", primaryjoin="ExchangeRate.foreign_id == Currency.id"
     )
 
-class StageExchangeRates(ExchangeRatesBase):
+    date = Column(db.Date, primary_key=True)
+    value = Column(db.Float)
+
+class StageExchangeRates(Base):
     __tablename__ = "stage_" + ExchangeRates.__tablename__
 
     domestic_id = Column(db.Integer, primary_key=True)
     foreign_id = Column(db.Integer, primary_key=True)
 
+    date = Column(db.String(50), primary_key=True)
+    value = Column(db.VARCHAR)
