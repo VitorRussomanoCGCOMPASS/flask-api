@@ -37,7 +37,7 @@ def view_doesnt_exist(ddl, target, connection, **kw):
     return not view_exists(ddl, target, connection, **kw)
 
 
-def view(name, metadata, selectable):
+def View(name, metadata, selectable):
     """
     Automatically adds suffix _view to name
     """

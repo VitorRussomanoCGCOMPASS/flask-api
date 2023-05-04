@@ -3,7 +3,7 @@ from sqlalchemy import ForeignKeyConstraint, func, null, select
 from sqlalchemy.orm import relationship
 
 from flask_api.models.base_model import Base
-from flask_api.models.views import view
+from flask_api.models.views import View
 
 
 class StageIMA(Base):
@@ -190,7 +190,7 @@ class ComponentsIMA(Base):
 
 
 class StageComponentsIMAView(Base):
-    __table__ = view(
+    __table__ = View(
         "stage_anbima_componentsIMA",
         Base.metadata,
         select(
@@ -235,4 +235,6 @@ class StageComponentsIMAView(Base):
             ),
         ),
     )
+
+
 

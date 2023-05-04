@@ -62,9 +62,3 @@ class CompleteFundsValues(Base):
         Base.metadata,
         union(select(FundsValues), select(StageFundsValues)),
     )
-
-
-
-
-# Checkpoint object 
-# Bunch of stored procedures

@@ -58,11 +58,11 @@ class StageVNA(VNABase):
     titulos = db.Column(db.JSON)
 
 
-from flask_api.models.views import view
+from flask_api.models.views import View
 from sqlalchemy import select, func
 
 class StageVNAView(Base):
-    __table__ = view(
+    __table__ = View(
         "stage_anbima_vna_titulos" ,
         Base.metadata,
         select(
