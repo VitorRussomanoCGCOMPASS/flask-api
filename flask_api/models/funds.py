@@ -1,7 +1,7 @@
 from flask_api.models.base_model import Base
 import sqlalchemy as db
 from sqlalchemy.orm import relationship
-from flask_api.models.views import view
+from flask_api.models.views import View
 from sqlalchemy import select, union
 
 # FIXME : DISTRIBUIDOR RATE RELATIONSHIP.
@@ -57,7 +57,7 @@ class StageFundsValues(FundsValuesBase):
 
 
 class CompleteFundsValues(Base):
-    __table__ = view(
+    __table__ = View(
         "funds_values",
         Base.metadata,
         union(select(FundsValues), select(StageFundsValues)),
