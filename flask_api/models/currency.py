@@ -6,7 +6,7 @@ from sqlalchemy.orm import relationship
 class Currency(Base):
     __tablename__ = "currencies"
 
-    id = Column(db.Integer, autoincrement=True, primary_key=True)
+    id = Column(db.Integer, autoincrement=False, primary_key=True)
     currency = Column(db.String)
     
     exchange_rates = relationship("ExchangeRates")
@@ -35,3 +35,5 @@ class StageExchangeRates(Base):
 
     date = Column(db.String(50), primary_key=True)
     value = Column(db.VARCHAR)
+
+
