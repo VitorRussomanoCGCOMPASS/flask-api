@@ -32,9 +32,6 @@ class StageIndexValues(Base):
 from flask_api.models.views import View
 from sqlalchemy import select, func
 
-
-
-
 class StageIndexView(Base):
 
     __table__ = View(
