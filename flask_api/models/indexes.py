@@ -22,11 +22,31 @@ class IndexValues(Base):
     index = relationship("Indexes", back_populates="values")
 
 
-
-
 class StageIndexValues(Base):
-    __tablename__ = 'stage_' + IndexValues.__tablename__
+    __tablename__ = "stage_" + IndexValues.__tablename__
     Cotacoes = Column(db.JSON)
     IdIndice = Column(db.Integer, autoincrement=False, primary_key=True)
     Descricao = Column(db.String(50))
 
+
+from flask_api.models.views import View
+from sqlalchemy import select, func
+
+
+
+
+class StageIndexView(Base):
+
+    __table__ = View(
+        "stage_indexes_values",
+        Base.metadata,
+        select(
+            func.JSON_VALUE(StageIndexValues.Cotacoes, "$[0].Data").label(
+                "date"
+            ),
+            func.JSON_VALUE(StageIndexValues.Cotacoes, "$[0].Valor").label(
+                "value"
+            ),
+            StageIndexValues.IdIndice.label('index_id'),
+        ),
+    )
