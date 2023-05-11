@@ -202,6 +202,7 @@ class StageComponentsIMAView(Base):
             func.JSON_VALUE(StageIMA.componentes, "$[0].data_vencimento").label(
                 "data_vencimento"
             ),
+            
             func.JSON_VALUE(StageIMA.componentes, "$[0].codigo_selic").label(
                 "codigo_selic"
             ),

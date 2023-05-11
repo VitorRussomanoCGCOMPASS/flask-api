@@ -8,7 +8,7 @@ class Indexes(Base):
 
     __tablename__ = "indexes"
 
-    id = Column(db.Integer, autoincrement=True, primary_key=True)
+    id = Column(db.Integer, autoincrement=False, primary_key=True)
     index = Column(db.String(50))
     values = relationship("IndexValues", back_populates="index")
 
@@ -20,4 +20,13 @@ class IndexValues(Base):
     value = Column(db.Float)
 
     index = relationship("Indexes", back_populates="values")
+
+
+
+
+class StageIndexValues(Base):
+    __tablename__ = 'stage_' + IndexValues.__tablename__
+    Cotacoes = Column(db.JSON)
+    IdIndice = Column(db.Integer, autoincrement=False, primary_key=True)
+    Descricao = Column(db.String(50))
 
