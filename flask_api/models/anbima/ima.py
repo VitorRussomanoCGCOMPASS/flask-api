@@ -196,7 +196,7 @@ class StageComponentsIMAView(Base):
         select(
             StageIMA.data_referencia,
             StageIMA.indice,
-            func.JSON_VALUE(StageIMA.componentes, "$[0].tipo_titulo").label(
+            func.JSON_VALUE(StageIMA.componentes, "").label(
                 "tipo_titulo"
             ),
             func.JSON_VALUE(StageIMA.componentes, "$[0].data_vencimento").label(
