@@ -61,7 +61,7 @@ class CotistaOpBase(Base):
     IdOperacao = db.Column(db.Integer, primary_key=True, autoincrement=False)
     IdCotista = db.Column(db.Integer)
     NomeCotista = db.Column(db.String)
-    CodigoInterface = db.Column(db.String)
+    CodigoInterface = db.Column(db.String,nullable=True)
     IdCarteira = db.Column(db.Integer)
     NomeFundo = db.Column(db.String)
     DataOperacao = db.Column(db.VARCHAR)
@@ -124,3 +124,16 @@ from sqlalchemy import null
 class StageCotistaOp(CotistaOpBase):
     __tablename__ = "stage_" + CotistaOp.__tablename__
     DetalheResgate = db.Column(db.JSON,nullable=True, default=null())
+    CodigoInterface = db.Column(db.String,nullable=True,default=null())
+    TipoResgate = db.Column(db.Integer, nullable=True,default=null())
+    IdPosicaoResgatada = db.Column(db.Integer, nullable=True,default=null())
+    IdConta = db.Column(db.Integer, nullable=True,default=null())
+    CotaInformada = db.Column(db.Float, nullable=True,default=null())
+    IdAgenda = db.Column(db.Integer, nullable=True,default=null())
+    IdOperacaoResgatada = db.Column(db.Integer, nullable=True,default=null())
+    CodigoCategoriaMovimentacao = db.Column(db.String, nullable=True,default=null())
+    IdBoletaExterna = db.Column(db.Integer, nullable=True,default=null())
+    IdOperacaoAuxiliar = db.Column(db.Integer, nullable=True,default=null())
+    IdCategoriaMovimentacao = db.Column(db.Integer, nullable=True,default=null())
+
+
