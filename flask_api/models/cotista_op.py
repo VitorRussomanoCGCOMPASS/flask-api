@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 
 from flask_api.models.base_model import Base
 from flask_api.models.funds import Funds
-from sqlalchemy import null
+
 
 class DistribuidorEntry(Base):
     __tablename__ = "distribuidor_entry"
@@ -64,10 +64,10 @@ class CotistaOpBase(Base):
     CodigoInterface = db.Column(db.String)
     IdCarteira = db.Column(db.Integer)
     NomeFundo = db.Column(db.String)
-    DataOperacao = db.Column(db.Date)
-    DataConversao = db.Column(db.Date)
-    DataLiquidacao = db.Column(db.Date)
-    DataAgendamento = db.Column(db.Date)
+    DataOperacao = db.Column(db.VARCHAR)
+    DataConversao = db.Column(db.VARCHAR)
+    DataLiquidacao = db.Column(db.VARCHAR)
+    DataAgendamento = db.Column(db.VARCHAR)
     TipoOperacao = db.Column(db.Integer)
     TipoResgate = db.Column(db.Integer, nullable=True)
     IdPosicaoResgatada = db.Column(db.Integer, nullable=True)
@@ -96,24 +96,30 @@ class CotistaOpBase(Base):
     CodigoAnbima = db.Column(db.String)
     MovimentoCarteira = db.Column(db.String, nullable=True)
     SituacaoOperacao = db.Column(db.Integer)
+    CodigoCategoriaMovimentacao = db.Column(db.String, nullable=True)
+    TipoCotistaMovimentacao = db.Column(db.Integer)
+    IdBoletaExterna = db.Column(db.Integer, nullable=True)
+    DataDia = db.Column(db.VARCHAR)
+    Status = db.Column(db.String)
+    IdOperacaoAuxiliar = db.Column(db.Integer, nullable=True)
+    IdCategoriaMovimentacao = db.Column(db.Integer, nullable=True)
 
 
 class CotistaOp(CotistaOpBase):
     __tablename__ = "cotista_op"
 
     CpfcnpjCotista = db.Column(
-        db.String(20), db.ForeignKey("distribuidor_quotaholder.CpfcnpjCotista")
+        db.String(20),
     )
+    DataOperacao = db.Column(db.Date)
+    DataConversao = db.Column(db.Date)
+    DataLiquidacao = db.Column(db.Date)
+    DataAgendamento = db.Column(db.Date)
+    DataDia = db.Column(db.Date)
+    # db.ForeignKey("distribuidor_quotaholder.CpfcnpjCotista")
 
 
 class StageCotistaOp(CotistaOpBase):
     __tablename__ = "stage_" + CotistaOp.__tablename__
-    TipoResgate = db.Column(db.Integer, nullable=True,default=null())
-    IdPosicaoResgatada = db.Column(db.Integer, nullable=True,default=null())
-    Observacao = db.Column(db.String, nullable=True,default=null())
-    DadosBancarios = db.Column(db.String, nullable=True,default=null())
-    IdConta = db.Column(db.Integer, nullable=True,default=null())
-    CotaInformada = db.Column(db.Float, nullable=True,default=null())
-    IdAgenda = db.Column(db.Integer, nullable=True,default=null())
-    IdOperacaoResgatada = db.Column(db.Integer, nullable=True,default=null())
-    MovimentoCarteira = db.Column(db.String, nullable=True,default=null())
+    DetalheResgate = db.Column(db.JSON)
+
