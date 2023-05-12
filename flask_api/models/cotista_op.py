@@ -118,8 +118,9 @@ class CotistaOp(CotistaOpBase):
     DataDia = db.Column(db.Date)
     # db.ForeignKey("distribuidor_quotaholder.CpfcnpjCotista")
 
+from sqlalchemy import null
+
 
 class StageCotistaOp(CotistaOpBase):
     __tablename__ = "stage_" + CotistaOp.__tablename__
-    DetalheResgate = db.Column(db.JSON)
-
+    DetalheResgate = db.Column(db.JSON,nullable=True, default=null())
