@@ -1,6 +1,5 @@
 from flask_api.models.base_model import Base
 import sqlalchemy as db
-from sqlalchemy import null
 
 
 class DebenturesBase(Base):
@@ -33,10 +32,11 @@ class Debentures(DebenturesBase):
     __tablename__ = "debentures"
     percent_reune = db.Column(db.Float, nullable=True)
 
-
 class StageDebentures(DebenturesBase):
     __tablename__ = "stage_" + Debentures.__tablename__
 
     emissor = db.Column(db.String)
     data_finalizado = db.Column(db.String(50))
     data_vencimento = db.Column(db.String(50))
+
+
