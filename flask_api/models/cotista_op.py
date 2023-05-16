@@ -115,7 +115,7 @@ class CotistaOp(CotistaOpBase):
     DataConversao = db.Column(db.Date)
     DataLiquidacao = db.Column(db.Date)
     DataAgendamento = db.Column(db.Date)
-    DataDia = db.Column(db.Date)
+    # DataDia = db.Column(db.Date)
     # db.ForeignKey("distribuidor_quotaholder.CpfcnpjCotista")
 
 from sqlalchemy import null
@@ -135,5 +135,4 @@ class StageCotistaOp(CotistaOpBase):
     IdBoletaExterna = db.Column(db.Integer, nullable=True,default=null())
     IdOperacaoAuxiliar = db.Column(db.Integer, nullable=True,default=null())
     IdCategoriaMovimentacao = db.Column(db.Integer, nullable=True,default=null())
-
 
