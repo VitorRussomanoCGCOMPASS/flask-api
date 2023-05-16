@@ -76,7 +76,7 @@ class RendaFixaPos(RendaFixaBase):
     DataVolta = db.Column(db.Date, nullable=True)
 
 
-class RendaFixaPosStage(RendaFixaBase):
+class StageRendaFixaPos(RendaFixaBase):
     __tablename__ = "stage_" + RendaFixaPos.__tablename__
 
     DataVolta = db.Column(db.VARCHAR, nullable=True, default=null())
