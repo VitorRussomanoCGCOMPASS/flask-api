@@ -7,7 +7,7 @@ class RendaFixaBase(Base):
     __abstract__ = True
 
     IdPosicao = db.Column(db.Integer, autoincrement=False, primary_key=True)
-    DataHistorico = db.Column(db.VARCHAR)
+    DataHistorico = db.Column(db.VARCHAR(50),primary_key=True)
     IdCliente = db.Column(db.Integer)
     NomeCliente = db.Column(db.String)
     ApelidoCliente = db.Column(db.String)
@@ -69,7 +69,7 @@ class RendaFixaBase(Base):
 
 class RendaFixaPos(RendaFixaBase):
     __tablename__ = "rendafixa_pos"
-    DataHistorico = db.Column(db.Date)
+    DataHistorico = db.Column(db.Date,primary_key=True)
     DataVencimento = db.Column(db.Date)
     DataOperacao = db.Column(db.Date)
     DataLiquidacao = db.Column(db.Date)
@@ -91,3 +91,12 @@ class StageRendaFixaPos(RendaFixaBase):
     VersaoMotorCalculo = db.Column(db.String, nullable=True, default=null())
     IdPosicaoExterna = db.Column(db.Integer, nullable=True, default=null())
     
+
+
+
+# Data HIstorico, IdCliente, Id Carteira Primary keys (GROUP BY)
+# Valor Aplicacao soma
+# Cota Dia 
+# Valor Bruto soma
+# Liquido soma
+# Quantidade soma
