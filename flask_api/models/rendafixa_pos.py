@@ -94,9 +94,4 @@ class StageRendaFixaPos(RendaFixaBase):
 
 
 
-# Data HIstorico, IdCliente, Id Carteira Primary keys (GROUP BY)
-# Valor Aplicacao soma
-# Cota Dia 
-# Valor Bruto soma
-# Liquido soma
-# Quantidade soma
+
