@@ -98,7 +98,7 @@ class BaseFundsPos(Base):
 
 class FundsPos(BaseFundsPos):
     __tablename__ = "funds_pos"
-    IdCarteira = db.Column(db.Integer, db.ForeignKey("funds.britech_id"))
+    IdCliente = db.Column(db.Integer, db.ForeignKey("funds.britech_id"))
     DataHistorico = db.Column(db.Date, primary_key=True)
     DataAplicacao = db.Column(db.Date)
     DataConversao = db.Column(db.Date)
@@ -111,3 +111,5 @@ class StageFundsPos(BaseFundsPos):
 
     DataUltimoCortePfee = db.Column(db.VARCHAR, nullable=True, default=null())
     FieTabelaIr = db.Column(db.Float, nullable=True, default=null())
+
+
