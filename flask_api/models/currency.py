@@ -8,8 +8,9 @@ class Currency(Base):
 
     id = Column(db.Integer, autoincrement=False, primary_key=True)
     currency = Column(db.String)
-    
+
     exchange_rates = relationship("ExchangeRates")
+
 
 class ExchangeRates(Base):
     __tablename__ = "exchange_rates"
@@ -26,6 +27,8 @@ class ExchangeRates(Base):
 
     date = Column(db.Date, primary_key=True)
     value = Column(db.Float)
+    status_t3 = Column(db.VARCHAR)
+
 
 class StageExchangeRates(Base):
     __tablename__ = "stage_" + ExchangeRates.__tablename__
@@ -35,5 +38,4 @@ class StageExchangeRates(Base):
 
     date = Column(db.String(50), primary_key=True)
     value = Column(db.VARCHAR)
-
-
+    status_t3 = Column(db.VARCHAR)
