@@ -7,6 +7,7 @@ class VNABase(Base):
 
     __abstract__ = True
     data_referencia = db.Column(db.Date, primary_key=True)
+    status_t3 = db.Column(db.VARCHAR)
 
 
 class VNA(VNABase):
@@ -67,6 +68,7 @@ class StageVNAView(Base):
         Base.metadata,
         select(
         StageVNA.data_referencia,
+        StageVNA.status_t3,
         func.JSON_VALUE(StageVNA.titulos, '$[0].tipo_titulo').label('tipo_titulo'),
         func.JSON_VALUE(StageVNA.titulos, '$[0].codigo_selic').label('codigo_selic'),
         func.JSON_VALUE(StageVNA.titulos, '$[0].index').label('index'),

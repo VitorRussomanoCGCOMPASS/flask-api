@@ -30,6 +30,7 @@ class CriCraBase(Base):
     percent_reune = db.Column(db.Float, nullable=True)
     data_referencia_ntnb = db.Column(db.Date, nullable=True)
     referencia_ntnb = db.Column(db.Date, nullable=True)
+    status_t3 = db.Column(db.VARCHAR)
 
 
 

@@ -26,6 +26,7 @@ class DebenturesBase(Base):
     percent_pu_par = db.Column(db.Float, nullable=True)
     percent_reune = db.Column(db.VARCHAR, nullable=True)
     referencia_ntnb = db.Column(db.Date, nullable=True)
+    status_t3 = db.Column(db.VARCHAR)
 
 
 class Debentures(DebenturesBase):
@@ -38,5 +39,6 @@ class StageDebentures(DebenturesBase):
     emissor = db.Column(db.String)
     data_finalizado = db.Column(db.String(50))
     data_vencimento = db.Column(db.String(50))
+
 
 

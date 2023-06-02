@@ -26,6 +26,7 @@ class StageIMA(Base):
     yield_col = db.Column("yield", db.Float, nullable=True, default=null())
     redemption_yield = db.Column(db.Float, nullable=True, default=null())
     componentes = db.Column(db.JSON)
+    status_t3 = db.Column(db.VARCHAR)
 
 
 class IMABase(Base):
@@ -47,6 +48,7 @@ class IMABase(Base):
     duration = db.Column(db.Float)
     _yield = db.Column("yield", db.Float, nullable=True)
     redemption_yield = db.Column(db.Float, nullable=True)
+    status_t3 = db.Column(db.VARCHAR)
 
 
 class IMA(IMABase):
@@ -179,6 +181,7 @@ class ComponentsIMA(Base):
     duration = db.Column(db.Float)
     pmr = db.Column(db.Float)
     convexidade = db.Column(db.Float)
+    status_t3 = db.Column(db.VARCHAR)
 
 
     __table_args__ = (
@@ -192,10 +195,12 @@ class ComponentsIMA(Base):
 class StageComponentsIMAView(Base):
     __table__ = View(
         "stage_anbima_componentsIMA",
+
         Base.metadata,
         select(
             StageIMA.data_referencia,
             StageIMA.indice,
+            StageIMA.status_t3,
             func.JSON_VALUE(StageIMA.componentes, "").label(
                 "tipo_titulo"
             ),
