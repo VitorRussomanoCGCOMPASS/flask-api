@@ -47,4 +47,6 @@ class StageCetip(CetipBase):
 
     last_trade_closing_time = db.Column(db.VARCHAR)
     last_trade_settlement_date = db.Column(db.VARCHAR)
-    date = db.Column(db.VARCHAR(50),primary_key=True)
+    date = db.Column(db.Date,primary_key=True)
+
+
