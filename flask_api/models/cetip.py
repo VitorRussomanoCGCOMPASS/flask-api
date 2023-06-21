@@ -6,6 +6,7 @@ from sqlalchemy import null
 class CetipBase(Base):
 
     __abstract__  = True
+
     type = db.Column(db.String(10))
     issuer = db.Column(db.String,nullable=True)
     instrument_code = db.Column(db.String(50),primary_key=True)
@@ -47,6 +48,4 @@ class StageCetip(CetipBase):
 
     last_trade_closing_time = db.Column(db.VARCHAR)
     last_trade_settlement_date = db.Column(db.VARCHAR)
-    date = db.Column(db.Date,primary_key=True)
-
-
+    date = db.Column(db.String(50),primary_key=True)
